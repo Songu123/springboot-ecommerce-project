@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Category Form</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="container-fluid">
+        <h1 class="h3 mb-4 text-gray-800" th:text="${category.id != null ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}"></h1>
+
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <form th:action="@{/admin/categories/save}"
+                      th:object="${category}"
+                      method="post">
+                    <input type="hidden" name="id" th:value="${category.id}">
+                    <div class="mb-3">
+                        <label class="form-label">Tên danh mục</label>
+                        <input type="text" name="name" class="form-control" th:value="${category.name}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Slug</label>
+                        <input type="text" name="slug" class="form-control" th:value="${category.slug}" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Lưu
+                    </button>
+                    <a th:href="@{/admin/categories}" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Hủy
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,4 +1,5 @@
 <!--Start sidebar-wrapper-->
+<div th:fragment="sidebar" xmlns:th="http://www.w3.org/1999/xhtml">
 <div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
     <div class="brand-logo">
         <a href="index.html">
@@ -9,20 +10,20 @@
     <ul class="sidebar-menu do-nicescrol">
         <li class="sidebar-header">MAIN NAVIGATION</li>
         <li>
-            <a href="index.html">
+            <a href="admin/dashboard">
                 <i class="zmdi zmdi-view-dashboard"></i> <span>Dashboard</span>
             </a>
         </li>
 
         <li>
-            <a href="icons.html">
-                <i class="zmdi zmdi-invert-colors"></i> <span>UI Icons</span>
+            <a href="categories">
+                <i class="zmdi zmdi-invert-colors"></i> <span>Category</span>
             </a>
         </li>
 
         <li>
-            <a href="forms.html">
-                <i class="zmdi zmdi-format-list-bulleted"></i> <span>Forms</span>
+            <a href="products">
+                <i class="zmdi zmdi-format-list-bulleted"></i> <span>Product</span>
             </a>
         </li>
 
@@ -64,5 +65,6 @@
 
     </ul>
 
+</div>
 </div>
 <!--End sidebar-wrapper-->

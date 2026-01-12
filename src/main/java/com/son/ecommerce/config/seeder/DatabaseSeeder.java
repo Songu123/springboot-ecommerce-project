@@ -17,11 +17,23 @@ public class DatabaseSeeder implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-//        System.out.println("Seeders: " + seeders);
-//
-//        seeders.stream()
-//                .sorted(Comparator.comparingInt(BaseSeeder::order))
-//                .forEach(BaseSeeder::seed);
-        CategorySeeder categorySeeder = new CategorySeeder();
+        System.out.println("\n========================================");
+        System.out.println("   DATABASE SEEDING STARTED");
+        System.out.println("========================================\n");
+
+        seeders.stream()
+                .sorted(Comparator.comparingInt(BaseSeeder::order))
+                .forEach(seeder -> {
+                    try {
+                        seeder.seed();
+                    } catch (Exception e) {
+                        System.err.println("Error running seeder: " + seeder.getClass().getSimpleName());
+                        e.printStackTrace();
+                    }
+                });
+
+        System.out.println("\n========================================");
+        System.out.println("   DATABASE SEEDING COMPLETED");
+        System.out.println("========================================\n");
     }
 }

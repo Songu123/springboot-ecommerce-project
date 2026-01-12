@@ -1,6 +1,7 @@
 package com.son.ecommerce.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,6 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Product {
 
     @Id
@@ -26,7 +28,8 @@ public class Product {
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id",  nullable = false)
+    @JsonIgnoreProperties("products")
     private Category category;
 
     // getter & setter

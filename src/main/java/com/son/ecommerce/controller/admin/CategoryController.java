@@ -21,7 +21,7 @@ public class CategoryController {
     @GetMapping
     public String list(Model model) {
         model.addAttribute("categories", categoryService.findAll());
-        model.addAttribute("content", "admin/category/list :: content");
+        model.addAttribute("content", "admin/category/list");
         return "admin-layout";
     }
 
@@ -29,7 +29,7 @@ public class CategoryController {
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("category", new Category());
-        model.addAttribute("content", "admin/category/form :: content");
+        model.addAttribute("content", "admin/category/form");
         return "admin-layout";
     }
 
@@ -45,7 +45,7 @@ public class CategoryController {
     public String editForm(@PathVariable Long id, Model model) {
         Category category = categoryService.findById(id);
         model.addAttribute("category", category);
-        model.addAttribute("content", "admin/category/form :: content");
+        model.addAttribute("content", "admin/category/form");
         return "admin-layout";
     }
 

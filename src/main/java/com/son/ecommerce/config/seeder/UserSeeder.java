@@ -5,6 +5,7 @@ import com.son.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -14,6 +15,7 @@ import java.util.*;
 @Profile("dev")
 public class UserSeeder implements BaseSeeder {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void seed() {
@@ -35,12 +37,41 @@ public class UserSeeder implements BaseSeeder {
                         .username("admin")
                         .fullName("Administrator")
                         .email("admin@example.com")
-                        .password("$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6") // password: admin123
+                        .password(passwordEncoder.encode("admin123"))
+                        .role("ROLE_ADMIN")
                         .enabled(true)
                         .build()
         );
         usedEmails.add("admin@example.com");
         usedUsernames.add("admin");
+
+        // Tạo manager user
+        users.add(
+                User.builder()
+                        .username("manager")
+                        .fullName("Manager User")
+                        .email("manager@example.com")
+                        .password(passwordEncoder.encode("manager123"))
+                        .role("ROLE_MANAGER")
+                        .enabled(true)
+                        .build()
+        );
+        usedEmails.add("manager@example.com");
+        usedUsernames.add("manager");
+
+        // Tạo customer user
+        users.add(
+                User.builder()
+                        .username("customer")
+                        .fullName("Customer User")
+                        .email("customer@example.com")
+                        .password(passwordEncoder.encode("customer123"))
+                        .role("ROLE_CUSTOMER")
+                        .enabled(true)
+                        .build()
+        );
+        usedEmails.add("customer@example.com");
+        usedUsernames.add("customer");
 
         // Tạo 20 users ngẫu nhiên
         for (int i = 0; i < 20; i++) {
@@ -64,12 +95,17 @@ public class UserSeeder implements BaseSeeder {
             }
             usedEmails.add(email);
 
+            // Random role
+            String[] roles = {"ROLE_USER", "ROLE_CUSTOMER"};
+            String randomRole = roles[new Random().nextInt(roles.length)];
+
             users.add(
                     User.builder()
                             .username(username)
                             .fullName(faker.name().fullName())
                             .email(email)
-                            .password("$2a$10$slYQmyNdGzTn7ZLBXBChFOC9f6kFjAqPhccnP6DxlWXx2lPk1C3G6") // password: admin123
+                            .password(passwordEncoder.encode("password123"))
+                            .role(randomRole)
                             .enabled(faker.bool().bool())
                             .build()
             );
@@ -78,6 +114,10 @@ public class UserSeeder implements BaseSeeder {
         try {
             userRepository.saveAll(users);
             System.out.println(">>> Seeded " + users.size() + " users successfully.");
+            System.out.println(">>> Default users:");
+            System.out.println("    - admin/admin123 (ROLE_ADMIN)");
+            System.out.println("    - manager/manager123 (ROLE_MANAGER)");
+            System.out.println("    - customer/customer123 (ROLE_CUSTOMER)");
         } catch (Exception e) {
             System.err.println("Error seeding users: " + e.getMessage());
             e.printStackTrace();
@@ -86,7 +126,7 @@ public class UserSeeder implements BaseSeeder {
 
     @Override
     public int order() {
-        return 2; // Chạy sau CategorySeeder
+        return 2; // Chạy sau RoleSeeder và CategorySeeder
     }
 }
 

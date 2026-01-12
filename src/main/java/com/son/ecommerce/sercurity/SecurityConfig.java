@@ -14,17 +14,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                .csrf(csrf -> csrf.disable())
-//                .authorizeHttpRequests(auth -> auth.requestMatchers("/login","/register", "/css/**", "/js/**", "/images/**").permitAll()
-//                        .requestMatchers("/admin/**").hasRole("ADMIN")
-//                        .anyRequest().authenticated())
-////                .formLogin(form -> form
-////                        .loginPage("/login")
-////                        .defaultSuccessUrl("/home", true)
-////                        .permitAll()
-////                )
-//                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
+        http
+                .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/login","/register", "/css/**", "/js/**", "/images/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
+                .formLogin(form -> form
+                        .loginPage("/login")
+                        .defaultSuccessUrl("/home", true)
+                        .permitAll()
+                )
+                .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login?logout"));
         return http.build();
     }
 

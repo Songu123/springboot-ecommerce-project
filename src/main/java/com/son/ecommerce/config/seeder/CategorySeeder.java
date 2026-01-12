@@ -4,18 +4,16 @@ import com.son.ecommerce.entity.Category;
 import com.son.ecommerce.repository.CategoryRepository;
 import com.son.ecommerce.util.SlugUtils;
 import lombok.RequiredArgsConstructor;
-import net.datafaker.Faker;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 @Profile("dev")
 public class CategorySeeder implements BaseSeeder{
-    @Autowired
-    private CategoryRepository categoryRepo;
+    private final CategoryRepository categoryRepo;
 
     @Override
     public void seed() {
@@ -26,23 +24,38 @@ public class CategorySeeder implements BaseSeeder{
             return;
         }
 
-        Faker faker = new Faker(Locale.forLanguageTag("vi"));
-
-        Set<String> usedSlugs = new HashSet<>();
+        // Danh sách các danh mục thực tế cho e-commerce
+        String[] categoryNames = {
+            "Điện thoại & Phụ kiện",
+            "Laptop & Máy tính bảng",
+            "Máy ảnh & Quay phim",
+            "Đồng hồ thông minh",
+            "Thiết bị âm thanh",
+            "Thiết bị Gaming",
+            "Tivi & Thiết bị nghe nhìn",
+            "Thiết bị văn phòng",
+            "Nhà thông minh",
+            "Phụ kiện công nghệ",
+            "Thời trang Nam",
+            "Thời trang Nữ",
+            "Giày dép",
+            "Túi xách & Ví",
+            "Đồng hồ",
+            "Trang sức",
+            "Mỹ phẩm",
+            "Chăm sóc da",
+            "Sách & Văn phòng phẩm",
+            "Thể thao & Du lịch",
+            "Đồ chơi & Giải trí",
+            "Mẹ & Bé",
+            "Nhà cửa & Đời sống",
+            "Thực phẩm & Đồ uống"
+        };
 
         List<Category> categories = new ArrayList<>();
 
-        for (int i = 0; i < 10; i++) {
-            String name = faker.commerce().department();
+        for (String name : categoryNames) {
             String slug = SlugUtils.toSlug(name);
-
-            // đảm bảo slug unique
-            int suffix = 1;
-            while (usedSlugs.contains(slug)) {
-                slug = slug + "-" + suffix++;
-            }
-            usedSlugs.add(slug);
-
             categories.add(
                     Category.builder()
                             .name(name)
@@ -53,7 +66,7 @@ public class CategorySeeder implements BaseSeeder{
 
         try {
             categoryRepo.saveAll(categories);
-            System.out.println(">>> Categories seeded successfully.");
+            System.out.println(">>> Seeded " + categories.size() + " categories successfully.");
         } catch (Exception e) {
             System.err.println("Error seeding categories: " + e.getMessage());
             e.printStackTrace();
@@ -62,6 +75,6 @@ public class CategorySeeder implements BaseSeeder{
 
     @Override
     public int order() {
-        return 1;
+        return 1; // Chạy sau RoleSeeder
     }
 }

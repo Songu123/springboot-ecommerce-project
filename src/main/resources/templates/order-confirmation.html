@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Order Confirmation</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="order-confirmation-page">
+        <div class="container py-5">
+            <div class="text-center mb-5">
+                <div class="success-icon mb-3">
+                    <i class="fas fa-check-circle fa-5x text-success"></i>
+                </div>
+                <h1 class="display-4 mb-3">Order Placed Successfully!</h1>
+                <p class="lead text-muted">Thank you for your order</p>
+                <p class="text-muted">Order #<span class="fw-bold" th:text="${order.id}">12345</span></p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="order-details-card">
+                        <h5 class="card-title mb-4">Order Details</h5>
+
+                        <div class="info-section mb-4">
+                            <h6 class="text-muted mb-3">Order Information</h6>
+                            <div class="row">
+                                <div class="col-md-6 mb-2">
+                                    <strong>Order Date:</strong>
+                                    <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Status:</strong>
+                                    <span class="badge bg-warning" th:text="${order.status}">PENDING</span>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Payment Method:</strong>
+                                    <span th:text="${order.paymentMethod}">COD</span>
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <strong>Payment Status:</strong>
+                                    <span class="badge bg-secondary" th:text="${order.paymentStatus}">UNPAID</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="info-section mb-4">
+                            <h6 class="text-muted mb-3">Shipping Address</h6>
+                            <p class="mb-1" th:text="${order.shippingAddress}">Address</p>
+                            <p class="mb-1" th:text="${order.shippingCity}">City</p>
+                            <p class="mb-0">Phone: <span th:text="${order.shippingPhone}">Phone</span></p>
+                        </div>
+
+                        <div class="info-section mb-4">
+                            <h6 class="text-muted mb-3">Order Items</h6>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Product</th>
+                                            <th class="text-center">Quantity</th>
+                                            <th class="text-end">Price</th>
+                                            <th class="text-end">Subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="item : ${order.items}">
+                                            <td th:text="${item.product.name}">Product</td>
+                                            <td class="text-center" th:text="${item.quantity}">1</td>
+                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">99</span></td>
+                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">99</span></td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
+                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}">0</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="3" class="text-end"><strong>Shipping:</strong></td>
+                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(order.shippingFee, 1, 2)}">0</span></td>
+                                        </tr>
+                                        <tr class="table-active">
+                                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
+                                            <td class="text-end"><strong>$<span th:text="${#numbers.formatDecimal(order.finalTotal, 1, 2)}">0</span></strong></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="text-center">
+                            <a href="/products" class="btn btn-primary btn-lg me-2">
+                                <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
+                            </a>
+                            <a href="/admin/orders" class="btn btn-outline-primary btn-lg">
+                                <i class="fas fa-list me-2"></i>View All Orders
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .order-confirmation-page {
+            background: linear-gradient(135deg, #F9FAFB 0%, #EEF2FF 100%);
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .success-icon {
+            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0) rotate(-180deg); opacity: 0; }
+            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+
+        .success-icon i {
+            color: #10B981;
+            filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
+        }
+
+        .display-4 {
+            font-weight: 600;
+            background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .order-details-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid #E5E7EB;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #111827;
+            border-bottom: 2px solid #7B68EE;
+            padding-bottom: 0.75rem;
+        }
+
+        .info-section {
+            padding: 1.5rem;
+            background: #F9FAFB;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid #E5E7EB;
+        }
+
+        .info-section h6 {
+            font-weight: 600;
+            color: #7B68EE;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-section strong {
+            color: #4B5563;
+            font-weight: 500;
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.8125rem;
+        }
+
+        .bg-warning {
+            background: #FFB84D !important;
+            color: #111827 !important;
+        }
+
+        .bg-secondary {
+            background: #6B7280 !important;
+        }
+
+        .table {
+            font-size: 0.875rem;
+        }
+
+        .table thead th {
+            background: #F9FAFB;
+            color: #4B5563;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 1rem;
+            border-bottom: 2px solid #E5E7EB;
+        }
+
+        .table tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .table tfoot tr {
+            font-weight: 600;
+        }
+
+        .table-active {
+            background: #EEF2FF !important;
+        }
+
+        .table-active td {
+            color: #7B68EE !important;
+            font-size: 1.125rem;
+        }
+
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border-radius: 10px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: none;
+            font-size: 0.9375rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%);
+            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(123, 104, 238, 0.4);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid #7B68EE;
+            color: #7B68EE;
+            background: white;
+        }
+
+        .btn-outline-primary:hover {
+            background: #7B68EE;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .lead {
+            font-size: 1.125rem;
+        }
+
+        @media (max-width: 768px) {
+            .order-details-card {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+  <title>Danh sách người dùng</title>
+  <style>
+    /* ID Badge Style */
+    .id-badge {
+      background: linear-gradient(135deg, #dc3545, #a02830);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 13px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .id-badge:hover {
+      background: linear-gradient(135deg, #a02830, #7a1d24);
+      box-shadow: 0 4px 14px rgba(220, 53, 69, 0.4);
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+<div th:fragment="content">
+  <div class="container-fluid">
+    <!-- Page Header with Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="h3 mb-1 text-gray-800">
+          <i class="zmdi zmdi-accounts text-primary"></i> User Management
+        </h1>
+        <p class="text-muted small mb-0">Quản lý người dùng và phân quyền</p>
+      </div>
+      <div>
+        <a th:href="@{/admin/users/create}" class="btn btn-primary">
+          <i class="fas fa-user-plus"></i> Thêm người dùng mới
+        </a>
+      </div>
+    </div>
+
+    <!-- Stats Cards Row -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card border-left-primary shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Tổng Users
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(users)}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="zmdi zmdi-accounts zmdi-hc-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-success shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  Active Users
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"
+                     th:text="${#lists.size(users.?[enabled == true])}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="zmdi zmdi-check-circle zmdi-hc-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-warning shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Inactive Users
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"
+                     th:text="${#lists.size(users.?[enabled == false])}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="zmdi zmdi-block zmdi-hc-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-info shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  Admins
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  <span th:text="${#lists.size(users.?[roles.?[name == 'ROLE_ADMIN'].size() > 0])}">0</span>
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="zmdi zmdi-star zmdi-hc-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card shadow-lg border-0">
+      <div class="card-header bg-gradient-primary text-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold">
+            <i class="fas fa-table"></i> Danh sách người dùng
+          </h6>
+          <span class="badge badge-light" th:text="${#lists.size(users)} + ' users'">0 users</span>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover table-borderless mb-0" id="dataTable">
+            <thead class="bg-light">
+            <tr>
+              <th class="border-0 text-center" style="width: 60px;">
+                <small class="text-uppercase font-weight-bold">ID</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Username</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Họ và tên</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Email</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Roles</small>
+              </th>
+              <th class="border-0 text-center">
+                <small class="text-uppercase font-weight-bold">Trạng thái</small>
+              </th>
+              <th class="border-0 text-center">
+                <small class="text-uppercase font-weight-bold">Thao tác</small>
+              </th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:if="${#lists.isEmpty(users)}">
+              <td colspan="7" class="text-center py-5">
+                <div class="text-muted">
+                  <i class="zmdi zmdi-accounts zmdi-hc-3x mb-3 d-block"></i>
+                  <p class="mb-0">Chưa có người dùng nào trong hệ thống</p>
+                </div>
+              </td>
+            </tr>
+
+            <tr th:each="user : ${users}" class="border-bottom">
+              <td class="text-center align-middle">
+                <span class="badge badge-secondary id-badge" th:text="${user.id}">1</span>
+              </td>
+              <td class="align-middle">
+                <div class="d-flex align-items-center">
+                  <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mr-2"
+                       style="width: 35px; height: 35px; font-size: 14px;">
+                    <span th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</span>
+                  </div>
+                  <div>
+                    <strong th:text="${user.username}">username</strong>
+                  </div>
+                </div>
+              </td>
+              <td class="align-middle">
+                <span th:text="${user.fullName}">Full Name</span>
+              </td>
+              <td class="align-middle">
+                <small class="text-muted">
+                  <i class="fas fa-envelope mr-1"></i>
+                  <span th:text="${user.email}">email@example.com</span>
+                </small>
+              </td>
+              <td class="align-middle">
+                <div class="role-badges">
+                  <span th:each="role : ${user.roles}"
+                        th:classappend="${role.name == 'ROLE_ADMIN'} ? 'badge-danger' : (${role.name == 'ROLE_MANAGER'} ? 'badge-warning' : (${role.name == 'ROLE_USER'} ? 'badge-info' : 'badge-secondary'))"
+                        class="badge badge-pill mr-1 mb-1"
+                        th:text="${#strings.replace(role.name, 'ROLE_', '')}">
+                    ROLE
+                  </span>
+                  <span th:if="${#lists.isEmpty(user.roles)}"
+                        class="text-muted small">
+                    <i class="fas fa-exclamation-circle"></i> No roles
+                  </span>
+                </div>
+              </td>
+              <td class="text-center align-middle">
+                <span th:if="${user.enabled}"
+                      class="badge badge-success badge-pill px-3">
+                  <i class="fas fa-check-circle"></i> Active
+                </span>
+                <span th:unless="${user.enabled}"
+                      class="badge badge-secondary badge-pill px-3">
+                  <i class="fas fa-ban"></i> Inactive
+                </span>
+              </td>
+              <td class="text-center align-middle">
+                <div class="btn-group" role="group">
+                  <a th:href="@{/admin/users/edit/{id}(id=${user.id})}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="Chỉnh sửa">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a th:href="@{/admin/users/delete/{id}(id=${user.id})}"
+                     class="btn btn-sm btn-outline-danger"
+                     title="Xóa"
+                     onclick="return confirm('⚠️ Bạn có chắc chắn muốn xóa người dùng này?\n\nHành động này không thể hoàn tác!')">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Card Footer with Info -->
+      <div class="card-footer bg-light py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            <i class="fas fa-info-circle"></i>
+            Hiển thị <strong th:text="${#lists.size(users)}">0</strong> người dùng
+          </small>
+          <small class="text-muted">
+            <i class="fas fa-clock"></i> Cập nhật: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Now</span>
+          </small>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
+

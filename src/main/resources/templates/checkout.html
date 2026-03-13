@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Checkout</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="checkout-page">
+        <div class="container py-4">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/cart">Cart</a></li>
+                    <li class="breadcrumb-item active">Checkout</li>
+                </ol>
+            </nav>
+
+            <h1 class="page-title mb-4">
+                <i class="fas fa-lock me-2"></i>Secure Checkout
+            </h1>
+
+            <form th:action="@{/checkout/place-order}" method="post">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <!-- Step 1: Shipping Address -->
+                        <div class="checkout-section">
+                            <h5 class="section-title">
+                                <span class="step-number">1</span> Shipping Address
+                            </h5>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label class="form-label">Full Address *</label>
+                                    <textarea name="shippingAddress" class="form-control" rows="2" required></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" name="shippingCity" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Phone *</label>
+                                    <input type="tel" name="shippingPhone" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Shipping Method -->
+                        <div class="checkout-section">
+                            <h5 class="section-title">
+                                <span class="step-number">2</span> Shipping Method
+                            </h5>
+                            <div class="shipping-methods">
+                                <label class="shipping-option">
+                                    <input type="radio" name="shippingMethod" value="standard" checked>
+                                    <div class="option-content">
+                                        <div>
+                                            <strong>Standard Shipping</strong>
+                                            <p class="text-muted mb-0">5-7 business days</p>
+                                        </div>
+                                        <span class="option-price">FREE</span>
+                                    </div>
+                                </label>
+                                <label class="shipping-option">
+                                    <input type="radio" name="shippingMethod" value="express">
+                                    <div class="option-content">
+                                        <div>
+                                            <strong>Express Shipping</strong>
+                                            <p class="text-muted mb-0">2-3 business days</p>
+                                        </div>
+                                        <span class="option-price">$10.00</span>
+                                    </div>
+                                </label>
+                                <label class="shipping-option">
+                                    <input type="radio" name="shippingMethod" value="nextday">
+                                    <div class="option-content">
+                                        <div>
+                                            <strong>Next Day Delivery</strong>
+                                            <p class="text-muted mb-0">1 business day</p>
+                                        </div>
+                                        <span class="option-price">$20.00</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Payment Method -->
+                        <div class="checkout-section">
+                            <h5 class="section-title">
+                                <span class="step-number">3</span> Payment Method
+                            </h5>
+                            <div class="payment-methods">
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="COD" checked>
+                                    <div class="option-content">
+                                        <i class="fas fa-money-bill-wave fa-2x text-success"></i>
+                                        <div>
+                                            <strong>Cash on Delivery</strong>
+                                            <p class="text-muted mb-0">Pay when you receive</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="CREDIT_CARD">
+                                    <div class="option-content">
+                                        <i class="fas fa-credit-card fa-2x text-primary"></i>
+                                        <div>
+                                            <strong>Credit/Debit Card</strong>
+                                            <p class="text-muted mb-0">Visa, MasterCard, Amex</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="BANK_TRANSFER">
+                                    <div class="option-content">
+                                        <i class="fas fa-university fa-2x text-info"></i>
+                                        <div>
+                                            <strong>Bank Transfer</strong>
+                                            <p class="text-muted mb-0">Direct bank payment</p>
+                                        </div>
+                                    </div>
+                                </label>
+                                <label class="payment-option">
+                                    <input type="radio" name="paymentMethod" value="MOMO">
+                                    <div class="option-content">
+                                        <i class="fas fa-mobile-alt fa-2x text-danger"></i>
+                                        <div>
+                                            <strong>MoMo / VNPay</strong>
+                                            <p class="text-muted mb-0">E-wallet payment</p>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Order Note -->
+                        <div class="checkout-section">
+                            <h5 class="section-title">Order Note (Optional)</h5>
+                            <textarea name="note" class="form-control" rows="3" placeholder="Any special instructions..."></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Order Summary -->
+                    <div class="col-lg-4">
+                        <div class="order-summary">
+                            <h5 class="summary-title">Order Summary</h5>
+
+                            <div class="summary-items">
+                                <div th:each="item : ${cartItems}" class="summary-item">
+                                    <div class="item-info">
+                                        <img th:src="${item.product.image}" th:alt="${item.product.name}" class="item-img">
+                                        <div>
+                                            <p class="item-name" th:text="${item.product.name}">Product</p>
+                                            <p class="item-qty">Qty: <span th:text="${item.quantity}">1</span></p>
+                                        </div>
+                                    </div>
+                                    <p class="item-price">$<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">99</span></p>
+                                </div>
+                            </div>
+
+                            <div class="summary-totals">
+                                <div class="summary-row">
+                                    <span>Subtotal:</span>
+                                    <span>$<span th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                                </div>
+                                <div class="summary-row">
+                                    <span>Shipping:</span>
+                                    <span id="shippingCost">FREE</span>
+                                </div>
+                                <div class="summary-total">
+                                    <span>Total:</span>
+                                    <span>$<span id="totalAmount" th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-lg w-100 mb-2">
+                                <i class="fas fa-check-circle me-2"></i>Place Order
+                            </button>
+
+                            <p class="text-center text-muted small">
+                                <i class="fas fa-shield-alt me-1"></i>Your payment is secure
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        .checkout-page { background: #f8f9fa; min-height: 600px; }
+        .page-title { font-size: 2rem; font-weight: 700; }
+        .checkout-section { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 1.5rem; }
+        .section-title { font-weight: 700; margin-bottom: 1.5rem; display: flex; align-items: center; }
+        .step-number { background: #4e73df; color: white; width: 32px; height: 32px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 0.75rem; font-weight: 700; }
+
+        .shipping-methods, .payment-methods { display: flex; flex-direction: column; gap: 1rem; }
+        .shipping-option, .payment-option { border: 2px solid #e5e7eb; padding: 1rem; border-radius: 8px; cursor: pointer; transition: 0.2s; display: block; }
+        .shipping-option:hover, .payment-option:hover { border-color: #4e73df; }
+        .shipping-option input, .payment-option input { margin-right: 1rem; }
+        .option-content { display: flex; align-items: center; justify-content: space-between; flex: 1; }
+        .option-price { font-weight: 700; color: #4e73df; font-size: 1.1rem; }
+        .payment-option .option-content { gap: 1rem; }
+
+        .order-summary { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 20px; }
+        .summary-title { font-weight: 700; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 2px solid #e5e7eb; }
+        .summary-items { max-height: 300px; overflow-y: auto; margin-bottom: 1rem; }
+        .summary-item { display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 0; border-bottom: 1px solid #e5e7eb; }
+        .item-info { display: flex; gap: 0.75rem; align-items: center; flex: 1; }
+        .item-img { width: 50px; height: 50px; border-radius: 6px; object-fit: cover; }
+        .item-name { margin: 0; font-weight: 600; font-size: 0.9rem; }
+        .item-qty { margin: 0; color: #6b7280; font-size: 0.85rem; }
+        .item-price { margin: 0; font-weight: 700; }
+
+        .summary-totals { padding-top: 1rem; border-top: 2px solid #e5e7eb; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 0.75rem; }
+        .summary-total { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 700; color: #4e73df; padding-top: 1rem; margin-top: 1rem; border-top: 2px solid #e5e7eb; }
+    </style>
+
+    <script>
+        const subtotal = parseFloat([[${subtotal}]]);
+        const shippingMethods = document.querySelectorAll('input[name="shippingMethod"]');
+
+        shippingMethods.forEach(method => {
+            method.addEventListener('change', function() {
+                let shipping = 0;
+                if (this.value === 'express') shipping = 10;
+                if (this.value === 'nextday') shipping = 20;
+
+                document.getElementById('shippingCost').textContent = shipping === 0 ? 'FREE' : '$' + shipping.toFixed(2);
+                document.getElementById('totalAmount').textContent = (subtotal + shipping).toFixed(2);
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
+

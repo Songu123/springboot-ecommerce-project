@@ -23,14 +23,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam  String username,@RequestParam String password,@RequestParam(required = false) String email, Model model) {
+    public String registerUser(
+            @RequestParam String username,
+            @RequestParam String password,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String fullName,
+            Model model) {
         try {
             RegisterRequest request = new RegisterRequest();
             request.setUsername(username);
             request.setPassword(password);
             request.setEmail(email);
+            request.setFullName(fullName);
             authService.register(request);
-            return "redirect:/login";
+            return "redirect:/login?registered";
         } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
             return "register";
@@ -45,10 +51,5 @@ public class AuthController {
     @GetMapping("/home")
     public String home() {
         return "home";
-    }
-
-    @GetMapping("/admin")
-    public String admin() {
-        return "admin";
     }
 }

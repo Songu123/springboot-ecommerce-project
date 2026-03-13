@@ -1,60 +1,265 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
   <title>Danh sách sản phẩm</title>
+  <style>
+    /* ID Badge Style */
+    .id-badge {
+      background: linear-gradient(135deg, #28a745, #1e7e34);
+      color: white;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 13px;
+      display: inline-block;
+      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .id-badge:hover {
+      background: linear-gradient(135deg, #1e7e34, #145a27);
+      box-shadow: 0 4px 14px rgba(40, 167, 69, 0.4);
+      transform: scale(1.05);
+    }
+  </style>
 </head>
 <body>
 <div th:fragment="content">
   <div class="container-fluid">
-    <h1 class="h3 mb-4 text-gray-800">Danh sách sản phẩm</h1>
-
-    <div class="card shadow mb-4">
-      <div class="card-header py-3">
-        <a th:href="@{/admin/products/create}" class="btn btn-primary btn-sm">
-          <i class="fas fa-plus"></i> Thêm mới
+    <!-- Page Header with Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h1 class="h3 mb-1 text-gray-800">
+          <i class="fas fa-box text-primary"></i> Product Management
+        </h1>
+        <p class="text-muted small mb-0">Quản lý sản phẩm và kho hàng</p>
+      </div>
+      <div>
+        <a th:href="@{/admin/products/create}" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Thêm sản phẩm mới
         </a>
       </div>
+    </div>
 
-      <div class="card-body">
+    <!-- Stats Cards Row -->
+    <div class="row mb-4">
+      <div class="col-md-3">
+        <div class="card border-left-primary shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                  Tổng Sản Phẩm
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(products)}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-box fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-success shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                  In Stock
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"
+                     th:text="${#lists.size(products.?[quantity > 0])}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-warning shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                  Out of Stock
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800"
+                     th:text="${#lists.size(products.?[quantity == 0])}">0</div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-left-info shadow-sm h-100">
+          <div class="card-body py-3">
+            <div class="row no-gutters align-items-center">
+              <div class="col mr-2">
+                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                  Total Value
+                </div>
+                <div class="h5 mb-0 font-weight-bold text-gray-800">
+                  $<span th:text="${#numbers.formatDecimal(#aggregates.sum(products.![price * quantity]), 1, 2)}">0.00</span>
+                </div>
+              </div>
+              <div class="col-auto">
+                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Table Card -->
+    <div class="card shadow-lg border-0">
+      <div class="card-header bg-gradient-primary text-white py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <h6 class="m-0 font-weight-bold">
+            <i class="fas fa-table"></i> Danh sách sản phẩm
+          </h6>
+          <span class="badge badge-light" th:text="${#lists.size(products)} + ' products'">0 products</span>
+        </div>
+      </div>
+
+      <div class="card-body p-0">
         <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable">
-            <thead>
+          <table class="table table-hover table-borderless mb-0" id="dataTable">
+            <thead class="bg-light">
             <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>Image</th>
-              <th>Price</th>
-              <th>Quantity</th>
-              <th>Description</th>
-              <th style="width:150px">Thao tác</th>
+              <th class="border-0 text-center" style="width: 60px;">
+                <small class="text-uppercase font-weight-bold">ID</small>
+              </th>
+              <th class="border-0" style="width: 100px;">
+                <small class="text-uppercase font-weight-bold">Image</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Tên sản phẩm</small>
+              </th>
+              <th class="border-0">
+                <small class="text-uppercase font-weight-bold">Danh mục</small>
+              </th>
+              <th class="border-0 text-right">
+                <small class="text-uppercase font-weight-bold">Giá</small>
+              </th>
+              <th class="border-0 text-center">
+                <small class="text-uppercase font-weight-bold">Số lượng</small>
+              </th>
+              <th class="border-0 text-center">
+                <small class="text-uppercase font-weight-bold">Trạng thái</small>
+              </th>
+              <th class="border-0 text-center">
+                <small class="text-uppercase font-weight-bold">Thao tác</small>
+              </th>
             </tr>
             </thead>
 
             <tbody>
             <tr th:if="${#lists.isEmpty(products)}">
-              <td colspan="4" class="text-center text-muted">
-                Chưa có sản phẩm
+              <td colspan="8" class="text-center py-5">
+                <div class="text-muted">
+                  <i class="fas fa-box-open fa-3x mb-3 d-block"></i>
+                  <p class="mb-0">Chưa có sản phẩm nào trong hệ thống</p>
+                </div>
               </td>
             </tr>
 
-            <tr th:each="product : ${products}">
-              <td th:text="${product.id}"></td>
-              <td th:text="${product.name}"></td>
-              <td th:text="${product.image}"></td>
-              <td th:text="${product.price}"></td>
-              <td th:text="${product.quantity}"></td>
-              <td th:text="${product.Description}"></td>
-              <td>
-                <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
-                   class="btn btn-info btn-sm">Sửa</a>
-
-                <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
-                   class="btn btn-danger btn-sm"
-                   onclick="return confirm('Xóa?')">Xóa</a>
+            <tr th:each="product : ${products}" class="border-bottom">
+              <td class="text-center align-middle">
+                <span class="badge badge-secondary id-badge" th:text="${product.id}">1</span>
+              </td>
+              <td class="align-middle">
+                <img th:src="${product.image}" th:alt="${product.name}"
+                     class="img-thumbnail"
+                     style="width: 60px; height: 60px; object-fit: cover;"
+                     onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
+              </td>
+              <td class="align-middle">
+                <div>
+                  <strong th:text="${product.name}">Product Name</strong>
+                  <br>
+                  <small class="text-muted" th:if="${product.description}"
+                         th:text="${#strings.abbreviate(product.description, 50)}">Description...</small>
+                </div>
+              </td>
+              <td class="align-middle">
+                <span class="badge badge-info badge-pill"
+                      th:if="${product.category}"
+                      th:text="${product.category.name}">Category</span>
+                <span class="text-muted small" th:unless="${product.category}">
+                  <i class="fas fa-minus"></i> N/A
+                </span>
+              </td>
+              <td class="text-right align-middle">
+                <strong class="text-success">
+                  $<span th:text="${#numbers.formatDecimal(product.price, 1, 2)}">0.00</span>
+                </strong>
+              </td>
+              <td class="text-center align-middle">
+                <span th:if="${product.quantity > 10}"
+                      class="badge badge-success badge-pill px-3">
+                  <span th:text="${product.quantity}">0</span>
+                </span>
+                <span th:if="${product.quantity > 0 && product.quantity <= 10}"
+                      class="badge badge-warning badge-pill px-3">
+                  <i class="fas fa-exclamation-triangle"></i>
+                  <span th:text="${product.quantity}">0</span>
+                </span>
+                <span th:if="${product.quantity == 0}"
+                      class="badge badge-danger badge-pill px-3">
+                  <i class="fas fa-times-circle"></i> 0
+                </span>
+              </td>
+              <td class="text-center align-middle">
+                <span th:if="${product.quantity > 0}"
+                      class="badge badge-success badge-pill px-3">
+                  <i class="fas fa-check-circle"></i> In Stock
+                </span>
+                <span th:unless="${product.quantity > 0}"
+                      class="badge badge-danger badge-pill px-3">
+                  <i class="fas fa-ban"></i> Out of Stock
+                </span>
+              </td>
+              <td class="text-center align-middle">
+                <div class="btn-group" role="group">
+                  <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
+                     class="btn btn-sm btn-outline-primary"
+                     title="Chỉnh sửa">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
+                     class="btn btn-sm btn-outline-danger"
+                     title="Xóa"
+                     onclick="return confirm('⚠️ Bạn có chắc chắn muốn xóa sản phẩm này?\n\nHành động này không thể hoàn tác!')">
+                    <i class="fas fa-trash-alt"></i>
+                  </a>
+                </div>
               </td>
             </tr>
             </tbody>
           </table>
+        </div>
+      </div>
+
+      <!-- Card Footer with Info -->
+      <div class="card-footer bg-light py-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <small class="text-muted">
+            <i class="fas fa-info-circle"></i>
+            Hiển thị <strong th:text="${#lists.size(products)}">0</strong> sản phẩm
+          </small>
+          <small class="text-muted">
+            <i class="fas fa-clock"></i> Cập nhật: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Now</span>
+          </small>
         </div>
       </div>
     </div>

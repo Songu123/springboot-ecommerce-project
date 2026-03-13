@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title th:text="${product.name} + ' - LifestyleShop'">Product Detail</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="product-detail-page">
+        <div class="container py-4">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/products">Products</a></li>
+                    <li class="breadcrumb-item" th:if="${product.category != null}">
+                        <a th:href="@{/products(categoryId=${product.category.id})}" th:text="${product.category.name}">Category</a>
+                    </li>
+                    <li class="breadcrumb-item active" th:text="${product.name}">Product</li>
+                </ol>
+            </nav>
+
+            <!-- Product Detail Section -->
+            <div class="row mb-5">
+                <!-- Product Images -->
+                <div class="col-lg-5 mb-4">
+                    <div class="product-images">
+                        <div class="main-image">
+                            <img th:src="${product.image} ?: '/img/product-default.jpg'"
+                                 th:alt="${product.name}"
+                                 class="img-fluid rounded"
+                                 id="mainProductImage">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="col-lg-7">
+                    <div class="product-detail-info">
+                        <!-- Category Badge -->
+                        <span class="badge bg-primary mb-2" th:if="${product.category != null}"
+                              th:text="${product.category.name}">Category</span>
+
+                        <!-- Product Name -->
+                        <h1 class="product-title" th:text="${product.name}">Product Name</h1>
+
+                        <!-- Rating (placeholder) -->
+                        <div class="product-rating mb-3">
+                            <span class="stars text-warning">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                            </span>
+                            <span class="text-muted ms-2">(4.5 / 128 reviews)</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="product-price-section mb-4">
+                            <h2 class="product-price" th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$99.99</h2>
+                            <p class="text-muted mb-0">
+                                <i class="fas fa-check-circle text-success me-1"></i>In Stock
+                            </p>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="product-description mb-4">
+                            <h5 class="mb-3">Description</h5>
+                            <p th:text="${product.description}" th:if="${product.description != null}">
+                                Product description goes here...
+                            </p>
+                            <p th:if="${product.description == null}" class="text-muted">
+                                No description available for this product.
+                            </p>
+                        </div>
+
+                        <!-- Quantity Selector -->
+                        <div class="quantity-section mb-4">
+                            <h6 class="mb-2">Quantity</h6>
+                            <div class="quantity-selector">
+                                <button class="btn-quantity" onclick="decreaseQuantity()">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <input type="number" id="quantity" value="1" min="1" max="99" readonly>
+                                <button class="btn-quantity" onclick="increaseQuantity()">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="action-buttons">
+                            <button class="btn-add-to-cart-lg" th:onclick="'addToCart(' + ${product.id} + ')'">
+                                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+                            </button>
+                            <button class="btn-wishlist-lg" title="Add to Wishlist">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+
+                        <!-- Product Meta -->
+                        <div class="product-meta mt-4 pt-4 border-top">
+                            <p class="mb-2">
+                                <strong>SKU:</strong> <span th:text="${product.id}">12345</span>
+                            </p>
+                            <p class="mb-2" th:if="${product.category != null}">
+                                <strong>Category:</strong>
+                                <a th:href="@{/products(categoryId=${product.category.id})}" th:text="${product.category.name}">Category</a>
+                            </p>
+                            <p class="mb-0">
+                                <strong>Share:</strong>
+                                <a href="#" class="share-link"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#" class="share-link"><i class="fab fa-twitter"></i></a>
+                                <a href="#" class="share-link"><i class="fab fa-pinterest"></i></a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="related-products" th:if="${!relatedProducts.isEmpty()}">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-th-large me-2"></i>Related Products
+                </h3>
+                <div class="row g-4">
+                    <div class="col-6 col-md-3" th:each="related : ${relatedProducts}">
+                        <div class="product-card-small">
+                            <a th:href="@{/products/{id}(id=${related.id})}">
+                                <img th:src="${related.image} ?: '/img/product-default.jpg'"
+                                     th:alt="${related.name}"
+                                     class="product-card-image">
+                            </a>
+                            <div class="product-card-info">
+                                <a th:href="@{/products/{id}(id=${related.id})}" class="product-card-name" th:text="${related.name}">Product</a>
+                                <p class="product-card-price" th:text="'$' + ${#numbers.formatDecimal(related.price, 1, 2)}">$99.99</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Product Detail Styles */
+        .product-detail-page {
+            background: #f8f9fa;
+            min-height: 600px;
+        }
+
+        .product-images .main-image {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .product-images .main-image img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-height: 500px;
+        }
+
+        .product-detail-info {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .product-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .product-rating .stars {
+            font-size: 1.1rem;
+        }
+
+        .product-price {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #4e73df;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-description {
+            line-height: 1.8;
+            color: #4b5563;
+        }
+
+        /* Quantity Selector */
+        .quantity-selector {
+            display: inline-flex;
+            align-items: center;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .btn-quantity {
+            background: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-quantity:hover {
+            background: #f3f4f6;
+        }
+
+        .quantity-selector input {
+            width: 60px;
+            text-align: center;
+            border: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-add-to-cart-lg {
+            flex: 1;
+            background: #4e73df;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-add-to-cart-lg:hover {
+            background: #2e59d9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(78, 115, 223, 0.3);
+        }
+
+        .btn-wishlist-lg {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1.5rem;
+        }
+
+        .btn-wishlist-lg:hover {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+
+        .product-meta a {
+            color: #4e73df;
+            text-decoration: none;
+        }
+
+        .share-link {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            border-radius: 50%;
+            background: #f3f4f6;
+            color: #6b7280;
+            margin-left: 0.5rem;
+            transition: all 0.3s;
+        }
+
+        .share-link:hover {
+            background: #4e73df;
+            color: white;
+        }
+
+        /* Related Products */
+        .related-products {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-top: 3rem;
+        }
+
+        .product-card-small {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .product-card-small:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+        }
+
+        .product-card-image {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+        }
+
+        .product-card-info {
+            padding: 1rem;
+        }
+
+        .product-card-name {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            text-decoration: none;
+            margin-bottom: 0.5rem;
+            min-height: 2.5rem;
+        }
+
+        .product-card-price {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #4e73df;
+            margin: 0;
+        }
+
+        @media (max-width: 992px) {
+            .product-title {
+                font-size: 1.5rem;
+            }
+
+            .product-price {
+                font-size: 2rem;
+            }
+        }
+    </style>
+
+    <script>
+        let quantity = 1;
+
+        function increaseQuantity() {
+            if (quantity < 99) {
+                quantity++;
+                document.getElementById('quantity').value = quantity;
+            }
+        }
+
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('quantity').value = quantity;
+            }
+        }
+
+        function addToCart(productId) {
+            const qty = parseInt(document.getElementById('quantity').value);
+
+            fetch('/api/cart/add', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({productId: productId, quantity: qty})
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast(`Added ${qty} item(s) to cart!`, 'success');
+                updateCartCount();
+            })
+            .catch(error => {
+                showToast('Failed to add to cart', 'error');
+            });
+        }
+
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = 'toast-notification';
+            toast.textContent = message;
+            toast.style.cssText = 'position:fixed;bottom:30px;right:30px;background:white;padding:1rem 1.5rem;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:9999;opacity:0;transition:opacity 0.3s;';
+            if (type === 'success') toast.style.borderLeft = '4px solid #10b981';
+            if (type === 'error') toast.style.borderLeft = '4px solid #ef4444';
+
+            document.body.appendChild(toast);
+            setTimeout(() => toast.style.opacity = '1', 100);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        function updateCartCount() {
+            fetch('/api/cart/count')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.querySelector('.cart-count');
+                    if (badge) badge.textContent = data.count || 0;
+                });
+        }
+    </script>
+</div>
+</body>
+</html>
+

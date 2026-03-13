@@ -1,70 +1,499 @@
-<!--Start sidebar-wrapper-->
+<!--Start sidebar-->
 <div th:fragment="sidebar" xmlns:th="http://www.w3.org/1999/xhtml">
-<div id="sidebar-wrapper" data-simplebar="" data-simplebar-auto-hide="true">
+<div id="sidebar-wrapper" class="sidebar">
+    <!-- Brand Logo -->
     <div class="brand-logo">
-        <a href="index.html">
-            <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
-            <h5 class="logo-text">Dashtreme Admin</h5>
+        <a th:href="@{/admin/dashboard}" class="logo-link">
+            <div class="logo-icon-wrapper">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <span class="logo-text">Admin Portal</span>
         </a>
     </div>
-    <ul class="sidebar-menu do-nicescrol">
-        <li class="sidebar-header">MAIN NAVIGATION</li>
-        <li>
-            <a href="admin/dashboard">
-                <i class="zmdi zmdi-view-dashboard"></i> <span>Dashboard</span>
-            </a>
-        </li>
 
-        <li>
-            <a href="categories">
-                <i class="zmdi zmdi-invert-colors"></i> <span>Category</span>
-            </a>
-        </li>
+    <!-- Sidebar Menu -->
+    <nav class="sidebar-nav">
+        <ul class="sidebar-menu">
+            <!-- Dashboard -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/dashboard}" class="menu-item" data-page="dashboard">
+                    <i class="fas fa-home menu-icon"></i>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="products">
-                <i class="zmdi zmdi-format-list-bulleted"></i> <span>Product</span>
-            </a>
-        </li>
+            <!-- Section: Management -->
+            <li class="menu-divider"></li>
+            <li class="menu-header">
+                <span>QUẢN LÝ</span>
+            </li>
 
-        <li>
-            <a href="tables.html">
-                <i class="zmdi zmdi-grid"></i> <span>Tables</span>
-            </a>
-        </li>
+            <!-- Categories -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/categories}" class="menu-item" data-page="categories">
+                    <i class="fas fa-folder menu-icon"></i>
+                    <span class="menu-text">Categories</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="calendar.html">
-                <i class="zmdi zmdi-calendar-check"></i> <span>Calendar</span>
-                <small class="badge float-right badge-light">New</small>
-            </a>
-        </li>
+            <!-- Products -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/products}" class="menu-item" data-page="products">
+                    <i class="fas fa-box menu-icon"></i>
+                    <span class="menu-text">Products</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="profile.html">
-                <i class="zmdi zmdi-face"></i> <span>Profile</span>
-            </a>
-        </li>
+            <!-- Orders -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/orders}" class="menu-item" data-page="orders">
+                    <i class="fas fa-shopping-cart menu-icon"></i>
+                    <span class="menu-text">Orders</span>
+                    <span class="badge-count" th:if="${orderCount != null && orderCount > 0}" th:text="${orderCount}">0</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="login.html" target="_blank">
-                <i class="zmdi zmdi-lock"></i> <span>Login</span>
-            </a>
-        </li>
+            <!-- Users -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/users}" class="menu-item" data-page="users">
+                    <i class="fas fa-users menu-icon"></i>
+                    <span class="menu-text">Users</span>
+                </a>
+            </li>
 
-        <li>
-            <a href="register.html" target="_blank">
-                <i class="zmdi zmdi-account-circle"></i> <span>Registration</span>
-            </a>
-        </li>
+            <!-- Section: System -->
+            <li class="menu-divider"></li>
+            <li class="menu-header">
+                <span>HỆ THỐNG</span>
+            </li>
 
-        <li class="sidebar-header">LABELS</li>
-        <li><a href="javaScript:void();"><i class="zmdi zmdi-coffee text-danger"></i> <span>Important</span></a></li>
-        <li><a href="javaScript:void();"><i class="zmdi zmdi-chart-donut text-success"></i> <span>Warning</span></a></li>
-        <li><a href="javaScript:void();"><i class="zmdi zmdi-share text-info"></i> <span>Information</span></a></li>
+            <!-- Settings -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/admin/settings}" class="menu-item" data-page="settings">
+                    <i class="fas fa-cog menu-icon"></i>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </li>
 
-    </ul>
+            <!-- Logout -->
+            <li class="menu-item-wrapper">
+                <a th:href="@{/logout}" class="menu-item menu-item-danger">
+                    <i class="fas fa-sign-out-alt menu-icon"></i>
+                    <span class="menu-text">Logout</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 
+    <!-- Sidebar Footer (optional) -->
+    <div class="sidebar-footer">
+        <div class="sidebar-user">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">Admin User</div>
+                <div class="user-role">Administrator</div>
+            </div>
+        </div>
+    </div>
 </div>
+
+<!-- Sidebar Overlay for Mobile -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<style>
+    /* ===== SIDEBAR STYLING - CLICKUP INSPIRED ===== */
+
+    /* Reset any conflicting styles */
+    #sidebar-wrapper.sidebar * {
+        box-sizing: border-box;
+    }
+
+    /* Sidebar Container */
+    #sidebar-wrapper.sidebar {
+        width: 260px !important;
+        background: #ffffff !important;
+        border-right: 1px solid #E5E7EB !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    }
+
+    /* Brand Logo Section */
+    #sidebar-wrapper .brand-logo {
+        padding: 1.25rem !important;
+        border-bottom: 1px solid #E5E7EB !important;
+        background: #ffffff !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 10 !important;
+    }
+
+    #sidebar-wrapper .logo-link {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.875rem !important;
+        text-decoration: none !important;
+        transition: all 0.2s ease !important;
+    }
+
+    #sidebar-wrapper .logo-icon-wrapper {
+        width: 42px !important;
+        height: 42px !important;
+        background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%) !important;
+        border-radius: 11px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        font-size: 1.375rem !important;
+        box-shadow: 0 4px 14px rgba(123, 104, 238, 0.35) !important;
+        transition: all 0.2s ease !important;
+    }
+
+    #sidebar-wrapper .logo-link:hover .logo-icon-wrapper {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(123, 104, 238, 0.45) !important;
+    }
+
+    #sidebar-wrapper .logo-text {
+        font-size: 1.125rem !important;
+        font-weight: 600 !important;
+        color: #1F2937 !important;
+        margin: 0 !important;
+        transition: color 0.2s ease !important;
+    }
+
+    #sidebar-wrapper .logo-link:hover .logo-text {
+        color: #7B68EE !important;
+    }
+
+    /* Sidebar Navigation */
+    #sidebar-wrapper .sidebar-nav {
+        flex: 1 !important;
+        overflow-y: auto !important;
+        padding: 0.5rem 0 !important;
+    }
+
+    #sidebar-wrapper .sidebar-menu {
+        list-style: none !important;
+        padding: 0 0.75rem !important;
+        margin: 0 !important;
+    }
+
+    #sidebar-wrapper .menu-item-wrapper {
+        margin-bottom: 0.125rem !important;
+        list-style: none !important;
+    }
+
+    /* Menu Headers */
+    #sidebar-wrapper .menu-header {
+        font-size: 0.6875rem !important;
+        font-weight: 700 !important;
+        color: #9CA3AF !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.8px !important;
+        padding: 1rem 1rem 0.5rem 1rem !important;
+        margin-top: 0.5rem !important;
+        user-select: none !important;
+        list-style: none !important;
+    }
+
+    #sidebar-wrapper .menu-divider {
+        height: 1px !important;
+        background: #E5E7EB !important;
+        margin: 0.875rem 0.5rem !important;
+        list-style: none !important;
+    }
+
+    /* Menu Items */
+    #sidebar-wrapper .menu-item {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.875rem !important;
+        padding: 0.75rem 1rem !important;
+        border-radius: 10px !important;
+        text-decoration: none !important;
+        color: #4B5563 !important;
+        font-size: 0.9375rem !important;
+        font-weight: 500 !important;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        position: relative !important;
+        cursor: pointer !important;
+        width: 100% !important;
+    }
+
+    #sidebar-wrapper .menu-icon {
+        font-size: 1.125rem !important;
+        width: 20px !important;
+        text-align: center !important;
+        flex-shrink: 0 !important;
+        transition: transform 0.2s ease !important;
+    }
+
+    #sidebar-wrapper .menu-text {
+        flex: 1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Hover State */
+    #sidebar-wrapper .menu-item:hover {
+        background: #F3F4F6 !important;
+        color: #7B68EE !important;
+        transform: translateX(2px) !important;
+    }
+
+    #sidebar-wrapper .menu-item:hover .menu-icon {
+        transform: scale(1.1) !important;
+        color: #7B68EE !important;
+    }
+
+    /* Active State */
+    #sidebar-wrapper .menu-item.active {
+        background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%) !important;
+        color: #7B68EE !important;
+        font-weight: 600 !important;
+        box-shadow: inset 3px 0 0 #7B68EE !important;
+    }
+
+    #sidebar-wrapper .menu-item.active .menu-icon {
+        color: #7B68EE !important;
+    }
+
+    /* Danger Item (Logout) */
+    #sidebar-wrapper .menu-item-danger {
+        color: #DC2626 !important;
+    }
+
+    #sidebar-wrapper .menu-item-danger:hover {
+        background: #FEF2F2 !important;
+        color: #DC2626 !important;
+    }
+
+    #sidebar-wrapper .menu-item-danger .menu-icon {
+        color: #DC2626 !important;
+    }
+
+    /* Badge Count */
+    #sidebar-wrapper .badge-count {
+        background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 0.25rem 0.625rem !important;
+        font-size: 0.75rem !important;
+        font-weight: 700 !important;
+        min-width: 24px !important;
+        text-align: center !important;
+        box-shadow: 0 2px 6px rgba(123, 104, 238, 0.3) !important;
+        animation: pulse 2s ease-in-out infinite !important;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+
+    /* Sidebar Footer */
+    #sidebar-wrapper .sidebar-footer {
+        padding: 1rem !important;
+        border-top: 1px solid #E5E7EB !important;
+        background: #F9FAFB !important;
+    }
+
+    #sidebar-wrapper .sidebar-user {
+        display: flex !important;
+        align-items: center !important;
+        gap: 0.75rem !important;
+        padding: 0.625rem !important;
+        border-radius: 10px !important;
+        transition: background 0.2s ease !important;
+        cursor: pointer !important;
+    }
+
+    #sidebar-wrapper .sidebar-user:hover {
+        background: white !important;
+    }
+
+    #sidebar-wrapper .user-avatar {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: 10px !important;
+        background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%) !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: white !important;
+        font-size: 0.875rem !important;
+        flex-shrink: 0 !important;
+    }
+
+    #sidebar-wrapper .user-info {
+        flex: 1 !important;
+        min-width: 0 !important;
+    }
+
+    #sidebar-wrapper .user-name {
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        color: #1F2937 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    #sidebar-wrapper .user-role {
+        font-size: 0.75rem !important;
+        color: #6B7280 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+
+    /* Custom Scrollbar */
+    #sidebar-wrapper.sidebar::-webkit-scrollbar {
+        width: 6px !important;
+    }
+
+    #sidebar-wrapper.sidebar::-webkit-scrollbar-track {
+        background: #F9FAFB !important;
+    }
+
+    #sidebar-wrapper.sidebar::-webkit-scrollbar-thumb {
+        background: #D1D5DB !important;
+        border-radius: 3px !important;
+        transition: background 0.2s !important;
+    }
+
+    #sidebar-wrapper.sidebar::-webkit-scrollbar-thumb:hover {
+        background: #9CA3AF !important;
+    }
+
+    #sidebar-wrapper .sidebar-nav::-webkit-scrollbar {
+        width: 6px !important;
+    }
+
+    #sidebar-wrapper .sidebar-nav::-webkit-scrollbar-track {
+        background: transparent !important;
+    }
+
+    #sidebar-wrapper .sidebar-nav::-webkit-scrollbar-thumb {
+        background: #D1D5DB !important;
+        border-radius: 3px !important;
+    }
+
+    /* Sidebar Overlay for Mobile */
+    .sidebar-overlay {
+        display: none !important;
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        z-index: 999 !important;
+        opacity: 0 !important;
+        transition: opacity 0.3s ease !important;
+    }
+
+    .sidebar-overlay.active {
+        display: block !important;
+        opacity: 1 !important;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        #sidebar-wrapper.sidebar {
+            transform: translateX(-100%) !important;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        #sidebar-wrapper.sidebar.active {
+            transform: translateX(0) !important;
+        }
+
+        .sidebar-overlay.active {
+            display: block !important;
+        }
+    }
+
+    /* Print Styles */
+    @media print {
+        #sidebar-wrapper.sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
+<script>
+    // Sidebar Active State Detection
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        const menuItems = document.querySelectorAll('.menu-item');
+
+        menuItems.forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && currentPath.includes(href)) {
+                item.classList.add('active');
+            }
+        });
+
+        // Mobile Sidebar Toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                sidebarOverlay.classList.toggle('active');
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', function() {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+            });
+        }
+
+        // Close sidebar on menu item click (mobile)
+        if (window.innerWidth <= 768) {
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                });
+            });
+        }
+
+        // Update badge count dynamically (if needed)
+        updateOrderBadge();
+    });
+
+    // Function to update order badge
+    function updateOrderBadge() {
+        // You can fetch order count via API here
+        // Example:
+        // fetch('/api/orders/count')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         const badge = document.querySelector('.badge-count');
+        //         if (badge) badge.textContent = data.count;
+        //     });
+    }
+
+    // Refresh badge every 30 seconds
+    setInterval(updateOrderBadge, 30000);
+</script>
 </div>
-<!--End sidebar-wrapper-->
+<!--End sidebar-->

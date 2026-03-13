@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Shopping Cart</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="cart-page">
+        <div class="container py-4">
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/">Home</a></li>
+                    <li class="breadcrumb-item active">Shopping Cart</li>
+                </ol>
+            </nav>
+
+            <h1 class="page-title mb-4">
+                <i class="fas fa-shopping-cart me-2"></i>Shopping Cart
+            </h1>
+
+            <div th:if="${success}" class="alert alert-success alert-dismissible">
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <div class="row" th:if="${cartItems != null && !cartItems.isEmpty()}">
+                <div class="col-lg-8">
+                    <div class="cart-items">
+                        <div class="cart-item" th:each="item : ${cartItems}">
+                            <div class="row align-items-center">
+                                <div class="col-2">
+                                    <img th:src="${item.product.image}" th:alt="${item.product.name}" class="cart-img">
+                                </div>
+                                <div class="col-4">
+                                    <h6 th:text="${item.product.name}">Product</h6>
+                                    <p class="text-muted" th:text="'$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">$99</p>
+                                </div>
+                                <div class="col-3">
+                                    <form th:action="@{/cart/update/{id}(id=${item.product.id})}" method="post">
+                                        <div class="qty-control">
+                                            <button type="button" class="btn-qty" onclick="this.nextElementSibling.stepDown()">-</button>
+                                            <input type="number" name="quantity" th:value="${item.quantity}" min="1" max="99">
+                                            <button type="button" class="btn-qty" onclick="this.previousElementSibling.stepUp()">+</button>
+                                        </div>
+                                        <button type="submit" class="btn btn-sm btn-primary mt-2">Update</button>
+                                    </form>
+                                </div>
+                                <div class="col-3 text-end">
+                                    <p class="fw-bold">$<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">199</span></p>
+                                    <a th:href="@{/cart/remove/{id}(id=${item.product.id})}" class="btn btn-sm btn-danger">Remove</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="cart-summary">
+                        <h5>Order Summary</h5>
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span>$<span th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping:</span>
+                            <span th:if="${shippingFee == 0}">FREE</span>
+                            <span th:if="${shippingFee > 0}">$<span th:text="${shippingFee}">10</span></span>
+                        </div>
+                        <div class="summary-total">
+                            <span>Total:</span>
+                            <span>$<span th:text="${#numbers.formatDecimal(total, 1, 2)}">0</span></span>
+                        </div>
+                        <a href="/checkout" class="btn btn-primary w-100 mt-3">Checkout</a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${cartItems == null || cartItems.isEmpty()}" class="empty-cart text-center py-5">
+                <i class="fas fa-shopping-cart fa-5x text-muted mb-3"></i>
+                <h3>Your cart is empty</h3>
+                <a href="/products" class="btn btn-primary mt-3">Start Shopping</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .cart-page { background: #f8f9fa; min-height: 600px; }
+        .page-title { font-size: 2rem; font-weight: 700; }
+        .cart-items { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        .cart-item { padding: 1.5rem 0; border-bottom: 1px solid #e5e7eb; }
+        .cart-item:last-child { border-bottom: none; }
+        .cart-img { width: 100%; border-radius: 8px; aspect-ratio: 1; object-fit: cover; }
+        .qty-control { display: flex; align-items: center; border: 1px solid #ddd; border-radius: 8px; overflow: hidden; width: fit-content; }
+        .qty-control input { width: 60px; text-align: center; border: none; padding: 8px 0; font-weight: 600; }
+        .btn-qty { background: #f3f4f6; border: none; padding: 8px 12px; cursor: pointer; transition: 0.2s; }
+        .btn-qty:hover { background: #e5e7eb; }
+        .cart-summary { background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); position: sticky; top: 20px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 1rem; }
+        .summary-total { display: flex; justify-content: space-between; font-size: 1.5rem; font-weight: 700; padding-top: 1rem; margin-top: 1rem; border-top: 2px solid #e5e7eb; color: #4e73df; }
+        .empty-cart i { opacity: 0.3; }
+    </style>
+</div>
+</body>
+</html>
+

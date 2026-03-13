@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Footer Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7B68EE;
+            --primary-dark: #6A5ACD;
+            --sidebar-width: 260px;
+            --header-height: 64px;
+            --footer-bg: #FFFFFF;
+            --footer-border: #E5E7EB;
+            --text-primary: #6B7280;
+            --text-secondary: #9CA3AF;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #F9FAFB;
+        }
+
+        .demo-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Demo */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            border-right: 1px solid var(--footer-border);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            color: var(--primary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 0.5rem;
+        }
+
+        .sidebar a {
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem 0.75rem;
+            display: block;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .sidebar a:hover {
+            background: #F3F4F6;
+            color: var(--primary);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Demo */
+        .header {
+            background: white;
+            border-bottom: 1px solid var(--footer-border);
+            padding: 1rem 2rem;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 1.25rem;
+            margin: 0;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+
+        .content h2 {
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .content p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Footer Styling */
+        .footer-wrapper {
+            width: 100%;
+            background: var(--footer-bg);
+            border-top: 1px solid var(--footer-border);
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .admin-footer {
+            position: relative;
+            width: 100%;
+        }
+
+        .footer-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.25rem 2rem;
+            width: 100%;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            gap: 2rem;
+            width: 100%;
+        }
+
+        .footer-left,
+        .footer-center,
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        .footer-left {
+            justify-content: flex-start;
+            flex: 1;
+        }
+
+        .footer-center {
+            justify-content: center;
+            flex: 1;
+        }
+
+        .footer-right {
+            justify-content: flex-end;
+            flex: 1;
+        }
+
+        .copyright {
+            color: var(--text-primary);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .footer-version {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+            padding-left: 0.75rem;
+            border-left: 1px solid var(--footer-border);
+        }
+
+        .footer-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-link {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            padding: 0.25rem 0;
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.2s ease;
+        }
+
+        .footer-link:hover::after {
+            width: 100%;
+        }
+
+        .separator {
+            color: var(--footer-border);
+            margin: 0 0.25rem;
+            user-select: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 1.5rem;
+            }
+
+            .footer-center {
+                grid-column: 1 / -1;
+                justify-content: center;
+                order: 3;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .demo-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--footer-border);
+            }
+
+            .footer-wrapper {
+                margin-left: 0 !important;
+            }
+
+            .footer-container {
+                padding: 1rem 1.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                text-align: center;
+            }
+
+            .footer-left,
+            .footer-center,
+            .footer-right {
+                justify-content: center;
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .footer-version {
+                border-left: none;
+                padding-left: 0;
+                margin-left: 0;
+            }
+
+            .copyright {
+                white-space: normal;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#reports">Reports</a></li>
+            </ul>
+
+            <h3>Management</h3>
+            <ul>
+                <li><a href="#users">Users</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#orders">Orders</a></li>
+            </ul>
+
+            <h3>Settings</h3>
+            <ul>
+                <li><a href="#config">Configuration</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#api">API Keys</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1>Admin Dashboard</h1>
+            </header>
+
+            <!-- Content -->
+            <main class="content">
+                <h2>Welcome to Admin Dashboard</h2>
+                <p>
+                    Đây là demo footer được thiết kế cho giao diện Admin Dashboard ClickUp Style.
+                </p>
+                <p>
+                    Footer bao gồm:
+                </p>
+                <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                    <li>Thông tin bản quyền với năm tự động cập nhật</li>
+                    <li>Navigation links (Documentation, Support, Status)</li>
+                    <li>Quick links (Privacy, Terms, Help)</li>
+                </ul>
+                <p>
+                    <strong>Features:</strong>
+                </p>
+                <ul style="margin-left: 2rem; margin-bottom: 1rem;">
+                    <li>✓ Fully responsive design</li>
+                    <li>✓ Dark mode support</li>
+                    <li>✓ Smooth hover effects</li>
+                    <li>✓ Keyboard accessible</li>
+                    <li>✓ Print-friendly</li>
+                </ul>
+                <p>
+                    Hãy thay đổi kích thước cửa sổ để xem footer responsive như thế nào!
+                </p>
+            </main>
+
+            <!-- Footer -->
+            <footer class="admin-footer">
+                <div class="footer-wrapper">
+                    <div class="footer-container">
+                        <div class="footer-content">
+                            <div class="footer-left">
+                                <span class="copyright">
+                                    &copy; <script>document.write(new Date().getFullYear());</script> Admin Portal. All rights reserved.
+                                </span>
+                                <span class="footer-version">v1.0.0</span>
+                            </div>
+                            <div class="footer-center">
+                                <nav class="footer-nav">
+                                    <a href="#" class="footer-link">Documentation</a>
+                                    <span class="separator">|</span>
+                                    <a href="#" class="footer-link">Support</a>
+                                    <span class="separator">|</span>
+                                    <a href="#" class="footer-link">Status</a>
+                                </nav>
+                            </div>
+                            <div class="footer-right">
+                                <a href="#" class="footer-link" title="Privacy Policy">Privacy</a>
+                                <span class="separator">|</span>
+                                <a href="#" class="footer-link" title="Terms of Service">Terms</a>
+                                <span class="separator">|</span>
+                                <a href="#" class="footer-link" title="Help Center">Help</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // Demo: Change color scheme
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)');
+        console.log('System color scheme:', prefersLight.matches ? 'light' : 'dark');
+    </script>
+</body>
+</html>
+

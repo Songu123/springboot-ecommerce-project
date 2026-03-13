@@ -1,6 +1,8 @@
 package com.son.ecommerce.config.seeder;
 
+import com.son.ecommerce.entity.Role;
 import com.son.ecommerce.entity.User;
+import com.son.ecommerce.repository.RoleRepository;
 import com.son.ecommerce.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import net.datafaker.Faker;
@@ -15,6 +17,7 @@ import java.util.*;
 @Profile("dev")
 public class UserSeeder implements BaseSeeder {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -26,50 +29,57 @@ public class UserSeeder implements BaseSeeder {
             return;
         }
 
+        // Get roles
+        Role adminRole = roleRepository.findByName("ROLE_ADMIN")
+                .orElseThrow(() -> new RuntimeException("ROLE_ADMIN not found"));
+        Role managerRole = roleRepository.findByName("ROLE_MANAGER")
+                .orElseThrow(() -> new RuntimeException("ROLE_MANAGER not found"));
+        Role customerRole = roleRepository.findByName("ROLE_CUSTOMER")
+                .orElseThrow(() -> new RuntimeException("ROLE_CUSTOMER not found"));
+        Role userRole = roleRepository.findByName("ROLE_USER")
+                .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+
         Faker faker = new Faker(Locale.forLanguageTag("vi"));
         Set<String> usedEmails = new HashSet<>();
         Set<String> usedUsernames = new HashSet<>();
         List<User> users = new ArrayList<>();
 
         // Tạo admin user
-        users.add(
-                User.builder()
-                        .username("admin")
-                        .fullName("Administrator")
-                        .email("admin@example.com")
-                        .password(passwordEncoder.encode("admin123"))
-                        .role("ROLE_ADMIN")
-                        .enabled(true)
-                        .build()
-        );
+        User admin = User.builder()
+                .username("admin")
+                .fullName("Administrator")
+                .email("admin@example.com")
+                .password(passwordEncoder.encode("admin123"))
+                .enabled(true)
+                .roles(new HashSet<>(Set.of(adminRole)))
+                .build();
+        users.add(admin);
         usedEmails.add("admin@example.com");
         usedUsernames.add("admin");
 
         // Tạo manager user
-        users.add(
-                User.builder()
-                        .username("manager")
-                        .fullName("Manager User")
-                        .email("manager@example.com")
-                        .password(passwordEncoder.encode("manager123"))
-                        .role("ROLE_MANAGER")
-                        .enabled(true)
-                        .build()
-        );
+        User manager = User.builder()
+                .username("manager")
+                .fullName("Manager User")
+                .email("manager@example.com")
+                .password(passwordEncoder.encode("manager123"))
+                .enabled(true)
+                .roles(new HashSet<>(Set.of(managerRole)))
+                .build();
+        users.add(manager);
         usedEmails.add("manager@example.com");
         usedUsernames.add("manager");
 
         // Tạo customer user
-        users.add(
-                User.builder()
-                        .username("customer")
-                        .fullName("Customer User")
-                        .email("customer@example.com")
-                        .password(passwordEncoder.encode("customer123"))
-                        .role("ROLE_CUSTOMER")
-                        .enabled(true)
-                        .build()
-        );
+        User customer = User.builder()
+                .username("customer")
+                .fullName("Customer User")
+                .email("customer@example.com")
+                .password(passwordEncoder.encode("customer123"))
+                .enabled(true)
+                .roles(new HashSet<>(Set.of(customerRole)))
+                .build();
+        users.add(customer);
         usedEmails.add("customer@example.com");
         usedUsernames.add("customer");
 
@@ -96,28 +106,27 @@ public class UserSeeder implements BaseSeeder {
             usedEmails.add(email);
 
             // Random role
-            String[] roles = {"ROLE_USER", "ROLE_CUSTOMER"};
-            String randomRole = roles[new Random().nextInt(roles.length)];
+            Role[] roleOptions = {userRole, customerRole};
+            Role randomRole = roleOptions[new Random().nextInt(roleOptions.length)];
 
-            users.add(
-                    User.builder()
-                            .username(username)
-                            .fullName(faker.name().fullName())
-                            .email(email)
-                            .password(passwordEncoder.encode("password123"))
-                            .role(randomRole)
-                            .enabled(faker.bool().bool())
-                            .build()
-            );
+            User user = User.builder()
+                    .username(username)
+                    .fullName(faker.name().fullName())
+                    .email(email)
+                    .password(passwordEncoder.encode("password123"))
+                    .enabled(faker.bool().bool())
+                    .roles(new HashSet<>(Set.of(randomRole)))
+                    .build();
+            users.add(user);
         }
 
         try {
             userRepository.saveAll(users);
             System.out.println(">>> Seeded " + users.size() + " users successfully.");
             System.out.println(">>> Default users:");
-            System.out.println("    - admin/admin123 (ROLE_ADMIN)");
-            System.out.println("    - manager/manager123 (ROLE_MANAGER)");
-            System.out.println("    - customer/customer123 (ROLE_CUSTOMER)");
+            System.out.println("    - admin/admin123 (ROLE_ADMIN - " + adminRole.getPermissions().size() + " permissions)");
+            System.out.println("    - manager/manager123 (ROLE_MANAGER - " + managerRole.getPermissions().size() + " permissions)");
+            System.out.println("    - customer/customer123 (ROLE_CUSTOMER - " + customerRole.getPermissions().size() + " permissions)");
         } catch (Exception e) {
             System.err.println("Error seeding users: " + e.getMessage());
             e.printStackTrace();
@@ -126,7 +135,7 @@ public class UserSeeder implements BaseSeeder {
 
     @Override
     public int order() {
-        return 2; // Chạy sau RoleSeeder và CategorySeeder
+        return 2; // Chạy sau RoleSeeder
     }
 }
 

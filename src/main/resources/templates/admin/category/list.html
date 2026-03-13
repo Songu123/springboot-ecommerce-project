@@ -1,58 +1,500 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
 <head>
     <title>Danh sách danh mục</title>
+        <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .table-row-hover {
+            transition: all 0.2s ease;
+        }
+
+        .table-row-hover:hover {
+            background-color: rgba(123, 104, 238, 0.05);
+            transform: translateX(5px);
+        }
+
+        .btn-group-sm .btn {
+            transition: all 0.2s ease;
+        }
+
+        .btn-outline-primary:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-outline-danger:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding-right: 40px;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state i {
+            color: #ddd;
+        }
+
+        /* ID Badge Style */
+        .id-badge {
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 13px;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .id-badge:hover {
+            background: linear-gradient(135deg, #0056b3, #003d82);
+            box-shadow: 0 4px 14px rgba(0, 123, 255, 0.4);
+            transform: scale(1.05);
+        }
+
+        /* Custom ID Badge Style */
+        .id-badge {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 14px;
+            display: inline-block;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+        }
+
+        .id-badge:hover {
+            background-color: #0056b3;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+            transform: scale(1.05);
+            transition: all 0.2s ease;
+        }
+    </style>
 </head>
 <body>
 <div th:fragment="content">
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Danh sách danh mục</h1>
+        <!-- Alert Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show fade-in" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle mr-2"></i>
+                <div>
+                    <strong>Thành công!</strong>
+                    <span th:text="${success}"></span>
+                </div>
+            </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
 
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <a th:href="@{/admin/categories/create}" class="btn btn-primary btn-sm">
-                    <i class="fas fa-plus"></i> Thêm mới
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fade-in" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle mr-2"></i>
+                <div>
+                    <strong>Lỗi!</strong>
+                    <span th:text="${error}"></span>
+                </div>
+            </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show fade-in" role="alert">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <div>
+                    <strong>Cảnh báo!</strong>
+                    <span th:text="${warning}"></span>
+                </div>
+            </div>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <!-- Page Header with Actions -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h1 class="h3 mb-1 text-gray-800">
+                    <i class="fas fa-folder text-primary"></i> Category Management
+                </h1>
+                <p class="text-muted small mb-0">Quản lý danh mục sản phẩm trên hệ thống</p>
+            </div>
+            <div>
+                <a th:href="@{/admin/categories/create}" class="btn btn-primary btn-lg" data-toggle="tooltip" title="Tạo danh mục mới">
+                    <i class="fas fa-plus"></i> Thêm danh mục mới
                 </a>
             </div>
+        </div>
 
+        <!-- Stats Cards Row -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card border-left-primary shadow-sm h-100 stat-card">
+                    <div class="card-body py-4">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-2">
+                                    <i class="fas fa-list mr-1"></i> Tổng Danh Mục
+                                </div>
+                                <div class="h4 mb-0 font-weight-bold text-gray-800">
+                                    <span th:text="${#lists.size(categories)}">0</span>
+                                </div>
+                                <small class="text-muted">danh mục trong hệ thống</small>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-folder fa-3x text-primary opacity-25"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card border-left-success shadow-sm h-100 stat-card">
+                    <div class="card-body py-4">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-success text-uppercase mb-2">
+                                    <i class="fas fa-check-circle mr-1"></i> Danh Mục Hoạt Động
+                                </div>
+                                <div class="h4 mb-0 font-weight-bold text-gray-800">
+                                    <span th:text="${#lists.size(categories)}">0</span>
+                                </div>
+                                <small class="text-muted">sẵn sàng sử dụng</small>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-check fa-3x text-success opacity-25"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <div class="card border-left-info shadow-sm h-100 stat-card">
+                    <div class="card-body py-4">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-2">
+                                    <i class="fas fa-star mr-1"></i> Danh Mục Mới Nhất
+                                </div>
+                                <div class="h6 mb-0 font-weight-bold text-gray-800" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
+                                     th:text="${!#lists.isEmpty(categories)} ? ${categories[#lists.size(categories) - 1].name} : 'N/A'">N/A
+                                </div>
+                                <small class="text-muted">vừa được thêm</small>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-star fa-3x text-info opacity-25"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search & Filter Section -->
+        <div class="card shadow-sm mb-4 border-0">
             <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable">
-                        <thead>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <input type="text"
+                                   id="searchInput"
+                                   class="form-control form-control-lg"
+                                   placeholder="🔍 Tìm kiếm theo tên hoặc slug..."
+                                   data-toggle="tooltip"
+                                   title="Nhập tên danh mục hoặc slug để tìm kiếm">
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-right">
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                onclick="resetSearch()"
+                                data-toggle="tooltip"
+                                title="Xóa tất cả tìm kiếm">
+                            <i class="fas fa-redo"></i> Đặt lại
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Table Card -->
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-gradient-primary text-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-table"></i> Danh sách danh mục
+                    </h6>
+                    <span class="badge badge-light badge-lg" th:text="${#lists.size(categories)} + ' danh mục'">0 danh mục</span>
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+                <div th:if="${#lists.isEmpty(categories)}" class="empty-state">
+                    <i class="fas fa-folder-open fa-5x mb-4"></i>
+                    <h5 class="text-muted mb-2">Chưa có danh mục nào</h5>
+                    <p class="text-muted mb-4">Hệ thống chưa có danh mục sản phẩm. Hãy tạo danh mục đầu tiên ngay bây giờ!</p>
+                    <a th:href="@{/admin/categories/create}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Tạo danh mục mới
+                    </a>
+                </div>
+
+                <div th:if="${!#lists.isEmpty(categories)}" class="table-responsive">
+                    <table class="table table-hover table-borderless mb-0" id="categoriesTable">
+                        <thead class="bg-light">
                         <tr>
-                            <th>ID</th>
-                            <th>Tên danh mục</th>
-                            <th>Slug</th>
-                            <th style="width:150px">Thao tác</th>
+                            <th class="border-0 text-center" style="width: 70px;">
+                                <small class="text-uppercase font-weight-bold">
+                                    <i class="fas fa-hashtag"></i> ID
+                                </small>
+                            </th>
+                            <th class="border-0" style="width: 40%;">
+                                <small class="text-uppercase font-weight-bold">
+                                    <i class="fas fa-folder"></i> Tên danh mục
+                                </small>
+                            </th>
+                            <th class="border-0" style="width: 35%;">
+                                <small class="text-uppercase font-weight-bold">
+                                    <i class="fas fa-link"></i> Slug
+                                </small>
+                            </th>
+                            <th class="border-0 text-center" style="width: 15%;">
+                                <small class="text-uppercase font-weight-bold">
+                                    <i class="fas fa-cog"></i> Thao tác
+                                </small>
+                            </th>
                         </tr>
                         </thead>
 
                         <tbody>
-                        <tr th:if="${#lists.isEmpty(categories)}">
-                            <td colspan="4" class="text-center text-muted">
-                                Chưa có danh mục
+                        <tr th:each="category : ${categories}" class="table-row-hover border-bottom" th:data-name="${category.name}" th:data-slug="${category.slug}">
+                            <td class="text-center align-middle">
+                                <span class="id-badge" th:text="'ID: ' + ${category.id}">ID: 1</span>
                             </td>
-                        </tr>
-
-                        <tr th:each="category : ${categories}">
-                            <td th:text="${category.id}"></td>
-                            <td th:text="${category.name}"></td>
-                            <td th:text="${category.slug}"></td>
-                            <td>
-                                <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
-                                   class="btn btn-info btn-sm">Sửa</a>
-
-                                <a th:href="@{/admin/categories/delete/{id}(id=${category.id})}"
-                                   class="btn btn-danger btn-sm"
-                                   onclick="return confirm('Xóa?')">Xóa</a>
+                            <td class="align-middle">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mr-3"
+                                         style="width: 40px; height: 40px; font-size: 16px; flex-shrink: 0;">
+                                        <i class="fas fa-folder"></i>
+                                    </div>
+                                    <div>
+                                        <strong class="text-gray-800" th:text="${category.name}">Category Name</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            <i class="fas fa-id-card-alt mr-1"></i>ID: <span th:text="${category.id}">1</span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <div class="d-flex align-items-center">
+                                    <code class="text-info" th:text="${category.slug}">category-slug</code>
+                                    <i class="fas fa-copy ml-2 text-muted"
+                                       style="cursor: pointer;"
+                                       onclick="copyToClipboard(this)"
+                                       data-toggle="tooltip"
+                                       title="Sao chép slug"
+                                       th:data-slug="${category.slug}"></i>
+                                </div>
+                            </td>
+                            <td class="text-center align-middle">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
+                                       class="btn btn-outline-primary"
+                                       data-toggle="tooltip"
+                                       title="Chỉnh sửa danh mục này">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-outline-danger"
+                                            data-toggle="modal"
+                                            data-target="#deleteModal"
+                                            th:data-id="${category.id}"
+                                            th:data-name="${category.name}"
+                                            title="Xóa danh mục này">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </div>
                             </td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Card Footer with Info -->
+            <div class="card-footer bg-light py-3" th:if="${!#lists.isEmpty(categories)}">
+                <div class="d-flex justify-content-between align-items-center flex-wrap">
+                    <small class="text-muted">
+                        <i class="fas fa-info-circle"></i>
+                        Hiển thị <strong id="totalCategories" th:text="${#lists.size(categories)}">0</strong> danh mục
+                    </small>
+                    <small class="text-muted">
+                        <i class="fas fa-clock"></i>
+                        Cập nhật: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm:ss')}">Now</span>
+                    </small>
+                </div>
+            </div>
+        </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-header bg-danger text-white border-0">
+                    <h5 class="modal-title font-weight-bold">
+                        <i class="fas fa-exclamation-triangle mr-2"></i>Xác nhận xóa
+                    </h5>
+                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-2">Bạn có chắc chắn muốn xóa danh mục này?</p>
+                    <p class="font-weight-bold text-danger mb-3">
+                        <i class="fas fa-folder mr-2"></i><span id="categoryName">Category Name</span>
+                    </p>
+                    <div class="alert alert-warning" role="alert">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <strong>Lưu ý:</strong> Hành động này không thể hoàn tác!
+                    </div>
+                </div>
+                <div class="modal-footer border-top">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times mr-2"></i>Hủy bỏ
+                    </button>
+                    <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
+                        <i class="fas fa-trash-alt mr-2"></i>Xóa danh mục
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Scripts -->
+    <script>
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            $('[data-toggle="tooltip"]').tooltip();
+
+            // Auto-hide alerts after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut('slow', function() { $(this).remove(); });
+            }, 5000);
+        });
+
+        // Delete modal setup
+        $('#deleteModal').on('show.bs.modal', function(event) {
+            const button = $(event.relatedTarget);
+            const categoryId = button.data('id');
+            const categoryName = button.data('name');
+
+            const modal = $(this);
+            modal.find('#categoryName').text(categoryName);
+            modal.find('#confirmDeleteBtn').attr('href', '/admin/categories/delete/' + categoryId);
+        });
+
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const tableRows = document.querySelectorAll('#categoriesTable tbody tr');
+            let visibleCount = 0;
+
+            tableRows.forEach(row => {
+                const name = row.getAttribute('data-name').toLowerCase();
+                const slug = row.getAttribute('data-slug').toLowerCase();
+
+                if (name.includes(searchTerm) || slug.includes(searchTerm)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update counter
+            document.getElementById('totalCategories').textContent = visibleCount;
+
+            // Show "no results" message if needed
+            if (visibleCount === 0) {
+                const tbody = document.querySelector('#categoriesTable tbody');
+                const noResultsRow = tbody.querySelector('.no-results');
+                if (!noResultsRow) {
+                    const tr = document.createElement('tr');
+                    tr.className = 'no-results';
+                    tr.innerHTML = '<td colspan="4" class="text-center py-5"><i class="fas fa-search text-muted fa-2x mb-3 d-block"></i><p class="text-muted">Không tìm thấy danh mục nào</p></td>';
+                    tbody.appendChild(tr);
+                }
+            } else {
+                const noResultsRow = document.querySelector('.no-results');
+                if (noResultsRow) noResultsRow.remove();
+            }
+        });
+
+        // Reset search
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInput').dispatchEvent(new Event('keyup'));
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(element) {
+            const slug = element.getAttribute('data-slug');
+            navigator.clipboard.writeText(slug).then(function() {
+                element.classList.add('text-success');
+                element.title = 'Đã sao chép!';
+                setTimeout(() => {
+                    element.classList.remove('text-success');
+                    element.title = 'Sao chép slug';
+                }, 2000);
+            });
+        }
+    </script>
 </div>
 </body>
 </html>

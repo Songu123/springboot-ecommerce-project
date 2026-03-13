@@ -74,6 +74,12 @@ public class UserApiController {
                 existingUser.setPassword(user.getPassword());
             }
             existingUser.setEnabled(user.isEnabled());
+
+            // Update roles if provided
+            if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+                existingUser.setRoles(user.getRoles());
+            }
+
             User updatedUser = userService.save(existingUser);
             return ResponseEntity.ok(updatedUser);
         } catch (RuntimeException e) {

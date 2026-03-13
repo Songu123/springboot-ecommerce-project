@@ -1,0 +1,351 @@
+/* ========================================
+   ADMIN FOOTER STYLING - ClickUp Inspired
+   ======================================== */
+
+/* Root Variables */
+:root {
+    --primary: #7B68EE;
+    --primary-dark: #6A5ACD;
+    --sidebar-width: 260px;
+    --header-height: 64px;
+    --footer-bg: #FFFFFF;
+    --footer-border: #E5E7EB;
+    --text-primary: #6B7280;
+    --text-secondary: #9CA3AF;
+}
+
+/* ========== FOOTER WRAPPER ========== */
+
+.footer-wrapper {
+    width: 100%;
+    background: var(--footer-bg);
+    border-top: 1px solid var(--footer-border);
+    margin-left: var(--sidebar-width);
+    transition: margin-left 0.3s ease;
+    position: relative;
+    z-index: 10;
+}
+
+/* ========== FOOTER CONTAINER ========== */
+
+.admin-footer {
+    position: relative;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.25rem 2rem;
+    width: 100%;
+}
+
+/* ========== FOOTER CONTENT LAYOUT ========== */
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    gap: 2rem;
+    width: 100%;
+}
+
+.footer-left,
+.footer-center,
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.footer-left {
+    justify-content: flex-start;
+    flex: 1;
+}
+
+.footer-center {
+    justify-content: center;
+    flex: 1;
+}
+
+.footer-right {
+    justify-content: flex-end;
+    flex: 1;
+}
+
+/* ========== FOOTER TEXT ELEMENTS ========== */
+
+.copyright {
+    color: var(--text-primary);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.footer-version {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+    padding-left: 0.75rem;
+    border-left: 1px solid var(--footer-border);
+}
+
+/* ========== FOOTER NAVIGATION ========== */
+
+.footer-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ========== FOOTER LINKS ========== */
+
+.footer-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    padding: 0.25rem 0;
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.footer-link:hover {
+    color: var(--primary);
+}
+
+.footer-link:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.footer-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--primary);
+    transition: width 0.2s ease;
+}
+
+.footer-link:hover::after {
+    width: 100%;
+}
+
+/* ========== FOOTER SEPARATOR ========== */
+
+.separator {
+    color: var(--footer-border);
+    margin: 0 0.25rem;
+    user-select: none;
+}
+
+/* ========================================
+   RESPONSIVE DESIGN
+   ======================================== */
+
+/* Tablet View (992px and below) */
+@media (max-width: 992px) {
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+
+    .footer-center {
+        grid-column: 1 / -1;
+        justify-content: center;
+        order: 3;
+    }
+
+    .footer-left {
+        justify-content: flex-start;
+    }
+
+    .footer-right {
+        justify-content: flex-end;
+    }
+}
+
+/* Mobile View (768px and below) */
+@media (max-width: 768px) {
+    .footer-wrapper {
+        margin-left: 0 !important;
+    }
+
+    .footer-container {
+        padding: 1rem 1.5rem;
+    }
+
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .footer-left,
+    .footer-center,
+    .footer-right {
+        justify-content: center;
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .footer-left {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .footer-version {
+        border-left: none;
+        padding-left: 0;
+        margin-left: 0;
+    }
+
+    .footer-nav {
+        justify-content: center;
+    }
+
+    .separator {
+        margin: 0 0.5rem;
+    }
+
+    .copyright {
+        white-space: normal;
+    }
+}
+
+/* Extra Small Devices (480px and below) */
+@media (max-width: 480px) {
+    .footer-container {
+        padding: 0.75rem 1rem;
+    }
+
+    .footer-content {
+        gap: 0.75rem;
+    }
+
+    .copyright {
+        font-size: 0.75rem;
+    }
+
+    .footer-link {
+        font-size: 0.75rem;
+    }
+
+    .footer-right {
+        flex-wrap: wrap;
+        gap: 0.25rem;
+    }
+
+    .separator {
+        margin: 0 0.25rem;
+    }
+
+    .footer-version {
+        font-size: 0.65rem;
+        margin-left: 0.25rem;
+        padding-left: 0.5rem;
+    }
+}
+
+/* ========================================
+   PRINT STYLES
+   ======================================== */
+
+@media print {
+    .admin-footer {
+        display: none !important;
+    }
+
+    .footer-wrapper {
+        display: none !important;
+    }
+}
+
+/* ========================================
+   DARK MODE SUPPORT
+   ======================================== */
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --footer-bg: #1F2937;
+        --footer-border: #374151;
+        --text-primary: #D1D5DB;
+        --text-secondary: #9CA3AF;
+    }
+
+    .footer-wrapper {
+        background: var(--footer-bg);
+        border-top-color: var(--footer-border);
+    }
+
+    .copyright,
+    .footer-link {
+        color: var(--text-primary);
+    }
+
+    .footer-version {
+        color: var(--text-secondary);
+        border-left-color: #4B5563;
+    }
+
+    .separator {
+        color: #4B5563;
+    }
+
+    .footer-link:hover {
+        color: #A78BFA;
+    }
+
+    .footer-link:focus {
+        outline-color: #A78BFA;
+    }
+
+    .footer-link::after {
+        background: #A78BFA;
+    }
+}
+
+/* ========================================
+   ACCESSIBILITY
+   ======================================== */
+
+/* Focus Visible for Keyboard Navigation */
+.footer-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: more) {
+    .footer-link {
+        text-decoration: underline;
+    }
+
+    .footer-content {
+        border-top: 2px solid var(--text-primary);
+    }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+    .footer-wrapper {
+        transition: none;
+    }
+
+    .footer-link {
+        transition: none;
+    }
+
+    .footer-link::after {
+        transition: none;
+    }
+}
+

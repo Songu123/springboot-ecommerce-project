@@ -2,27 +2,62 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <style>
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            transition: all 0.3s ease;
+            border-radius: 10px;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        .revenue-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 16px;
+        }
+    </style>
 </head>
 <body>
 <div th:fragment="content">
     <div class="container-fluid">
-        <h1 class="h3 mb-4 text-gray-800">Dashboard</h1>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-gray-800">
+                <i class="fas fa-chart-line text-primary"></i> Dashboard
+            </h1>
+            <div class="revenue-badge">
+                Doanh thu: <span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')}">0</span>₫
+            </div>
+        </div>
 
         <!-- Statistics Cards -->
         <div class="row">
             <!-- Total Users Card -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card border-left-primary shadow stat-card h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Total Users
+                                    <i class="fas fa-users"></i> Total Users
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalUsers}">0</div>
                             </div>
                             <div class="col-auto">
-                                <i class="zmdi zmdi-accounts zmdi-hc-2x text-gray-300"></i>
+                                <i class="fas fa-user-circle fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -31,17 +66,17 @@
 
             <!-- Enabled Users Card -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div class="card border-left-success shadow stat-card h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Enabled Users
+                                    <i class="fas fa-check-circle"></i> Active Users
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${enabledUsers}">0</div>
                             </div>
                             <div class="col-auto">
-                                <i class="zmdi zmdi-account-circle zmdi-hc-2x text-gray-300"></i>
+                                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -50,36 +85,17 @@
 
             <!-- Total Products Card -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
+                <div class="card border-left-info shadow stat-card h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Total Products
+                                    <i class="fas fa-box"></i> Products
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalProducts}">0</div>
                             </div>
                             <div class="col-auto">
-                                <i class="zmdi zmdi-shopping-basket zmdi-hc-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Total Categories Card -->
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-warning shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Total Categories
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalCategories}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="zmdi zmdi-label zmdi-hc-2x text-gray-300"></i>
+                                <i class="fas fa-shopping-basket fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -88,17 +104,36 @@
 
             <!-- Total Orders Card -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-danger shadow h-100 py-2">
+                <div class="card border-left-warning shadow stat-card h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                    Total Orders
+                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                    <i class="fas fa-shopping-cart"></i> Orders
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalOrders}">0</div>
                             </div>
                             <div class="col-auto">
-                                <i class="zmdi zmdi-shopping-cart zmdi-hc-2x text-gray-300"></i>
+                                <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Total Categories Card -->
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow stat-card h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    <i class="fas fa-tag"></i> Categories
+                                </div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalCategories}">0</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-tag fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -107,19 +142,19 @@
 
             <!-- Total Revenue Card -->
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-dark shadow h-100 py-2">
+                <div class="card border-left-dark shadow stat-card h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-dark text-uppercase mb-1">
-                                    Total Revenue
+                                    <i class="fas fa-money-bill-wave"></i> Revenue
                                 </div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    <span th:text="${totalRevenue} + ' ₫'">0 ₫</span>
+                                    <span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')}">0</span>₫
                                 </div>
                             </div>
                             <div class="col-auto">
-                                <i class="zmdi zmdi-money zmdi-hc-2x text-gray-300"></i>
+                                <i class="fas fa-coins fa-2x text-gray-300"></i>
                             </div>
                         </div>
                     </div>
@@ -127,35 +162,109 @@
             </div>
         </div>
 
-        <!-- Content Row -->
+        <!-- Charts and Recent Data Row -->
         <div class="row">
-            <!-- Recent Products -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-primary">Recent Products</h6>
-                        <a th:href="@{/admin/products}" class="btn btn-sm btn-primary">View All</a>
+            <!-- Revenue Chart -->
+            <div class="col-xl-8 col-lg-8 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient-primary text-white py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-chart-line"></i> Biểu đồ doanh thu
+                        </h6>
                     </div>
                     <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Statistics -->
+            <div class="col-xl-4 col-lg-4 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient-success text-white py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-chart-pie"></i> Thống kê đơn hàng
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="orderStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Orders and Top Products -->
+        <div class="row">
+            <!-- Recent Orders -->
+            <div class="col-xl-6 col-lg-6 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient-info text-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-receipt"></i> Đơn hàng gần đây
+                        </h6>
+                        <a th:href="@{/admin/orders}" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-right"></i> Xem tất cả
+                        </a>
+                    </div>
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Name</th>
-                                    <th>Price</th>
-                                    <th>Quantity</th>
+                                    <th class="border-0">
+                                        <small class="text-uppercase font-weight-bold">Mã đơn</small>
+                                    </th>
+                                    <th class="border-0">
+                                        <small class="text-uppercase font-weight-bold">Khách hàng</small>
+                                    </th>
+                                    <th class="border-0 text-right">
+                                        <small class="text-uppercase font-weight-bold">Tổng tiền</small>
+                                    </th>
+                                    <th class="border-0 text-center">
+                                        <small class="text-uppercase font-weight-bold">Trạng thái</small>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:if="${#lists.isEmpty(recentProducts)}">
-                                    <td colspan="4" class="text-center text-muted">No products</td>
+                                <tr th:if="${#lists.isEmpty(recentOrders)}">
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-2x mb-2 d-block text-gray-300"></i>
+                                        Không có đơn hàng
+                                    </td>
                                 </tr>
-                                <tr th:each="product : ${recentProducts}">
-                                    <td th:text="${product.id}"></td>
-                                    <td th:text="${product.name}"></td>
-                                    <td th:text="${product.price}"></td>
-                                    <td th:text="${product.quantity}"></td>
+                                <tr th:each="order : ${recentOrders}" class="align-middle">
+                                    <td>
+                                        <a th:href="@{/admin/orders/{id}(id=${order.id})}" class="text-primary font-weight-bold">
+                                            <span th:text="'#' + ${order.id}">Order</span>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span th:text="${order.user?.fullName}">Customer</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong class="text-success" th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</strong>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:if="${order.status == 'PENDING'}" class="badge badge-warning">
+                                            <i class="fas fa-clock"></i> Đang chờ
+                                        </span>
+                                        <span th:if="${order.status == 'CONFIRMED'}" class="badge badge-info">
+                                            <i class="fas fa-check"></i> Đã xác nhận
+                                        </span>
+                                        <span th:if="${order.status == 'SHIPPED'}" class="badge badge-primary">
+                                            <i class="fas fa-box"></i> Đã gửi
+                                        </span>
+                                        <span th:if="${order.status == 'DELIVERED'}" class="badge badge-success">
+                                            <i class="fas fa-check-circle"></i> Đã giao
+                                        </span>
+                                        <span th:if="${order.status == 'CANCELLED'}" class="badge badge-danger">
+                                            <i class="fas fa-times"></i> Hủy
+                                        </span>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -164,35 +273,52 @@
                 </div>
             </div>
 
-            <!-- Recent Users -->
-            <div class="col-xl-6 col-lg-6">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-success">Recent Users</h6>
-                        <a th:href="@{/admin/users}" class="btn btn-sm btn-success">View All</a>
+            <!-- Top Products -->
+            <div class="col-xl-6 col-lg-6 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient-warning text-white py-3 d-flex justify-content-between align-items-center">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-fire"></i> Top 5 sản phẩm bán chạy
+                        </h6>
+                        <a th:href="@{/admin/products}" class="btn btn-sm btn-light">
+                            <i class="fas fa-arrow-right"></i> Xem tất cả
+                        </a>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
+                            <table class="table table-hover mb-0">
+                                <thead class="bg-light">
                                 <tr>
-                                    <th>ID</th>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
+                                    <th class="border-0">
+                                        <small class="text-uppercase font-weight-bold">Tên sản phẩm</small>
+                                    </th>
+                                    <th class="border-0 text-center">
+                                        <small class="text-uppercase font-weight-bold">Đã bán</small>
+                                    </th>
+                                    <th class="border-0 text-right">
+                                        <small class="text-uppercase font-weight-bold">Doanh số</small>
+                                    </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr th:if="${#lists.isEmpty(recentUsers)}">
-                                    <td colspan="4" class="text-center text-muted">No users</td>
+                                <tr th:if="${#lists.isEmpty(bestSellers)}">
+                                    <td colspan="3" class="text-center text-muted py-4">
+                                        <i class="fas fa-box-open fa-2x mb-2 d-block text-gray-300"></i>
+                                        Không có dữ liệu
+                                    </td>
                                 </tr>
-                                <tr th:each="user : ${recentUsers}">
-                                    <td th:text="${user.id}"></td>
-                                    <td th:text="${user.username}"></td>
-                                    <td th:text="${user.email}"></td>
+                                <tr th:each="entry,iter : ${bestSellers}" class="align-middle">
                                     <td>
-                                        <span th:if="${user.enabled}" class="badge badge-success">Active</span>
-                                        <span th:unless="${user.enabled}" class="badge badge-danger">Inactive</span>
+                                        <div class="d-flex align-items-center">
+                                            <span class="badge badge-success badge-pill mr-2" th:text="${iter.index + 1}">1</span>
+                                            <span th:text="${entry.key.name}">Product</span>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge badge-info" th:text="${entry.value} + ' đơn'">0</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <strong class="text-primary" th:text="${#numbers.formatDecimal(entry.key.price * entry.value, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</strong>
                                     </td>
                                 </tr>
                                 </tbody>
@@ -206,30 +332,32 @@
         <!-- Quick Actions -->
         <div class="row">
             <div class="col-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Quick Actions</h6>
+                <div class="card shadow-lg border-0">
+                    <div class="card-header bg-gradient-secondary text-white py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-bolt"></i> Tác vụ nhanh
+                        </h6>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-3 mb-3">
                                 <a th:href="@{/admin/users/create}" class="btn btn-primary btn-block">
-                                    <i class="zmdi zmdi-account-add"></i> Add New User
+                                    <i class="fas fa-user-plus"></i> Thêm người dùng
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <a th:href="@{/admin/products/create}" class="btn btn-info btn-block">
-                                    <i class="zmdi zmdi-plus"></i> Add New Product
+                                    <i class="fas fa-plus"></i> Thêm sản phẩm
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <a th:href="@{/admin/categories/create}" class="btn btn-warning btn-block">
-                                    <i class="zmdi zmdi-label"></i> Add New Category
+                                    <i class="fas fa-tag"></i> Thêm danh mục
                                 </a>
                             </div>
                             <div class="col-md-3 mb-3">
-                                <a th:href="@{/admin/users}" class="btn btn-success btn-block">
-                                    <i class="zmdi zmdi-accounts"></i> Manage Users
+                                <a th:href="@{/admin/orders}" class="btn btn-success btn-block">
+                                    <i class="fas fa-shopping-cart"></i> Quản lý đơn hàng
                                 </a>
                             </div>
                         </div>
@@ -238,42 +366,104 @@
             </div>
         </div>
 
-        <!-- Best Sellers Table -->
-        <div class="row">
-            <div class="col-xl-12 col-lg-12">
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                        <h6 class="m-0 font-weight-bold text-warning">Top 5 Sản phẩm bán chạy</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Tên sản phẩm</th>
-                                    <th>Đã bán</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr th:if="${#lists.isEmpty(bestSellers)}">
-                                    <td colspan="3" class="text-center text-muted">Không có dữ liệu</td>
-                                </tr>
-                                <tr th:each="entry,iter : ${bestSellers}">
-                                    <td th:text="${iter.index + 1}"></td>
-                                    <td th:text="${entry.key.name}"></td>
-                                    <td th:text="${entry.value}"></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <!-- Chart.js Scripts -->
+        <script>
+            // Fetch monthly revenue data from API
+            fetch('/admin/api/revenue')
+                .then(response => response.json())
+                .then(data => {
+                    // Revenue Chart with data from backend
+                    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+                    const revenueChart = new Chart(revenueCtx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Doanh thu (₫)',
+                                data: data.data,
+                                borderColor: '#667eea',
+                                backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 5,
+                                pointBackgroundColor: '#667eea',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointHoverRadius: 7
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    labels: {
+                                        font: { size: 12, weight: 'bold' },
+                                        padding: 15,
+                                        usePointStyle: true
+                                    }
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function(value) {
+                                            return (value / 1000000).toFixed(1) + 'M';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                })
+                .catch(error => console.error('Error loading revenue data:', error));
 
+            // Order Status Chart with real data from backend
+            document.addEventListener('DOMContentLoaded', function() {
+                const orderCtx = document.getElementById('orderStatusChart').getContext('2d');
+                const orderStatusChart = new Chart(orderCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Đang chờ', 'Đã xác nhận', 'Đã gửi', 'Đã giao', 'Hủy'],
+                        datasets: [{
+                            data: [
+                                [[${pendingCount}]],
+                                [[${confirmedCount}]],
+                                [[${shippedCount}]],
+                                [[${deliveredCount}]],
+                                [[${cancelledCount}]]
+                            ],
+                            backgroundColor: [
+                                '#ffc107',
+                                '#17a2b8',
+                                '#007bff',
+                                '#28a745',
+                                '#dc3545'
+                            ],
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    font: { size: 11, weight: 'bold' },
+                                    padding: 15,
+                                    usePointStyle: true
+                                }
+                            }
+                        }
+                    }
+                });
+            });
+        </script>
     </div>
 </div>
-</body>
-</html>
 

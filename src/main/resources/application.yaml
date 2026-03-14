@@ -9,7 +9,7 @@ spring:
     restart:
       enabled: true
     livereload:
-      enabled: true
+      enabled: false
       port: 35729
 
   application:

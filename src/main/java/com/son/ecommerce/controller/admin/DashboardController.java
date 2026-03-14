@@ -7,12 +7,18 @@ import com.son.ecommerce.service.OrderService;
 import com.son.ecommerce.service.OrderItemService;
 import com.son.ecommerce.entity.Product;
 import com.son.ecommerce.entity.OrderItem;
+import com.son.ecommerce.entity.Order;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
 
 @Controller
 @RequestMapping("/admin")
@@ -73,6 +79,27 @@ public class DashboardController {
         model.addAttribute("recentProducts", productService.findAll().stream().limit(5).toList());
         model.addAttribute("recentUsers", userService.findAll().stream().limit(5).toList());
 
+        // Recent orders (last 5)
+        List<com.son.ecommerce.entity.Order> recentOrders = orderService.findAll().stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .limit(5)
+                .toList();
+        model.addAttribute("recentOrders", recentOrders);
+
+        // Order status statistics
+        List<com.son.ecommerce.entity.Order> allOrders = orderService.findAll();
+        long pendingCount = allOrders.stream().filter(o -> "PENDING".equals(o.getStatus())).count();
+        long confirmedCount = allOrders.stream().filter(o -> "CONFIRMED".equals(o.getStatus())).count();
+        long shippedCount = allOrders.stream().filter(o -> "SHIPPED".equals(o.getStatus())).count();
+        long deliveredCount = allOrders.stream().filter(o -> "DELIVERED".equals(o.getStatus())).count();
+        long cancelledCount = allOrders.stream().filter(o -> "CANCELLED".equals(o.getStatus())).count();
+
+        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("confirmedCount", confirmedCount);
+        model.addAttribute("shippedCount", shippedCount);
+        model.addAttribute("deliveredCount", deliveredCount);
+        model.addAttribute("cancelledCount", cancelledCount);
+
         model.addAttribute("content", "admin/dashboard");
         return "admin-layout";
     }
@@ -81,5 +108,40 @@ public class DashboardController {
     public String adminHome() {
         return "redirect:/admin/dashboard";
     }
-}
 
+    @GetMapping("/api/revenue")
+    @ResponseBody
+    public Map<String, Object> getMonthlyRevenue() {
+        List<Order> allOrders = orderService.findAll();
+        Map<YearMonth, Double> monthlyRevenue = new TreeMap<>();
+
+        // Lấy 6 tháng gần nhất
+        for (int i = 5; i >= 0; i--) {
+            YearMonth ym = YearMonth.now().minusMonths(i);
+            monthlyRevenue.put(ym, 0.0);
+        }
+
+        // Tính tổng doanh thu theo tháng
+        for (Order order : allOrders) {
+            if (order.getCreatedAt() != null) {
+                YearMonth ym = YearMonth.from(order.getCreatedAt());
+                if (monthlyRevenue.containsKey(ym)) {
+                    monthlyRevenue.put(ym, monthlyRevenue.get(ym) + order.getTotalPrice());
+                }
+            }
+        }
+
+        List<String> labels = new ArrayList<>();
+        List<Double> data = new ArrayList<>();
+
+        for (Map.Entry<YearMonth, Double> entry : monthlyRevenue.entrySet()) {
+            labels.add(String.format("Tháng %d", entry.getKey().getMonthValue()));
+            data.add(entry.getValue());
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("labels", labels);
+        result.put("data", data);
+        return result;
+    }
+}

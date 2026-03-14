@@ -5,21 +5,21 @@
   <style>
     /* ID Badge Style */
     .id-badge {
-      background: linear-gradient(135deg, #dc3545, #a02830);
-      color: white;
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-weight: bold;
-      font-size: 13px;
-      display: inline-block;
-      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3);
-      transition: all 0.3s ease;
+      background: linear-gradient(135deg, #dc3545, #a02830) !important;
+      color: white !important;
+      padding: 8px 14px !important;
+      border-radius: 20px !important;
+      font-weight: bold !important;
+      font-size: 13px !important;
+      display: inline-block !important;
+      box-shadow: 0 2px 8px rgba(220, 53, 69, 0.3) !important;
+      transition: all 0.3s ease !important;
     }
 
     .id-badge:hover {
-      background: linear-gradient(135deg, #a02830, #7a1d24);
-      box-shadow: 0 4px 14px rgba(220, 53, 69, 0.4);
-      transform: scale(1.05);
+      background: linear-gradient(135deg, #a02830, #7a1d24) !important;
+      box-shadow: 0 4px 14px rgba(220, 53, 69, 0.4) !important;
+      transform: scale(1.05) !important;
     }
   </style>
 </head>
@@ -172,7 +172,7 @@
 
             <tr th:each="user : ${users}" class="border-bottom">
               <td class="text-center align-middle">
-                <span class="badge badge-secondary id-badge" th:text="${user.id}">1</span>
+                <span class="id-badge" th:text="${user.id}">1</span>
               </td>
               <td class="align-middle">
                 <div class="d-flex align-items-center">

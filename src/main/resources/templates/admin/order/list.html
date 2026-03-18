@@ -5,7 +5,7 @@
     <style>
       /* ID Badge Style */
       .id-badge {
-        background: linear-gradient(135deg, #ffc107, #ff9800) !important;
+        background: #ffc107 !important;
         color: white !important;
         padding: 8px 14px !important;
         border-radius: 20px !important;
@@ -17,9 +17,420 @@
       }
 
       .id-badge:hover {
-        background: linear-gradient(135deg, #ff9800, #f57c00) !important;
+        background: #ffb300 !important;
         box-shadow: 0 4px 14px rgba(255, 193, 7, 0.4) !important;
         transform: scale(1.05) !important;
+      }
+
+      /* ========== Global Badge Override ========== */
+      .badge {
+        display: inline-block !important;
+        padding: 0.5rem 0.75rem !important;
+        font-size: 0.8rem !important;
+        font-weight: 500 !important;
+        border-radius: 20px !important;
+        border: none !important;
+      }
+
+      /* Badge Colors - Global Override */
+      .badge-danger {
+        background-color: #dc3545 !important;
+        color: white !important;
+      }
+
+      .badge-warning {
+        background-color: #ff9800 !important;
+        color: white !important;
+      }
+
+      .badge-info {
+        background-color: #17a2b8 !important;
+        color: white !important;
+      }
+
+      .pagination .page-item.active .page-link {
+        background-color: #2563EB !important;
+        border-color: #2563EB !important;
+        color: white !important;
+        font-weight: 600 !important;
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+        position: relative !important;
+        z-index: 1 !important;
+      }
+
+      .pagination .page-item.active .page-link:hover {
+        background-color: #1E40AF !important;
+        border-color: #1E40AF !important;
+        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
+        transform: translateY(-2px) !important;
+      }
+
+      .badge-success {
+        background-color: #28a745 !important;
+        color: white !important;
+      }
+
+      .badge-primary {
+        background-color: #007bff !important;
+        color: white !important;
+      }
+
+      /* ========== Order Status Badge Styles ========== */
+      .badge {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+        transition: all 0.3s ease !important;
+      }
+
+      .badge:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+        transform: translateY(-2px) !important;
+      }
+
+      /* Badge Pill styles */
+      .badge-pill {
+        border-radius: 20px !important;
+        padding: 0.5rem 1rem !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 0.5rem !important;
+        font-size: 0.8rem !important;
+      }
+
+      .badge-pill i {
+        font-size: 0.75rem !important;
+      }
+
+      /* ========== ClickUp-Style Pagination - Professional Design ========== */
+      .pagination-wrapper {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
+        border-top: 1px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
+        border-radius: 0 0 12px 12px;
+        flex-wrap: wrap;
+        gap: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      }
+
+      .pagination-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        color: #9ca3af;
+        padding: 0.5rem 0;
+        white-space: nowrap;
+      }
+
+      .pagination-info strong {
+        color: #1f2937;
+        font-weight: 700;
+        font-size: 0.9375rem;
+      }
+
+      .pagination-info span {
+        color: #9ca3af;
+      }
+
+      .pagination-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+
+      .pagination {
+        display: flex;
+        list-style: none;
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0;
+        align-items: center;
+        background: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .pagination .page-item {
+        display: inline-block;
+      }
+
+      .pagination .page-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid transparent;
+        border-radius: 6px;
+        background: transparent;
+        color: #6b7280;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.875rem;
+        cursor: pointer;
+        user-select: none;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+      }
+
+      .pagination .page-link:hover:not(.disabled) {
+        background: #f3f4f6;
+        color: #1f2937;
+        border-color: #d1d5db;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .pagination .page-item.active .page-link {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        position: relative;
+        z-index: 1;
+      }
+
+      .pagination .page-item.active .page-link:hover {
+        background: linear-gradient(135deg, #5568d3 0%, #6b3a92 100%);
+        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+      }
+
+      .pagination .page-link i {
+        font-size: 0.8rem;
+        transition: transform 0.3s ease;
+      }
+
+      .pagination .page-link:hover:not(.disabled) i {
+        transform: scale(1.15);
+      }
+
+      .pagination .page-item.active .page-link i {
+        color: white;
+      }
+
+      .pagination .page-item.disabled .page-link {
+        opacity: 0.4;
+        cursor: not-allowed;
+        color: #d1d5db;
+        background: transparent;
+        border-color: transparent;
+        pointer-events: none;
+      }
+
+      .pagination .page-item.disabled .page-link:hover {
+        background: transparent;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .pagination .ellipsis {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        height: 36px;
+        color: #9ca3af;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0 0.25rem;
+      }
+
+      .page-size-selector {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+        color: #6b7280;
+        white-space: nowrap;
+      }
+
+      .page-size-selector label {
+        font-weight: 500;
+        color: #4b5563;
+      }
+
+      .page-size-selector select {
+        padding: 0.5rem 0.85rem;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+        color: #1f2937;
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        appearance: none;
+        padding-right: 2rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 0.6rem center;
+        padding-right: 2.2rem;
+      }
+
+      .page-size-selector select:hover {
+        border-color: #9ca3af;
+        background-color: #f9fafb;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .page-size-selector select:focus {
+        outline: none;
+        border-color: #2563EB !important;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1),
+                    0 2px 4px rgba(0, 0, 0, 0.05) !important;
+      }
+
+      @media (max-width: 1024px) {
+        .pagination-wrapper {
+          gap: 1.5rem;
+          padding: 1rem 1.25rem;
+        }
+
+        .pagination-controls {
+          order: 2;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .pagination-info {
+          order: 1;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .page-size-selector {
+          order: 3;
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .pagination-wrapper {
+          flex-direction: column;
+          gap: 1rem;
+          padding: 1rem;
+        }
+
+        .pagination-info {
+          order: 1;
+          width: 100%;
+          justify-content: center;
+          font-size: 0.8125rem;
+        }
+
+        .pagination-controls {
+          order: 2;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .page-size-selector {
+          order: 3;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .pagination {
+          padding: 0.4rem 0.5rem;
+          gap: 0.25rem;
+        }
+
+        .pagination .page-link {
+          min-width: 32px;
+          height: 32px;
+          padding: 0.4rem 0.6rem;
+          font-size: 0.8125rem;
+        }
+
+        .pagination .page-link i {
+          font-size: 0.7rem;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .pagination-wrapper {
+          gap: 0.75rem;
+          padding: 0.85rem;
+        }
+
+        .pagination-info {
+          font-size: 0.75rem;
+        }
+
+        .pagination-info strong {
+          font-size: 0.875rem;
+        }
+
+        .pagination {
+          padding: 0.3rem 0.4rem;
+          gap: 0.2rem;
+        }
+
+        .pagination .page-link {
+          min-width: 28px;
+          height: 28px;
+          padding: 0.3rem 0.5rem;
+          font-size: 0.75rem;
+        }
+
+        .pagination .ellipsis {
+          min-width: 28px;
+          height: 28px;
+          font-size: 0.9rem;
+        }
+
+        .page-size-selector {
+          gap: 0.5rem;
+          font-size: 0.8125rem;
+        }
+
+        .page-size-selector select {
+          padding: 0.35rem 0.65rem;
+          font-size: 0.75rem;
+        }
+      }
+
+      @media print {
+        .pagination-wrapper {
+          display: none;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .pagination .page-link,
+        .page-size-selector select {
+          transition: none;
+        }
+
+        .pagination .page-link:hover:not(.disabled) {
+          transform: none;
+        }
+      }
+
+        .pagination-info {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .pagination-controls {
+          justify-content: center;
+          width: 100%;
+        }
+
+        .page-size-selector {
+          justify-content: center;
+          width: 100%;
+        }
       }
     </style>
 </head>
@@ -333,16 +744,123 @@
                 </div>
             </div>
 
+            <!-- Pagination -->
+            <div class="pagination-wrapper" th:if="${totalPages > 0}">
+                <div class="pagination-info">
+                    <span>Hiển thị</span>
+                    <strong th:text="${displayStartIndex}">1</strong>
+                    <span>-</span>
+                    <strong th:text="${displayEndIndex}">10</strong>
+                    <span>trong</span>
+                    <strong th:text="${totalItems}">0</strong>
+                </div>
+
+                <div class="pagination-controls">
+                    <ul class="pagination">
+                        <li class="page-item" th:classappend="${currentPage <= 1 ? 'disabled' : ''}">
+                            <a th:if="${currentPage > 1}" class="page-link" th:href="@{/admin/orders(page=${currentPage-1}, status=${selectedStatus}, search=${searchKeyword})}" title="Trang trước">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                            <span th:unless="${currentPage > 1}" class="page-link disabled">
+                                <i class="fas fa-chevron-left"></i>
+                            </span>
+                        </li>
+
+                        <th:block th:if="${totalPages <= 7}">
+                            <li class="page-item" th:each="p : ${#numbers.sequence(1, totalPages)}" th:classappend="${p == currentPage ? 'active' : ''}">
+                                <a th:if="${p != currentPage}" class="page-link" th:href="@{/admin/orders(page=${p}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${p}">1</a>
+                                <span th:unless="${p != currentPage}" class="page-link" th:text="${p}">1</span>
+                            </li>
+                        </th:block>
+
+                        <th:block th:if="${totalPages > 7}">
+                            <li class="page-item" th:classappend="${currentPage == 1 ? 'active' : ''}">
+                                <a th:if="${currentPage != 1}" class="page-link" th:href="@{/admin/orders(page=1, status=${selectedStatus}, search=${searchKeyword})}">1</a>
+                                <span th:unless="${currentPage != 1}" class="page-link">1</span>
+                            </li>
+
+                            <th:block th:if="${currentPage <= 3}">
+                                <li class="page-item" th:classappend="${currentPage == 2 ? 'active' : ''}">
+                                    <a th:if="${currentPage != 2}" class="page-link" th:href="@{/admin/orders(page=2, status=${selectedStatus}, search=${searchKeyword})}">2</a>
+                                    <span th:unless="${currentPage != 2}" class="page-link">2</span>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == 3 ? 'active' : ''}">
+                                    <a th:if="${currentPage != 3}" class="page-link" th:href="@{/admin/orders(page=3, status=${selectedStatus}, search=${searchKeyword})}">3</a>
+                                    <span th:unless="${currentPage != 3}" class="page-link">3</span>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
+                                <li class="page-item">
+                                    <span class="ellipsis">...</span>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${currentPage - 1}"></a>
+                                </li>
+                                <li class="page-item active">
+                                    <span class="page-link" th:text="${currentPage}"></span>
+                                </li>
+                                <li class="page-item">
+                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${currentPage + 1}"></a>
+                                </li>
+                            </th:block>
+
+                            <th:block th:if="${currentPage >= totalPages - 2}">
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 2 ? 'active' : ''}">
+                                    <a th:if="${currentPage != totalPages - 2}" class="page-link" th:href="@{/admin/orders(page=${totalPages - 2}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages - 2}"></a>
+                                    <span th:unless="${currentPage != totalPages - 2}" class="page-link" th:text="${totalPages - 2}"></span>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'active' : ''}">
+                                    <a th:if="${currentPage != totalPages - 1}" class="page-link" th:href="@{/admin/orders(page=${totalPages - 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages - 1}"></a>
+                                    <span th:unless="${currentPage != totalPages - 1}" class="page-link" th:text="${totalPages - 1}"></span>
+                                </li>
+                            </th:block>
+                            <th:block th:if="${currentPage < totalPages - 2}">
+                                <li class="page-item">
+                                    <span class="ellipsis">...</span>
+                                </li>
+                            </th:block>
+
+                            <li class="page-item" th:classappend="${currentPage == totalPages ? 'active' : ''}">
+                                <a th:if="${currentPage != totalPages}" class="page-link" th:href="@{/admin/orders(page=${totalPages}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages}"></a>
+                                <span th:unless="${currentPage != totalPages}" class="page-link" th:text="${totalPages}"></span>
+                            </li>
+                        </th:block>
+
+                        <li class="page-item" th:classappend="${currentPage >= totalPages ? 'disabled' : ''}">
+                            <a th:if="${currentPage < totalPages}" class="page-link" th:href="@{/admin/orders(page=${currentPage+1}, status=${selectedStatus}, search=${searchKeyword})}" title="Trang tiếp">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                            <span th:unless="${currentPage < totalPages}" class="page-link disabled">
+                                <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="page-size-selector">
+                    <label for="orderPageSizeSelect">Hiển thị:</label>
+                    <select id="orderPageSizeSelect" onchange="if(this.value) window.location.href='/admin/orders?pageSize=' + this.value + '&status=' + (new URLSearchParams(window.location.search).get('status') || '');">
+                        <option value="5" th:selected="${pageSize == 5}">5 / trang</option>
+                        <option value="10" th:selected="${pageSize == 10}">10 / trang</option>
+                        <option value="20" th:selected="${pageSize == 20}">20 / trang</option>
+                        <option value="50" th:selected="${pageSize == 50}">50 / trang</option>
+                    </select>
+                </div>
+            </div>
+
             <!-- Card Footer -->
             <div class="card-footer bg-light py-3">
                 <div class="d-flex justify-content-between align-items-center">
                     <small class="text-muted">
                         <i class="fas fa-info-circle"></i>
-                        Hiển thị <strong th:text="${#lists.size(orders)}">0</strong> đơn hàng
+                        Trang <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong>
                     </small>
                     <small class="text-muted">
-                        <i class="fas fa-sync"></i>
-                        Cập nhật: <span th:text="${#temporals.format(#temporals.createNow(), 'dd/MM/yyyy HH:mm')}">Now</span>
+                        <i class="fas fa-database mr-2"></i>Tổng: <strong th:text="${totalItems}">0</strong> đơn hàng
+                    </small>
                     </small>
                 </div>
             </div>

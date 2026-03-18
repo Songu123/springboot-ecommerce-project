@@ -152,14 +152,14 @@
                                             <p class="item-qty">Qty: <span th:text="${item.quantity}">1</span></p>
                                         </div>
                                     </div>
-                                    <p class="item-price">$<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">99</span></p>
+                                    <p class="item-price"><span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">99 VNĐ</span></p>
                                 </div>
                             </div>
 
                             <div class="summary-totals">
                                 <div class="summary-row">
                                     <span>Subtotal:</span>
-                                    <span>$<span th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                                    <span><span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></span>
                                 </div>
                                 <div class="summary-row">
                                     <span>Shipping:</span>
@@ -167,7 +167,7 @@
                                 </div>
                                 <div class="summary-total">
                                     <span>Total:</span>
-                                    <span>$<span id="totalAmount" th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                                    <span><span id="totalAmount" th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></span>
                                 </div>
                             </div>
 

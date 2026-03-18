@@ -1,11 +1,13 @@
 package com.son.ecommerce.controller.admin;
 
+import com.son.ecommerce.dto.PaginationDto;
 import com.son.ecommerce.entity.Category;
 import org.springframework.ui.Model;
 import com.son.ecommerce.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.List;
 
 
 @Controller
@@ -13,15 +15,25 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private static final int PAGE_SIZE = 10;
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;
     }
 
-    // 1. LIST
+    // 1. LIST with Pagination
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("categories", categoryService.findAll());
+    public String list(@RequestParam(defaultValue = "1") int page, Model model) {
+        List<Category> allCategories = categoryService.findAll();
+        PaginationDto<Category> pagination = new PaginationDto<>(allCategories, page, PAGE_SIZE);
+
+        model.addAttribute("categories", pagination.getContent());
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalItems", pagination.getTotalItems());
+        model.addAttribute("pageSize", PAGE_SIZE);
+        model.addAttribute("displayStartIndex", pagination.getDisplayStartIndex());
+        model.addAttribute("displayEndIndex", pagination.getDisplayEndIndex());
         model.addAttribute("content", "admin/category/list");
         return "admin-layout";
     }

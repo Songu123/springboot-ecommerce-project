@@ -33,7 +33,7 @@
                                 </div>
                                 <div class="col-4">
                                     <h6 th:text="${item.product.name}">Product</h6>
-                                    <p class="text-muted" th:text="'$' + ${#numbers.formatDecimal(item.product.price, 1, 2)}">$99</p>
+                                    <p class="text-muted" th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">99.999₫</p>
                                 </div>
                                 <div class="col-3">
                                     <form th:action="@{/cart/update/{id}(id=${item.product.id})}" method="post">
@@ -46,7 +46,7 @@
                                     </form>
                                 </div>
                                 <div class="col-3 text-end">
-                                    <p class="fw-bold">$<span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 1, 2)}">199</span></p>
+                                    <p class="fw-bold"><span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">199 VNĐ</span></p>
                                     <a th:href="@{/cart/remove/{id}(id=${item.product.id})}" class="btn btn-sm btn-danger">Remove</a>
                                 </div>
                             </div>
@@ -59,16 +59,16 @@
                         <h5>Order Summary</h5>
                         <div class="summary-row">
                             <span>Subtotal:</span>
-                            <span>$<span th:text="${#numbers.formatDecimal(subtotal, 1, 2)}">0</span></span>
+                            <span><span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></span>
                         </div>
                         <div class="summary-row">
                             <span>Shipping:</span>
                             <span th:if="${shippingFee == 0}">FREE</span>
-                            <span th:if="${shippingFee > 0}">$<span th:text="${shippingFee}">10</span></span>
+                            <span th:if="${shippingFee > 0}"><span th:text="${#numbers.formatDecimal(shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">10 VNĐ</span></span>
                         </div>
                         <div class="summary-total">
                             <span>Total:</span>
-                            <span>$<span th:text="${#numbers.formatDecimal(total, 1, 2)}">0</span></span>
+                            <span><span th:text="${#numbers.formatDecimal(total, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></span>
                         </div>
                         <a href="/checkout" class="btn btn-primary w-100 mt-3">Checkout</a>
                     </div>

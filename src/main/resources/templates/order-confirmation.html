@@ -66,22 +66,22 @@
                                         <tr th:each="item : ${order.items}">
                                             <td th:text="${item.product.name}">Product</td>
                                             <td class="text-center" th:text="${item.quantity}">1</td>
-                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(item.price, 1, 2)}">99</span></td>
-                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(item.price * item.quantity, 1, 2)}">99</span></td>
+                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">99 VNĐ</span></td>
+                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">99 VNĐ</span></td>
                                         </tr>
                                     </tbody>
                                     <tfoot>
                                         <tr>
                                             <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(order.totalPrice, 1, 2)}">0</span></td>
+                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></td>
                                         </tr>
                                         <tr>
                                             <td colspan="3" class="text-end"><strong>Shipping:</strong></td>
-                                            <td class="text-end">$<span th:text="${#numbers.formatDecimal(order.shippingFee, 1, 2)}">0</span></td>
+                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></td>
                                         </tr>
                                         <tr class="table-active">
                                             <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                            <td class="text-end"><strong>$<span th:text="${#numbers.formatDecimal(order.finalTotal, 1, 2)}">0</span></strong></td>
+                                            <td class="text-end"><strong><span th:text="${#numbers.formatDecimal(order.finalTotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></strong></td>
                                         </tr>
                                     </tfoot>
                                 </table>

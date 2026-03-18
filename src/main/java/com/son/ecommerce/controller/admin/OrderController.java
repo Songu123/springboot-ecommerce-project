@@ -1,5 +1,6 @@
 package com.son.ecommerce.controller.admin;
 
+import com.son.ecommerce.dto.PaginationDto;
 import com.son.ecommerce.entity.Order;
 import com.son.ecommerce.service.OrderService;
 import com.son.ecommerce.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -20,9 +22,10 @@ public class OrderController {
 
     private final OrderService orderService;
     private final UserService userService;
+    private static final int PAGE_SIZE = 10;
 
     /**
-     * List all orders with optional filters
+     * List all orders with optional filters and pagination
      */
     @GetMapping
     public String list(
@@ -30,29 +33,39 @@ public class OrderController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam(defaultValue = "1") int page,
             Model model) {
 
-        java.util.List<Order> orders;
+        List<Order> allOrders;
 
         if (search != null && !search.trim().isEmpty()) {
-            orders = orderService.searchOrders(search);
+            allOrders = orderService.searchOrders(search);
         } else if (status != null && !status.isEmpty()) {
-            orders = orderService.findByStatus(status);
+            allOrders = orderService.findByStatus(status);
         } else if (startDate != null && endDate != null) {
-            orders = orderService.findByDateRange(startDate, endDate);
+            allOrders = orderService.findByDateRange(startDate, endDate);
         } else {
-            orders = orderService.findAll();
+            allOrders = orderService.findAll();
         }
+
+        // Pagination
+        PaginationDto<Order> pagination = new PaginationDto<>(allOrders, page, PAGE_SIZE);
 
         // Get statistics
         Map<String, Long> statistics = orderService.getOrderStatistics();
         double totalRevenue = orderService.getTotalRevenue();
 
-        model.addAttribute("orders", orders);
+        model.addAttribute("orders", pagination.getContent());
         model.addAttribute("statistics", statistics);
         model.addAttribute("totalRevenue", totalRevenue);
         model.addAttribute("selectedStatus", status);
         model.addAttribute("searchKeyword", search);
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalItems", pagination.getTotalItems());
+        model.addAttribute("pageSize", PAGE_SIZE);
+        model.addAttribute("displayStartIndex", pagination.getDisplayStartIndex());
+        model.addAttribute("displayEndIndex", pagination.getDisplayEndIndex());
         model.addAttribute("content", "admin/order/list");
 
         return "admin-layout";

@@ -1,5 +1,6 @@
 package com.son.ecommerce.controller.admin;
 
+import com.son.ecommerce.dto.PaginationDto;
 import com.son.ecommerce.entity.Role;
 import com.son.ecommerce.entity.User;
 import com.son.ecommerce.service.RoleService;
@@ -19,6 +20,7 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final RoleService roleService;
+    private static final int PAGE_SIZE = 10;
 
     public UserController(UserService userService, PasswordEncoder passwordEncoder, RoleService roleService) {
         this.userService = userService;
@@ -26,10 +28,19 @@ public class UserController {
         this.roleService = roleService;
     }
 
-    // 1. LIST
+    // 1. LIST with Pagination
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("users", userService.findAll());
+    public String list(@RequestParam(defaultValue = "1") int page, Model model) {
+        List<User> allUsers = userService.findAll();
+        PaginationDto<User> pagination = new PaginationDto<>(allUsers, page, PAGE_SIZE);
+
+        model.addAttribute("users", pagination.getContent());
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalItems", pagination.getTotalItems());
+        model.addAttribute("pageSize", PAGE_SIZE);
+        model.addAttribute("displayStartIndex", pagination.getDisplayStartIndex());
+        model.addAttribute("displayEndIndex", pagination.getDisplayEndIndex());
         model.addAttribute("content", "admin/user/list");
         return "admin-layout";
     }

@@ -1,6 +1,13 @@
 server:
   port: 8080
 
+logging:
+  level:
+    org:
+      thymeleaf: DEBUG
+      springframework:
+        web: DEBUG
+
 spring:
   profiles:
     active: dev

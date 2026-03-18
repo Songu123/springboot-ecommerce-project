@@ -34,8 +34,10 @@ public class ProductController {
             @RequestParam(required = false) Double minPrice,
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) String sort,
+            @RequestParam(defaultValue = "1") int page,
             Model model) {
 
+        int pageSize = 12; // Products per page
         List<Product> products = productService.findAll();
 
         // Search by name or description
@@ -93,17 +95,33 @@ public class ProductController {
             products.sort(Comparator.comparing(Product::getId).reversed());
         }
 
+        // Pagination logic
+        int totalProducts = products.size();
+        int totalPages = (int) Math.ceil((double) totalProducts / pageSize);
+
+        // Validate page number
+        if (page < 1) page = 1;
+        if (page > totalPages && totalPages > 0) page = totalPages;
+
+        // Get products for current page
+        int startIndex = (page - 1) * pageSize;
+        int endIndex = Math.min(startIndex + pageSize, totalProducts);
+        List<Product> pageProducts = products.subList(startIndex, endIndex);
+
         // Get all categories for filter dropdown
         List<Category> categories = categoryService.findAll();
 
-        model.addAttribute("products", products);
+        model.addAttribute("products", pageProducts);
         model.addAttribute("categories", categories);
         model.addAttribute("searchKeyword", search);
         model.addAttribute("selectedCategoryId", categoryId);
         model.addAttribute("minPrice", minPrice);
         model.addAttribute("maxPrice", maxPrice);
         model.addAttribute("selectedSort", sort);
-        model.addAttribute("totalProducts", products.size());
+        model.addAttribute("totalProducts", totalProducts);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("pageSize", pageSize);
         model.addAttribute("content", "products");
 
         return "layout/main";

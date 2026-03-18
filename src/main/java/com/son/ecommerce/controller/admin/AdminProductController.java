@@ -1,5 +1,6 @@
 package com.son.ecommerce.controller.admin;
 
+import com.son.ecommerce.dto.PaginationDto;
 import com.son.ecommerce.entity.Product;
 import com.son.ecommerce.service.ProductService;
 import com.son.ecommerce.service.CategoryService;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -20,6 +22,7 @@ public class AdminProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
     private static final String UPLOAD_DIR = "src/main/resources/static/uploads/products/";
+    private static final int PAGE_SIZE = 10;
 
     public AdminProductController(ProductService productService, CategoryService categoryService) {
         this.productService = productService;
@@ -27,8 +30,17 @@ public class AdminProductController {
     }
 
     @GetMapping
-    public String list(Model model) {
-        model.addAttribute("products", productService.findAll());
+    public String list(@RequestParam(defaultValue = "1") int page, Model model) {
+        List<Product> allProducts = productService.findAll();
+        PaginationDto<Product> pagination = new PaginationDto<>(allProducts, page, PAGE_SIZE);
+
+        model.addAttribute("products", pagination.getContent());
+        model.addAttribute("currentPage", pagination.getCurrentPage());
+        model.addAttribute("totalPages", pagination.getTotalPages());
+        model.addAttribute("totalItems", pagination.getTotalItems());
+        model.addAttribute("pageSize", PAGE_SIZE);
+        model.addAttribute("displayStartIndex", pagination.getDisplayStartIndex());
+        model.addAttribute("displayEndIndex", pagination.getDisplayEndIndex());
         model.addAttribute("content", "admin/product/list");
         return "admin-layout";
     }

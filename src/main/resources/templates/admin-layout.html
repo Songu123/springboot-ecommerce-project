@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
-    <title>Admin Dashboard - ClickUp Style</title>
+    <title>Admin Dashboard</title>
 
     <!-- Favicon -->
     <link th:href="@{/assets/images/favicon.ico}" rel="icon" type="image/x-icon"/>
@@ -17,20 +17,22 @@
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
 
+    <!-- Chart.js (load trong <head> để các fragment dùng được) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
     <!-- simplebar CSS -->
     <link th:href="@{/assets/plugins/simplebar/css/simplebar.css}" rel="stylesheet"/>
 
     <!-- Sidebar CSS -->
     <link th:href="@{/assets/css/sidebar-menu.css}" rel="stylesheet"/>
 
-    <!-- Custom Admin CSS - ClickUp Style -->
+    <!-- Custom Admin CSS -->
     <link th:href="@{/assets/css/custom-admin.css}" rel="stylesheet"/>
 
     <!-- Admin Footer CSS -->
     <link th:href="@{/assets/css/admin-footer.css}" rel="stylesheet"/>
 
     <style>
-        /* ClickUp-Inspired Admin Layout */
         :root {
             --primary: #7B68EE;
             --primary-dark: #6A5ACD;
@@ -47,10 +49,10 @@
 
         #wrapper {
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Sidebar Styling */
         #sidebar-wrapper {
             width: var(--sidebar-width);
             background: white;
@@ -62,7 +64,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Main Content Area */
         .content-wrapper {
             margin-left: var(--sidebar-width);
             margin-top: var(--header-height);
@@ -72,7 +73,6 @@
             background: #F9FAFB;
         }
 
-        /* Topbar Header */
         .topbar-nav {
             position: fixed;
             top: 0;
@@ -87,24 +87,21 @@
             padding: 0 2rem;
         }
 
-        /* Hide old theme elements */
         .bg-theme, .bg-theme1, .bg-theme2, .bg-theme3,
         .bg-theme4, .bg-theme5, .bg-theme6,
         .right-sidebar, .back-to-top {
             display: none !important;
         }
 
-        /* Container Fluid */
         .container-fluid {
             max-width: 1400px;
             padding: 0;
         }
 
-        /* Cards */
         .card {
             border: 1px solid #E5E7EB;
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
             margin-bottom: 1.5rem;
         }
 
@@ -114,32 +111,20 @@
             padding: 1.25rem 1.5rem;
         }
 
-        /* Main Wrapper Layout */
-        #wrapper {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Footer Positioning */
         .footer-section {
             margin-top: auto;
         }
 
-        /* Responsive */
         @media (max-width: 768px) {
             #sidebar-wrapper {
                 margin-left: calc(-1 * var(--sidebar-width));
             }
-
             #sidebar-wrapper.active {
                 margin-left: 0;
             }
-
             .content-wrapper {
                 margin-left: 0;
             }
-
             .topbar-nav {
                 left: 0;
             }
@@ -149,29 +134,31 @@
 
 <body>
 
-<!-- Start wrapper-->
 <div id="wrapper">
-    <!--Start sidebar-->
-    <div th:replace="admin/fragments/sidebar :: sidebar"></div>
-    <!--End sidebar-->
 
-    <!--Start topbar-->
-    <div th:replace="admin/fragments/header :: header"></div>
-    <!--End topbar-->
+    <!-- ✅ Fix: thêm ~{} cho tất cả th:replace -->
+    <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
 
-    <!--Start content-->
+    <div th:replace="~{admin/fragments/header :: header}"></div>
+
     <div class="content-wrapper">
         <div class="container-fluid">
-            <div th:insert="~{${content} :: content}"></div>
+            <div th:if="${content != null}"
+                 th:insert="~{${content} :: content}">
+            </div>
         </div>
     </div>
-    <!--End content-->
 
-    <!--Start footer-->
-    <div th:replace="admin/fragments/footer :: footer" class="footer-section"></div>
-    <!--End footer-->
+    <!--
+        ✅ Fix: th:replace không giữ được attribute của thẻ gốc (class="footer-section" bị mất).
+        Dùng th:insert thay thế để giữ thẻ wrapper, HOẶC đặt class vào bên trong fragment.
+        Giải pháp an toàn nhất: bọc trong div cha.
+    -->
+    <div class="footer-section">
+        <div th:replace="~{admin/fragments/footer :: footer}"></div>
+    </div>
+
 </div>
-<!-- End wrapper-->
 
 <!-- Bootstrap 5 JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -179,10 +166,10 @@
 <!-- jQuery -->
 <script th:src="@{/assets/js/jquery.min.js}"></script>
 
-<!-- simplebar js -->
+<!-- simplebar -->
 <script th:src="@{/assets/plugins/simplebar/js/simplebar.js}"></script>
 
-<!-- sidebar-menu js -->
+<!-- sidebar-menu -->
 <script th:src="@{/assets/js/sidebar-menu.js}"></script>
 
 <!-- Custom scripts -->
@@ -190,5 +177,3 @@
 
 </body>
 </html>
-
-

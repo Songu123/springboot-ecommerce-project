@@ -1,5 +1,6 @@
 package com.son.ecommerce.service;
 
+import com.son.ecommerce.dto.AuthResponse;
 import com.son.ecommerce.dto.LoginRequest;
 import com.son.ecommerce.dto.RegisterRequest;
 import com.son.ecommerce.entity.Role;
@@ -23,7 +24,10 @@ public class AuthService {
     @Autowired
     private RoleRepository roleRepository;
 
-    private  final PasswordEncoder passwordEncoder;
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -31,7 +35,7 @@ public class AuthService {
     public AuthService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
-        this.passwordEncoder =  passwordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public void register(RegisterRequest request) {
@@ -58,8 +62,25 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    // New login method that returns AuthResponse with both tokens
+    public AuthResponse loginWithTokens(LoginRequest request){
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email"));
+
+        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+            throw new RuntimeException("Invalid password");
+        }
+
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        String refreshToken = refreshTokenService.generateRefreshToken(user.getId());
+
+        return new AuthResponse(accessToken, refreshToken);
+    }
+
+    // Keep old login method for backward compatibility
     public String login(LoginRequest request){
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new RuntimeException("Invalid username"));
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("Invalid email"));
 
         if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
@@ -68,5 +89,7 @@ public class AuthService {
         return jwtUtil.generateToken(user.getUsername());
     }
 }
+
+
 
 

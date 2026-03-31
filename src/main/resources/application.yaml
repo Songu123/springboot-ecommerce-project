@@ -23,7 +23,7 @@ spring:
     name: son
 
   datasource:
-    url: jdbc:mysql://localhost:3306/ecommerce_db1
+    url: jdbc:mysql://localhost:3306/ecommerce-db
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -52,3 +52,16 @@ spring:
         period: 0
       chain:
         cache: false
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: seancoding275@gmail.com   # đổi thành email của bạn
+    password: yugxrhdddpflcilf          # đổi thành mật khẩu/app password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com

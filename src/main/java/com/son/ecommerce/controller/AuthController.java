@@ -1,5 +1,6 @@
 package com.son.ecommerce.controller;
 
+import com.son.ecommerce.dto.LoginRequest;
 import com.son.ecommerce.dto.RegisterRequest;
 import com.son.ecommerce.service.AuthService;
 import org.springframework.stereotype.Controller;
@@ -46,6 +47,25 @@ public class AuthController {
     @GetMapping("/login")
     public String login() {
         return "login";
+    }
+
+    @PostMapping("/login")
+    public String loginUser(
+            @RequestParam String email,
+            @RequestParam String password,
+            Model model) {
+        try {
+            LoginRequest request = new LoginRequest();
+            request.setEmail(email);
+            request.setPassword(password);
+            String token = authService.login(request);
+            // Store token in session or return it to client
+            model.addAttribute("token", token);
+            return "redirect:/home";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "login";
+        }
     }
 
     @GetMapping("/home")

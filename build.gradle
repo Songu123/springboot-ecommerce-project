@@ -41,8 +41,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
-	// Web + REST API
+	// Web + REST API + WebSocket
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 	// JPA + Hibernate
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

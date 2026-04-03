@@ -2,12 +2,12 @@ version: "3.9"
 
 services:
   mysql:
-    image: mysql:8
-    container_name: mysql-db
+    image: mysql:8.0
+    container_name: son-mysql-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ecommerce
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ecommerce}
       MYSQL_USER: ${MYSQL_USER:-appuser}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-apppass123}
       TZ: Asia/Ho_Chi_Minh
@@ -17,21 +17,31 @@ services:
       - mysql_data:/var/lib/mysql
       - ./db/init:/docker-entrypoint-initdb.d
     networks:
-      - app-network
+      - son-network
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-123456}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-root123}"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
-    command: --default-authentication-plugin=mysql_native_password --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    command: >
+      --default-authentication-plugin=mysql_native_password
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --max_connections=500
+      --max_allowed_packet=256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: son-springboot:latest
-    container_name: springboot-app
+    image: son-ecommerce:latest
+    container_name: son-springboot-app
     restart: unless-stopped
     ports:
       - "${APP_PORT:-8080}:8080"
@@ -40,17 +50,23 @@ services:
         condition: service_healthy
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-ecommerce}?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true
+      SPRING_APPLICATION_NAME: ecommerce-api
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-ecommerce}?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true&autoReconnect=true&maxReconnects=5
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-appuser}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:-apppass123}
+      SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE: 20
+      SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE: 5
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${DDL_AUTO:-update}
+      SPRING_JPA_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
       SPRING_JPA_SHOW_SQL: ${SHOW_SQL:-false}
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: ${FORMAT_SQL:-false}
+      SERVER_PORT: 8080
       TZ: Asia/Ho_Chi_Minh
-      JAVA_OPTS: "-Xmx512m -Xms256m"
+      JAVA_OPTS: "-Xmx512m -Xms256m -XX:+UseG1GC -XX:MaxGCPauseMillis=200"
     networks:
-      - app-network
+      - son-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/auth/test"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -63,9 +79,14 @@ services:
         reservations:
           cpus: '0.5'
           memory: 512M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
-  app-network:
+  son-network:
     driver: bridge
 
 volumes:

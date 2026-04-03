@@ -48,7 +48,8 @@ public class CartServiceImpl implements CartService {
                     cart.setUser(user);
                     cart.setCreatedAt(LocalDateTime.now());
                     cart.setUpdatedAt(LocalDateTime.now());
-                    return cartRepository.save(cart);
+                    // Use saveAndFlush to ensure cart_id is generated immediately
+                    return cartRepository.saveAndFlush(cart);
                 });
     }
 
@@ -73,17 +74,38 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartItemEntity addItemToCart(Long userId, Long productId, int quantity) {
+        // Validate inputs
+        if (userId == null || userId <= 0) {
+            throw new RuntimeException("Invalid user ID: " + userId);
+        }
+        if (productId == null || productId <= 0) {
+            throw new RuntimeException("Invalid product ID: " + productId);
+        }
+        if (quantity <= 0) {
+            throw new RuntimeException("Quantity must be greater than 0");
+        }
+
+        // Get or create cart for user
         Cart cart = getOrCreateCartForUser(userId);
+
+        // Verify cart was created and has ID
+        if (cart == null || cart.getId() == null) {
+            throw new RuntimeException("Failed to create or retrieve cart for user: " + userId);
+        }
+
+        // Find product
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 
         // Check if item already exists in cart
-        CartItemEntity cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
+        CartItemEntity existingCartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
                 .orElse(null);
 
-        if (cartItem != null) {
+        CartItemEntity cartItem;
+        if (existingCartItem != null) {
             // Update quantity if item exists
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            existingCartItem.setQuantity(existingCartItem.getQuantity() + quantity);
+            cartItem = existingCartItem;
         } else {
             // Create new cart item
             cartItem = new CartItemEntity();
@@ -93,9 +115,12 @@ public class CartServiceImpl implements CartService {
             cartItem.setAddedAt(LocalDateTime.now());
         }
 
-        CartItemEntity savedItem = cartItemRepository.save(cartItem);
+        // Save cart item and flush to database immediately
+        CartItemEntity savedItem = cartItemRepository.saveAndFlush(cartItem);
+
+        // Update cart timestamp
         cart.setUpdatedAt(LocalDateTime.now());
-        cartRepository.save(cart);
+        cartRepository.saveAndFlush(cart);
 
         return savedItem;
     }
@@ -103,22 +128,31 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public CartItemEntity updateCartItemQuantity(Long userId, Long productId, int quantity) {
+        // Validate inputs
+        if (userId == null || userId <= 0) {
+            throw new RuntimeException("Invalid user ID: " + userId);
+        }
+        if (productId == null || productId <= 0) {
+            throw new RuntimeException("Invalid product ID: " + productId);
+        }
+
         Cart cart = findByUserId(userId);
+
         CartItemEntity cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+                .orElseThrow(() -> new RuntimeException("Cart item not found for product: " + productId));
 
         if (quantity <= 0) {
             cartItemRepository.delete(cartItem);
             cart.setUpdatedAt(LocalDateTime.now());
-            cartRepository.save(cart);
+            cartRepository.saveAndFlush(cart);
             return null;
         }
 
         cartItem.setQuantity(quantity);
-        CartItemEntity savedItem = cartItemRepository.save(cartItem);
+        CartItemEntity savedItem = cartItemRepository.saveAndFlush(cartItem);
 
         cart.setUpdatedAt(LocalDateTime.now());
-        cartRepository.save(cart);
+        cartRepository.saveAndFlush(cart);
 
         return savedItem;
     }
@@ -126,26 +160,46 @@ public class CartServiceImpl implements CartService {
     @Override
     @Transactional
     public void removeItemFromCart(Long userId, Long productId) {
+        // Validate inputs
+        if (userId == null || userId <= 0) {
+            throw new RuntimeException("Invalid user ID: " + userId);
+        }
+        if (productId == null || productId <= 0) {
+            throw new RuntimeException("Invalid product ID: " + productId);
+        }
+
         Cart cart = findByUserId(userId);
         CartItemEntity cartItem = cartItemRepository.findByCartIdAndProductId(cart.getId(), productId)
-                .orElseThrow(() -> new RuntimeException("Cart item not found"));
+                .orElseThrow(() -> new RuntimeException("Cart item not found for product: " + productId));
 
         cartItemRepository.delete(cartItem);
+
         cart.setUpdatedAt(LocalDateTime.now());
-        cartRepository.save(cart);
+        cartRepository.saveAndFlush(cart);
     }
 
     @Override
     @Transactional
     public void clearCart(Long userId) {
+        // Validate input
+        if (userId == null || userId <= 0) {
+            throw new RuntimeException("Invalid user ID: " + userId);
+        }
+
         Cart cart = findByUserId(userId);
         cartItemRepository.deleteByCartId(cart.getId());
+
         cart.setUpdatedAt(LocalDateTime.now());
-        cartRepository.save(cart);
+        cartRepository.saveAndFlush(cart);
     }
 
     @Override
     public List<CartItemEntity> getCartItems(Long userId) {
+        // Validate input
+        if (userId == null || userId <= 0) {
+            throw new RuntimeException("Invalid user ID: " + userId);
+        }
+
         Cart cart = getOrCreateCartForUser(userId);
         return cartItemRepository.findByCartId(cart.getId());
     }

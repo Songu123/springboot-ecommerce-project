@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<body>
+<div th:fragment="sidebar" class="profile-sidebar animate-up">
+
+    <!-- User Summary -->
+    <div class="profile-sidebar-header">
+        <div class="profile-avatar-wrap">
+            <div class="profile-avatar-circle">
+                <i class="fas fa-user"></i>
+            </div>
+        </div>
+        <h5 class="profile-sidebar-name" th:text="${user.fullName} ?: ${user.username}">User Name</h5>
+        <p class="profile-sidebar-email" th:text="${user.email}">user@example.com</p>
+    </div>
+
+    <!-- Menu Links -->
+    <nav class="profile-sidebar-nav">
+        <a th:href="@{/profile}"
+           class="profile-nav-item"
+           th:classappend="${content == 'profile/view'} ? ' active' : ''">
+            <span class="profile-nav-icon"><i class="fas fa-user-circle"></i></span>
+            <span>Tài khoản của tôi</span>
+            <i class="fas fa-chevron-right profile-nav-arrow"></i>
+        </a>
+
+        <a th:href="@{/orders}"
+           class="profile-nav-item"
+           th:classappend="${content == 'profile/orders' or content == 'order-confirmation'} ? ' active' : ''">
+            <span class="profile-nav-icon"><i class="fas fa-shopping-bag"></i></span>
+            <span>Lịch sử đơn hàng</span>
+            <i class="fas fa-chevron-right profile-nav-arrow"></i>
+        </a>
+
+        <a th:href="@{/profile/edit}"
+           class="profile-nav-item"
+           th:classappend="${content == 'profile/edit'} ? ' active' : ''">
+            <span class="profile-nav-icon"><i class="fas fa-user-edit"></i></span>
+            <span>Sửa thông tin</span>
+            <i class="fas fa-chevron-right profile-nav-arrow"></i>
+        </a>
+
+        <a th:href="@{/profile/change-password}"
+           class="profile-nav-item"
+           th:classappend="${content == 'profile/change-password'} ? ' active' : ''">
+            <span class="profile-nav-icon"><i class="fas fa-shield-alt"></i></span>
+            <span>Bảo mật &amp; Mật khẩu</span>
+            <i class="fas fa-chevron-right profile-nav-arrow"></i>
+        </a>
+
+        <div class="profile-nav-divider"></div>
+
+        <form th:action="@{/logout}" method="post" style="margin:0">
+            <button type="submit" class="profile-nav-item profile-nav-logout">
+                <span class="profile-nav-icon"><i class="fas fa-power-off"></i></span>
+                <span>Đăng xuất</span>
+            </button>
+        </form>
+    </nav>
+
+    <style>
+        .profile-sidebar {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-sidebar-header {
+            padding: 28px 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg-soft);
+        }
+
+        .profile-avatar-wrap {
+            display: flex; justify-content: center; margin-bottom: 12px;
+        }
+
+        .profile-avatar-circle {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            background: var(--clr-primary-glow);
+            color: var(--clr-primary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            border: 3px solid var(--clr-primary);
+            box-shadow: 0 0 0 4px var(--clr-primary-glow);
+        }
+
+        .profile-sidebar-name {
+            font-weight: 800; font-size: .95rem;
+            color: var(--txt); margin: 0 0 4px;
+        }
+        .profile-sidebar-email {
+            font-size: .78rem; color: var(--txt-muted); margin: 0;
+        }
+
+        .profile-sidebar-nav {
+            padding: 8px;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+
+        .profile-nav-item {
+            display: flex; align-items: center; gap: 10px;
+            padding: 11px 14px;
+            border-radius: var(--radius-sm);
+            color: var(--txt-muted);
+            font-size: .875rem; font-weight: 500;
+            text-decoration: none;
+            transition: all var(--transition);
+            background: none; border: none; cursor: pointer; width: 100%; text-align: left;
+        }
+
+        .profile-nav-item:hover {
+            background: var(--clr-primary-glow);
+            color: var(--clr-primary);
+        }
+
+        .profile-nav-item.active {
+            background: var(--clr-primary-glow);
+            color: var(--clr-primary);
+            font-weight: 700;
+            border-left: 3px solid var(--clr-primary);
+        }
+
+        .profile-nav-icon {
+            width: 28px; height: 28px;
+            border-radius: 8px;
+            background: var(--bg-soft);
+            display: flex; align-items: center; justify-content: center;
+            font-size: .82rem;
+            flex-shrink: 0;
+            transition: all var(--transition);
+        }
+
+        .profile-nav-item:hover .profile-nav-icon,
+        .profile-nav-item.active .profile-nav-icon {
+            background: var(--clr-primary);
+            color: white;
+        }
+
+        .profile-nav-arrow {
+            margin-left: auto;
+            font-size: .65rem;
+            opacity: .4;
+            transition: all var(--transition);
+        }
+
+        .profile-nav-item:hover .profile-nav-arrow,
+        .profile-nav-item.active .profile-nav-arrow {
+            opacity: 1;
+            transform: translateX(2px);
+        }
+
+        .profile-nav-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 4px 0;
+        }
+
+        .profile-nav-logout {
+            color: var(--clr-danger);
+        }
+        .profile-nav-logout:hover {
+            background: rgba(237,181,191,.15);
+            color: #8B3A4A;
+        }
+        .profile-nav-logout .profile-nav-icon {
+            color: var(--clr-danger);
+        }
+        .profile-nav-logout:hover .profile-nav-icon {
+            background: rgba(237,181,191,.3);
+            color: #8B3A4A;
+        }
+    </style>
+</div>
+</body>
+</html>

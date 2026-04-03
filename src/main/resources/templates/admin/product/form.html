@@ -1,408 +1,162 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-  <title>Product Form</title>
-</head>
+<head><title>Form Sản phẩm</title></head>
 <body>
 <div th:fragment="content">
-  <div class="container-fluid">
-    <!-- Breadcrumb -->
-    <nav aria-label="breadcrumb" class="mb-3">
-      <ol class="breadcrumb bg-transparent p-0">
-        <li class="breadcrumb-item">
-          <a th:href="@{/admin/dashboard}">
-            <i class="fas fa-home"></i> Dashboard
-          </a>
-        </li>
-        <li class="breadcrumb-item">
-          <a th:href="@{/admin/products}">Products</a>
-        </li>
-        <li class="breadcrumb-item active" th:text="${product.id != null ? 'Edit' : 'Create'}">Form</li>
-      </ol>
-    </nav>
 
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h3 mb-1 text-gray-800">
-          <i class="fas fa-box text-primary"></i>
-          <span th:text="${product.id != null ? 'Chỉnh sửa sản phẩm' : 'Thêm sản phẩm mới'}">Form</span>
-        </h1>
-        <p class="text-muted small mb-0">
-          <span th:if="${product.id != null}">Cập nhật thông tin sản phẩm</span>
-          <span th:unless="${product.id != null}">Tạo sản phẩm mới trong hệ thống</span>
-        </p>
-      </div>
-      <div>
-        <a th:href="@{/admin/products}" class="btn btn-outline-secondary">
-          <i class="fas fa-arrow-left"></i> Quay lại
-        </a>
-      </div>
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title" th:text="${product.id!=null}?'Chỉnh sửa sản phẩm':'Thêm sản phẩm mới'">Form</h1>
+            <ul class="breadcrumb">
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="/admin/products">Sản phẩm</a></li>
+                <li><span class="bc-active" th:text="${product.id!=null}?'Chỉnh sửa':'Thêm mới'">Form</span></li>
+            </ul>
+        </div>
+        <a href="/admin/products" class="btn-a btn-ghost"><i class="fas fa-arrow-left"></i> Quay lại</a>
     </div>
 
-    <!-- Form Card -->
-    <div class="row">
-      <div class="col-lg-8">
-        <div class="card shadow-lg border-0">
-          <div class="card-header bg-gradient-primary text-white py-3">
-            <h6 class="m-0 font-weight-bold">
-              <i class="fas fa-edit"></i> Thông tin sản phẩm
-            </h6>
-          </div>
+    <form th:action="@{/admin/products/save}" method="post" enctype="multipart/form-data" id="productForm">
+        <input type="hidden" name="id" th:value="${product.id}">
+        <input type="hidden" name="image" id="imageUrlInput" th:value="${product.image}">
 
-          <div class="card-body p-4">
-            <form th:action="@{/admin/products/save}"
-                  th:object="${product}"
-                  method="post"
-                  id="productForm"
-                  enctype="multipart/form-data">
-
-              <input type="hidden" name="id" th:value="${product.id}">
-
-              <!-- Product Name -->
-              <div class="form-group mb-4">
-                <label class="form-label font-weight-bold">
-                  <i class="fas fa-tag text-primary"></i> Tên sản phẩm
-                  <span class="text-danger">*</span>
-                </label>
-                <input type="text"
-                       name="name"
-                       class="form-control form-control-lg"
-                       th:value="${product.name}"
-                       placeholder="Nhập tên sản phẩm"
-                       required
-                       autofocus>
-                <small class="form-text text-muted">
-                  <i class="fas fa-info-circle"></i> Tên hiển thị của sản phẩm trên website
-                </small>
-              </div>
-
-              <div class="row">
-                <!-- Price -->
-                <div class="col-md-6">
-                  <div class="form-group mb-4">
-                    <label class="form-label font-weight-bold">
-                      <i class="fas fa-dollar-sign text-success"></i> Giá bán (USD)
-                      <span class="text-danger">*</span>
-                    </label>
-                    <div class="input-group input-group-lg">
-                      <span class="input-group-text">$</span>
-                      <input type="number"
-                             name="price"
-                             step="0.01"
-                             min="0"
-                             class="form-control"
-                             th:value="${product.price}"
-                             placeholder="0.00"
-                             required>
+        <div class="row g-4">
+            <!-- LEFT col -->
+            <div class="col-lg-8">
+                <!-- Basic info -->
+                <div class="adm-card mb-4">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-info-circle" style="color:var(--adm-primary)"></i> Thông tin cơ bản</span>
                     </div>
-                    <small class="form-text text-muted">
-                      <i class="fas fa-info-circle"></i> Giá bán lẻ của sản phẩm
-                    </small>
-                  </div>
+                    <div class="adm-card-body">
+                        <div class="form-group">
+                            <label class="form-label">Tên sản phẩm <span style="color:var(--adm-danger)">*</span></label>
+                            <input type="text" name="name" class="form-control" placeholder="Nhập tên sản phẩm..." required th:value="${product.name}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Mô tả sản phẩm</label>
+                            <textarea name="description" class="form-control" rows="5" placeholder="Mô tả chi tiết..." th:text="${product.description}"></textarea>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Giá bán (₫) <span style="color:var(--adm-danger)">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-tag icon"></i>
+                                        <input type="number" name="price" class="form-control" placeholder="0" min="0" step="1000" required th:value="${product.price}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <!-- Entity field is 'quantity' not 'stock' -->
+                                    <label class="form-label">Số lượng tồn kho</label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-boxes icon"></i>
+                                        <input type="number" name="quantity" class="form-control" placeholder="0" min="0" th:value="${product.quantity}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Quantity -->
-                <div class="col-md-6">
-                  <div class="form-group mb-4">
-                    <label class="form-label font-weight-bold">
-                      <i class="fas fa-boxes text-warning"></i> Số lượng tồn kho
-                      <span class="text-danger">*</span>
-                    </label>
-                    <input type="number"
-                           name="quantity"
-                           min="0"
-                           class="form-control form-control-lg"
-                           th:value="${product.quantity}"
-                           placeholder="0"
-                           required>
-                    <small class="form-text text-muted">
-                      <i class="fas fa-info-circle"></i> Số lượng sản phẩm có sẵn
-                    </small>
-                  </div>
+                <!-- Image -->
+                <div class="adm-card">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-image" style="color:var(--adm-primary)"></i> Hình ảnh sản phẩm</span>
+                    </div>
+                    <div class="adm-card-body">
+                        <div class="row g-3 align-items-start">
+                            <div class="col-auto">
+                                <div class="img-upload-box" onclick="document.getElementById('imageFileInput').click()">
+                                    <img id="imgPreview"
+                                         th:src="${product.image != null and !#strings.isEmpty(product.image)} ? ${product.image} : '/images/placeholder.png'"
+                                         alt="Preview" onerror="this.src='/images/placeholder.png'">
+                                </div>
+                                <p class="form-hint text-center" style="margin-top:5px;">Nhấn để đổi ảnh</p>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label">URL Hình ảnh</label>
+                                    <input type="text" id="imageUrlField" class="form-control" placeholder="https://..." th:value="${product.image}" oninput="updateImageFromUrl(this.value)">
+                                    <p class="form-hint">Nhập URL trực tiếp hoặc upload file bên dưới</p>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Upload file ảnh</label>
+                                    <input type="file" id="imageFileInput" name="imageFile" accept="image/*" class="form-control" onchange="previewUpload(event)">
+                                    <p class="form-hint">JPG, PNG, WebP — tối đa 5MB</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
+            </div>
 
-              <!-- Category -->
-              <div class="form-group mb-4">
-                <label class="form-label font-weight-bold">
-                  <i class="fas fa-folder text-info"></i> Danh mục
-                  <span class="text-danger">*</span>
-                </label>
-                <select name="category.id" class="form-control form-control-lg" required>
-                  <option value="" disabled th:selected="${product.category == null}">
-                    -- Chọn danh mục sản phẩm --
-                  </option>
-                  <option th:each="c : ${categories}"
-                          th:value="${c.id}"
-                          th:text="${c.name}"
-                          th:selected="${product.category != null and c.id == product.category.id}">
-                  </option>
-                </select>
-                <small class="form-text text-muted">
-                  <i class="fas fa-info-circle"></i> Phân loại sản phẩm
-                </small>
-              </div>
-
-              <!-- Image Upload and Preview -->
-              <div class="form-group mb-4">
-                <label class="form-label font-weight-bold">
-                  <i class="fas fa-image text-secondary"></i> Ảnh sản phẩm
-                </label>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-label small text-muted">
-                        <i class="fas fa-upload"></i> Upload ảnh mới
-                      </label>
-                      <input type="file"
-                             id="imageFile"
-                             name="imageFile"
-                             class="form-control"
-                             accept="image/*"
-                             onchange="previewImage(this)">
-                      <small class="form-text text-muted d-block mt-2">
-                        <i class="fas fa-info-circle"></i> Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WebP)
-                      </small>
+            <!-- RIGHT col -->
+            <div class="col-lg-4">
+                <div class="adm-card mb-4">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-cog" style="color:var(--adm-primary)"></i> Phân loại</span>
                     </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="form-group">
-                      <label class="form-label small text-muted">
-                        <i class="fas fa-link"></i> Hoặc nhập URL
-                      </label>
-                      <input type="url"
-                             name="image"
-                             class="form-control"
-                             th:value="${product.image}"
-                             placeholder="https://example.com/image.jpg">
-                      <small class="form-text text-muted d-block mt-2">
-                        <i class="fas fa-info-circle"></i> Nếu chỉ nhập URL, ảnh sẽ được lấy từ đường dẫn này
-                      </small>
+                    <div class="adm-card-body">
+                        <div class="form-group">
+                            <label class="form-label">Danh mục <span style="color:var(--adm-danger)">*</span></label>
+                            <select name="category.id" class="form-control" required>
+                                <option value="">-- Chọn danh mục --</option>
+                                <option th:each="c : ${categories}"
+                                        th:value="${c.id}"
+                                        th:text="${c.name}"
+                                        th:selected="${product.category != null and product.category.id == c.id}">Cat</option>
+                            </select>
+                            <p class="form-hint">Bắt buộc chọn danh mục</p>
+                        </div>
                     </div>
-                  </div>
                 </div>
 
-                <!-- Image Preview -->
-                <div class="mt-4">
-                  <label class="form-label small text-muted">
-                    <i class="fas fa-eye"></i> Preview ảnh
-                  </label>
-                  <div class="card border-0 bg-light p-3">
-                    <div id="imagePreviewContainer" class="text-center" style="min-height: 250px; display: flex; align-items: center; justify-content: center;">
-                      <div th:if="${product.image != null && !#strings.isEmpty(product.image)}">
-                        <img id="previewImage"
-                             th:src="${product.image}"
-                             alt="Product Preview"
-                             class="img-fluid"
-                             style="max-width: 300px; max-height: 300px; object-fit: contain;"
-                             onerror="showNoImage()">
-                      </div>
-                      <div th:unless="${product.image != null && !#strings.isEmpty(product.image)}" id="noImagePlaceholder">
-                        <i class="fas fa-image fa-4x text-muted mb-3 d-block"></i>
-                        <p class="text-muted">Chưa có ảnh, hãy upload hoặc nhập URL</p>
-                      </div>
+                <!-- Info card (edit only) -->
+                <div class="adm-card mb-4" th:if="${product.id != null}">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-info-circle" style="color:var(--adm-primary)"></i> Thông tin</span>
                     </div>
-                  </div>
+                    <div class="adm-card-body">
+                        <div class="detail-row"><span class="detail-row-label">ID</span><strong th:text="${product.id}">0</strong></div>
+                        <div class="detail-row"><span class="detail-row-label">Danh mục</span><strong th:text="${product.category?.name}?:'—'">—</strong></div>
+                        <div class="detail-row"><span class="detail-row-label">Giá hiện tại</span><strong style="color:var(--adm-primary);" th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')}+'₫'">0₫</strong></div>
+                        <div class="detail-row"><span class="detail-row-label">Tồn kho</span><strong th:text="${product.quantity}+' cái'">0 cái</strong></div>
+                    </div>
                 </div>
-              </div>
 
-              <script>
-                function previewImage(input) {
-                  const preview = document.getElementById('previewImage');
-                  const container = document.getElementById('imagePreviewContainer');
-                  const placeholder = document.getElementById('noImagePlaceholder');
-
-                  if (input.files && input.files[0]) {
-                    const reader = new FileReader();
-
-                    reader.onload = function(e) {
-                      let img = document.getElementById('previewImage');
-                      if (!img) {
-                        img = document.createElement('img');
-                        img.id = 'previewImage';
-                        img.className = 'img-fluid';
-                        img.style.cssText = 'max-width: 300px; max-height: 300px; object-fit: contain;';
-                        container.innerHTML = '';
-                        container.appendChild(img);
-                      }
-                      img.src = e.target.result;
-                    };
-
-                    reader.readAsDataURL(input.files[0]);
-                  }
-                }
-
-                function showNoImage() {
-                  const container = document.getElementById('imagePreviewContainer');
-                  const placeholder = document.getElementById('noImagePlaceholder');
-                  if (placeholder) {
-                    container.innerHTML = placeholder.innerHTML;
-                  }
-                }
-              </script>
-
-              <!-- Description -->
-              <div class="form-group mb-4">
-                <label class="form-label font-weight-bold">
-                  <i class="fas fa-align-left text-secondary"></i> Mô tả sản phẩm
-                </label>
-                <textarea name="description"
-                          class="form-control"
-                          rows="6"
-                          th:text="${product.description}"
-                          placeholder="Nhập mô tả chi tiết về sản phẩm..."></textarea>
-                <small class="form-text text-muted">
-                  <i class="fas fa-info-circle"></i> Mô tả chi tiết về đặc điểm, tính năng của sản phẩm
-                </small>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="d-flex justify-content-between align-items-center mt-4 pt-3 border-top">
-                <a th:href="@{/admin/products}" class="btn btn-outline-secondary btn-lg">
-                  <i class="fas fa-times"></i> Hủy bỏ
-                </a>
-                <button type="submit" class="btn btn-primary btn-lg px-5">
-                  <i class="fas fa-save"></i>
-                  <span th:text="${product.id != null ? 'Cập nhật' : 'Tạo mới'}">Lưu</span>
-                </button>
-              </div>
-            </form>
-          </div>
+                <div class="adm-card">
+                    <div class="adm-card-body">
+                        <button type="submit" class="btn-a btn-primary btn-lg w-full">
+                            <i class="fas fa-save"></i>
+                            <span th:text="${product.id!=null}?'Lưu thay đổi':'Tạo sản phẩm'">Lưu</span>
+                        </button>
+                        <a href="/admin/products" class="btn-a btn-ghost btn-lg w-full mt-2 d-flex justify-content-center">Hủy bỏ</a>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </form>
 
-      <!-- Info Panel -->
-      <div class="col-lg-4">
-        <div class="card shadow border-0 mb-3">
-          <div class="card-header bg-light py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-              <i class="fas fa-info-circle"></i> Hướng dẫn
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="mb-3">
-              <h6 class="font-weight-bold">
-                <i class="fas fa-check-circle text-success"></i> Thông tin cơ bản
-              </h6>
-              <p class="small text-muted mb-0">
-                Điền đầy đủ tên, giá, số lượng và danh mục cho sản phẩm.
-                Đây là những thông tin bắt buộc.
-              </p>
-            </div>
-
-            <hr>
-
-            <div class="mb-3">
-              <h6 class="font-weight-bold">
-                <i class="fas fa-check-circle text-success"></i> Hình ảnh
-              </h6>
-              <p class="small text-muted mb-0">
-                Nhập URL đầy đủ của hình ảnh sản phẩm. Ảnh nên có kích thước
-                ít nhất 800x800px để hiển thị đẹp.
-              </p>
-            </div>
-
-            <hr>
-
-            <div>
-              <h6 class="font-weight-bold">
-                <i class="fas fa-lightbulb text-warning"></i> Lưu ý
-              </h6>
-              <ul class="small text-muted mb-0 pl-3">
-                <li>Tên sản phẩm nên ngắn gọn, dễ hiểu</li>
-                <li>Giá nhập theo định dạng số thập phân</li>
-                <li>Số lượng = 0 sẽ hiển thị "Hết hàng"</li>
-                <li>Mô tả chi tiết giúp khách hàng hiểu rõ hơn</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="card shadow border-0" th:if="${product.id != null}">
-          <div class="card-header bg-light py-3">
-            <h6 class="m-0 font-weight-bold text-primary">
-              <i class="fas fa-chart-bar"></i> Thông tin
-            </h6>
-          </div>
-          <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="text-muted small">ID:</span>
-              <span class="badge badge-secondary" th:text="${product.id}">1</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-2">
-              <span class="text-muted small">Trạng thái:</span>
-              <span th:if="${product.quantity > 0}" class="badge badge-success">In Stock</span>
-              <span th:unless="${product.quantity > 0}" class="badge badge-danger">Out of Stock</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center" th:if="${product.category != null}">
-              <span class="text-muted small">Danh mục:</span>
-              <span class="badge badge-info" th:text="${product.category.name}">Category</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Form validation script -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.getElementById('productForm');
-      const priceInput = document.querySelector('input[name="price"]');
-      const quantityInput = document.querySelector('input[name="quantity"]');
-      const nameInput = document.querySelector('input[name="name"]');
-
-      // Real-time price formatting
-      priceInput.addEventListener('input', function() {
-        if (this.value < 0) this.value = 0;
-      });
-
-      // Real-time quantity validation
-      quantityInput.addEventListener('input', function() {
-        if (this.value < 0) this.value = 0;
-      });
-
-      // Form validation
-      form.addEventListener('submit', function(e) {
-        const name = nameInput.value.trim();
-        const price = parseFloat(priceInput.value);
-        const quantity = parseInt(quantityInput.value);
-        const category = document.querySelector('select[name="category.id"]').value;
-
-        if (!name) {
-          e.preventDefault();
-          alert('⚠️ Vui lòng nhập tên sản phẩm!');
-          nameInput.focus();
-          return false;
+    <script>
+        function previewUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = ev => {
+                document.getElementById('imgPreview').src = ev.target.result;
+                document.getElementById('imageUrlInput').value = '';
+                document.getElementById('imageUrlField').value = '';
+            };
+            reader.readAsDataURL(file);
         }
-
-        if (isNaN(price) || price < 0) {
-          e.preventDefault();
-          alert('⚠️ Giá sản phẩm không hợp lệ!');
-          priceInput.focus();
-          return false;
+        function updateImageFromUrl(url) {
+            document.getElementById('imageUrlInput').value = url;
+            if (url) document.getElementById('imgPreview').src = url;
         }
-
-        if (isNaN(quantity) || quantity < 0) {
-          e.preventDefault();
-          alert('⚠️ Số lượng không hợp lệ!');
-          quantityInput.focus();
-          return false;
-        }
-
-        if (!category) {
-          e.preventDefault();
-          alert('⚠️ Vui lòng chọn danh mục!');
-          return false;
-        }
-      });
-    });
-  </script>
+    </script>
 </div>
 </body>
 </html>
-

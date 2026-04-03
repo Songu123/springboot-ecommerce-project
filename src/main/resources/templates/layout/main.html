@@ -1,438 +1,236 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      lang="en">
+      lang="vi" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title th:text="${title} ?: 'LifestyleShop - Elevate Your Lifestyle'">LifestyleShop</title>
+    <meta name="description" content="LifestyleShop - Premium lifestyle products at great prices">
 
-    <!-- Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-            color: #1f2937;
-            line-height: 1.6;
-            background: #F9FAFB;
-        }
-
-        /* Header Styles - ClickUp Inspired */
-        .main-header {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid #E5E7EB;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            color: #1f2937;
-            font-weight: 600;
-            font-size: 1.5rem;
-            transition: all 0.2s;
-        }
-
-        .logo:hover {
-            color: #2563EB;
-        }
-
-        .logo-icon {
-            background: #2563EB;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .search-bar {
-            max-width: 500px;
-            position: relative;
-        }
-
-        .search-bar input {
-            padding: 10px 40px 10px 16px;
-            border: 1px solid #E5E7EB;
-            border-radius: 10px;
-            width: 100%;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-            background: #F9FAFB;
-        }
-
-        .search-bar input:focus {
-            outline: none;
-            border-color: #2563EB;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-            background: white;
-        }
-
-        .search-bar input::placeholder {
-            color: #9CA3AF;
-        }
-
-        .search-bar i {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-        }
-
-        .nav-links {
-            list-style: none;
-            display: flex;
-            gap: 24px;
-            margin: 0;
-            padding: 0;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #4B5563;
-            font-weight: 500;
-            font-size: 0.9375rem;
-            transition: color 0.2s;
-            padding: 0.5rem 0;
-            border-bottom: 2px solid transparent;
-        }
-
-        .nav-links a:hover {
-            color: #2563EB;
-            border-bottom-color: #2563EB;
-        }
-
-        .header-icons {
-            display: flex;
-            gap: 16px;
-            align-items: center;
-        }
-
-        .header-icon {
-            position: relative;
-            color: #4B5563;
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            padding: 0.5rem;
-            border-radius: 8px;
-        }
-
-        .header-icon:hover {
-            color: #2563EB;
-            background: #F3F4F6;
-        }
-
-        .cart-badge {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: #F94A4A;
-            color: white;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.625rem;
-            font-weight: 700;
-            border: 2px solid white;
-        }
-
-        /* Footer Styles */
-        .main-footer {
-            background: #1f2937;
-            color: #9ca3af;
-            padding: 60px 0 20px;
-            margin-top: 60px;
-        }
-
-        .footer-section h5 {
-            color: white;
-            font-weight: 600;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            font-size: 0.9rem;
-            letter-spacing: 1px;
-        }
-
-        .footer-section p {
-            color: #9ca3af;
-            line-height: 1.8;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: white;
-        }
-
-        .newsletter-form {
-            display: flex;
-            gap: 10px;
-        }
-
-        .newsletter-form input {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #374151;
-            color: white;
-        }
-
-        .newsletter-form input::placeholder {
-            color: #9ca3af;
-        }
-
-        .newsletter-form button {
-            padding: 12px 24px;
-            background: #2563eb;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .newsletter-form button:hover {
-            background: #1d4ed8;
-        }
-
-        .footer-bottom {
-            border-top: 1px solid #374151;
-            margin-top: 40px;
-            padding-top: 20px;
-            text-align: center;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .social-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #374151;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #9ca3af;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-
-        .social-icon:hover {
-            background: #2563eb;
-            color: white;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Main CSS -->
+    <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
 
-<!-- Header -->
+<!-- ==================== HEADER ==================== -->
 <header class="main-header">
     <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light py-3">
-            <a class="logo" href="/">
-                <div class="logo-icon">
+        <div class="d-flex align-items-center gap-3 w-100">
+
+            <!-- Logo -->
+            <a href="/" class="nav-brand me-2">
+                <div class="nav-brand-icon">
                     <i class="fas fa-shopping-bag"></i>
                 </div>
-                <span>LifestyleShop hello</span>
+                <span class="d-none d-md-inline">LifestyleShop</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Search -->
+            <form class="nav-search flex-grow-1" action="/products" method="get">
+                <i class="fas fa-search nav-search-icon"></i>
+                <input type="text" name="search" placeholder="Tìm sản phẩm, thương hiệu..." autocomplete="off"
+                       th:value="${searchKeyword}">
+            </form>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <div class="search-bar mx-auto my-3 my-lg-0">
-                    <input type="text" placeholder="Search for products, brands and more...">
-                    <i class="fas fa-search"></i>
+            <!-- Nav links (desktop) -->
+            <ul class="nav-links ms-2 d-none d-lg-flex">
+                <li><a href="/"><i class="fas fa-home"></i> Trang chủ</a></li>
+                <li><a href="/products"><i class="fas fa-th-large"></i> Sản phẩm</a></li>
+                <li><a href="/products?filter=new"><i class="fas fa-bolt"></i> Mới nhất</a></li>
+            </ul>
+
+            <!-- Actions -->
+            <div class="nav-actions ms-auto">
+                <!-- User menu (authenticated) -->
+                <div sec:authorize="isAuthenticated()" class="dropdown">
+                    <button class="nav-icon-btn dropdown-toggle border-0" id="userDropdown"
+                            data-bs-toggle="dropdown" aria-expanded="false" title="Tài khoản">
+                        <i class="fas fa-user-circle fs-5"></i>
+                        <span class="d-none d-lg-inline ms-1 fw-semibold" style="font-size:.85rem;" id="currentUsername" sec:authentication="name">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                        <li>
+                            <a class="dropdown-item" href="/profile">
+                                <i class="fas fa-user-circle"></i> Hồ sơ
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/orders">
+                                <i class="fas fa-box"></i> Đơn hàng
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
+                            <form th:action="@{/logout}" method="post" style="margin:0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
 
-                <ul class="nav-links d-none d-lg-flex">
-                    <li><a href="/">New Arrivals</a></li>
-                    <li><a href="/categories">Categories</a></li>
-                    <li><a href="/deals">Deals</a></li>
-                </ul>
-
-                <div class="header-icons ms-auto">
-                    <!-- If user is authenticated -->
-                    <div sec:authorize="isAuthenticated()" class="dropdown">
-                        <a href="#" class="header-icon dropdown-toggle" id="userDropdown"
-                           data-bs-toggle="dropdown" aria-expanded="false" title="Account">
-                            <i class="fas fa-user"></i>
-                            <span class="ms-2 d-none d-lg-inline" sec:authentication="name">User</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><a class="dropdown-item" href="/profile"><i class="fas fa-user-circle me-2"></i>My Profile</a></li>
-                            <li><a class="dropdown-item" href="/orders"><i class="fas fa-box me-2"></i>My Orders</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form th:action="@{/logout}" method="post" style="margin: 0;">
-                                    <button type="submit" class="dropdown-item text-danger">
-                                        <i class="fas fa-sign-out-alt me-2"></i>Logout
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- If user is not authenticated -->
-                    <div sec:authorize="!isAuthenticated()">
-                        <a href="/login" class="header-icon" title="Sign In">
-                            <i class="fas fa-user"></i>
-                            <span class="ms-2 d-none d-lg-inline">Sign In</span>
-                        </a>
-                    </div>
-
-                    <a href="/cart" class="header-icon ms-3" title="Cart">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-badge cart-count">0</span>
+                <!-- Login (unauthenticated) -->
+                <div sec:authorize="!isAuthenticated()">
+                    <a href="/login" class="nav-icon-btn" title="Đăng nhập">
+                        <i class="fas fa-user fs-5"></i>
                     </a>
                 </div>
+
+                <!-- Cart -->
+                <a href="/cart" class="nav-icon-btn position-relative" title="Giỏ hàng" id="cartIconBtn">
+                    <i class="fas fa-shopping-cart fs-5"></i>
+                    <span class="nav-cart-badge cart-count">0</span>
+                </a>
+
+                <!-- Mobile menu toggler -->
+                <button class="nav-icon-btn d-lg-none border-0" data-bs-toggle="collapse"
+                        data-bs-target="#mobileMenu" aria-expanded="false">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-        </nav>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="collapse" id="mobileMenu" style="background:var(--bg-card);border-top:1px solid var(--border);">
+        <div class="container py-3">
+            <ul class="nav-links flex-column gap-1">
+                <li><a href="/"><i class="fas fa-home"></i> Trang chủ</a></li>
+                <li><a href="/products"><i class="fas fa-th-large"></i> Sản phẩm</a></li>
+                <li><a href="/products?filter=new"><i class="fas fa-bolt"></i> Mới nhất</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/profile"><i class="fas fa-user"></i> Hồ sơ</a></li>
+                <li sec:authorize="isAuthenticated()"><a href="/orders"><i class="fas fa-box"></i> Đơn hàng</a></li>
+                <li sec:authorize="!isAuthenticated()"><a href="/login"><i class="fas fa-sign-in-alt"></i> Đăng nhập</a></li>
+                <li sec:authorize="!isAuthenticated()"><a href="/register"><i class="fas fa-user-plus"></i> Đăng ký</a></li>
+            </ul>
+        </div>
     </div>
 </header>
 
-<!-- Content -->
-<main>
-    <div th:replace="${content}"></div>
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="page-content">
+    <div th:replace="~{${content}}"></div>
 </main>
 
-<!-- Footer -->
+<!-- ==================== FOOTER ==================== -->
 <footer class="main-footer">
     <div class="container">
-        <div class="row">
-            <!-- Company Info -->
-            <div class="col-lg-3 col-md-6 mb-4">
-                <div class="footer-section">
-                    <a class="logo mb-3" href="/" style="color: white;">
-                        <div class="logo-icon">
+        <div class="row g-4">
+            <!-- Brand -->
+            <div class="col-lg-4 col-md-6">
+                <div class="footer-brand">
+                    <a href="/" class="nav-brand d-inline-flex mb-3">
+                        <div class="nav-brand-icon">
                             <i class="fas fa-shopping-bag"></i>
                         </div>
                         <span>LifestyleShop</span>
                     </a>
-                    <p>The world's leading ecommerce platform for high-quality minimalist lifestyle goods. Curated for your comfort and style.</p>
+                    <p class="footer-desc">Nền tảng thương mại điện tử hàng đầu cho các sản phẩm lifestyle cao cấp. Được tuyển chọn vì sự thoải mái và phong cách của bạn.</p>
                 </div>
             </div>
 
-            <!-- Shop Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-                <div class="footer-section">
-                    <h5>SHOP</h5>
-                    <ul class="footer-links">
-                        <li><a href="/products">All Products</a></li>
-                        <li><a href="/featured">Featured Items</a></li>
-                        <li><a href="/categories">Gift Cards</a></li>
-                        <li><a href="/new">New Releases</a></li>
-                    </ul>
-                </div>
+            <!-- Shop -->
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="footer-heading">Mua sắm</p>
+                <ul class="footer-links-list">
+                    <li><a href="/products">Tất cả sản phẩm</a></li>
+                    <li><a href="/products?filter=new">Mới nhất</a></li>
+                    <li><a href="/products?filter=sale">Khuyến mãi</a></li>
+                    <li><a href="/categories">Danh mục</a></li>
+                </ul>
             </div>
 
-            <!-- Support Links -->
-            <div class="col-lg-2 col-md-6 mb-4">
-                <div class="footer-section">
-                    <h5>SUPPORT</h5>
-                    <ul class="footer-links">
-                        <li><a href="/help">Help Center</a></li>
-                        <li><a href="/orders">Track Orders</a></li>
-                        <li><a href="/returns">Returns & Refunds</a></li>
-                        <li><a href="/contact">Contact Us</a></li>
-                    </ul>
-                </div>
+            <!-- Support -->
+            <div class="col-lg-2 col-md-3 col-6">
+                <p class="footer-heading">Hỗ trợ</p>
+                <ul class="footer-links-list">
+                    <li><a href="/help">Trung tâm trợ giúp</a></li>
+                    <li><a href="/orders">Theo dõi đơn hàng</a></li>
+                    <li><a href="/returns">Đổi trả hàng</a></li>
+                    <li><a href="/contact">Liên hệ</a></li>
+                </ul>
             </div>
 
             <!-- Newsletter -->
-            <div class="col-lg-5 col-md-6 mb-4">
-                <div class="footer-section">
-                    <h5>STAY UPDATED</h5>
-                    <p>Join our newsletter and get 10% off your first order.</p>
-                    <form class="newsletter-form" onsubmit="return false;">
-                        <input type="email" placeholder="Email address">
-                        <button type="submit">Join</button>
-                    </form>
+            <div class="col-lg-4 col-md-6">
+                <p class="footer-heading">Nhận thông tin ưu đãi</p>
+                <p class="footer-desc mb-3">Đăng ký và nhận ngay 10% off cho đơn hàng đầu tiên.</p>
+                <div class="d-flex gap-2">
+                    <input type="email" placeholder="Nhập email của bạn"
+                           style="flex:1;padding:10px 14px;background:var(--bg-input);border:1.5px solid var(--border);border-radius:var(--radius-md);color:var(--txt);font-size:.875rem;outline:none;">
+                    <button class="btn-primary-ls">Đăng ký</button>
                 </div>
             </div>
         </div>
 
+        <!-- Footer bottom -->
         <div class="footer-bottom">
-            <p>&copy; 2024 LifestyleShop. All rights reserved.</p>
-            <div class="social-links">
-                <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fas fa-shield-alt"></i></a>
+            <p class="footer-copy">© 2024 LifestyleShop. All rights reserved.</p>
+            <div class="footer-socials">
+                <a href="#" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="social-btn" title="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="social-btn" title="Twitter"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
             </div>
         </div>
     </div>
 </footer>
 
-<!-- Bootstrap 5 JS -->
+<!-- ==================== LIVE CHAT WIDGET ==================== -->
+<div id="liveChatWidget" style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+    <!-- Launcher -->
+    <button id="chatLauncherBtn" onclick="toggleChat()" style="width:55px;height:55px;border-radius:50%;background:var(--clr-primary);color:#fff;border:none;box-shadow:0 4px 12px rgba(0,0,0,0.15);font-size:1.5rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s;">
+        <i class="fas fa-comment-dots"></i>
+    </button>
+
+    <!-- Window -->
+    <div id="chatWindow" class="d-none" style="position:absolute;bottom:70px;right:0;width:320px;height:420px;background:var(--bg-card);border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.15);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);">
+        <div style="padding:15px;background:var(--clr-primary);color:#fff;display:flex;align-items:center;justify-content:space-between;">
+            <h6 style="margin:0;font-weight:600;"><i class="fas fa-headset me-2"></i>Hỗ trợ trực tuyến</h6>
+            <button onclick="toggleChat()" style="background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="chatBody" style="flex:1;padding:15px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;font-size:.85rem;background:var(--bg);">
+            <div style="background:var(--bg-input);padding:8px 12px;border-radius:12px;border-top-left-radius:0;align-self:flex-start;max-width:85%;border:1px solid var(--border);">
+                Xin chào! Chúng tôi có thể giúp gì cho bạn hôm nay?
+            </div>
+        </div>
+        <!-- Image Preview Container -->
+        <div id="customerImgPreview" style="display:none; padding:10px; border-top:1px solid var(--border); background:var(--bg-input); position:relative;">
+            <img id="customerImgPreviewEl" src="" style="max-height:80px; border-radius:8px; border:1px solid var(--border);">
+            <button onclick="clearCustomerPreview()" style="position:absolute; top:5px; right:15px; background:rgba(0,0,0,0.5); color:#fff; border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem;"><i class="fas fa-times"></i></button>
+        </div>
+
+        <div style="padding:10px;border-top:1px solid var(--border);display:flex;gap:8px;background:var(--bg-card);align-items:center;">
+            <!-- Hidden file input -->
+            <input type="file" id="chatImageInput" accept="image/*" style="display:none;">
+            
+            <button onclick="document.getElementById('chatImageInput').click()" style="background:none;border:none;color:var(--txt-muted);font-size:1.1rem;cursor:pointer;">
+                <i class="fas fa-paperclip"></i>
+            </button>
+
+            <input type="text" id="chatInput" placeholder="Nhập tin nhắn..." 
+                   style="flex:1;padding:8px 12px;border:1px solid var(--border);border-radius:20px;outline:none;background:var(--bg-input);color:var(--txt);font-size:.85rem;"
+                   onkeypress="if(event.key==='Enter') sendCustomerChat()">
+            <button onclick="sendCustomerChat()" style="width:36px;height:36px;border-radius:50%;background:var(--clr-primary);color:#fff;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== SCRIPTS ==================== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-    // Update cart count on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        updateCartCount();
-    });
-
-    function updateCartCount() {
-        fetch('/api/cart/count')
-            .then(response => response.json())
-            .then(data => {
-                const cartBadge = document.querySelector('.cart-count');
-                if (cartBadge) {
-                    cartBadge.textContent = data.count || 0;
-                }
-            })
-            .catch(error => console.error('Error updating cart count:', error));
-    }
-</script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.6.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script th:src="@{/js/app-ui.js}"></script>
+<script th:src="@{/js/socket.js}"></script>
 </body>
 </html>

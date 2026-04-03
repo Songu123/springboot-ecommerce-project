@@ -3,6 +3,7 @@ package com.son.ecommerce.service;
 import com.son.ecommerce.dto.AuthResponse;
 import com.son.ecommerce.dto.LoginRequest;
 import com.son.ecommerce.dto.RegisterRequest;
+import com.son.ecommerce.dto.UserResponse;
 import com.son.ecommerce.entity.Role;
 import com.son.ecommerce.entity.User;
 import com.son.ecommerce.repository.RoleRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
@@ -29,6 +31,8 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private UserResponse currentUser;
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -39,11 +43,11 @@ public class AuthService {
     }
 
     public void register(RegisterRequest request) {
-        if(userRepository.findByUsername(request.getUsername()).isPresent()) {
+        if (userRepository.findByUsername(request.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
         }
 
-        if(userRepository.existsByEmail(request.getEmail())) {
+        if (userRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
 
@@ -62,31 +66,67 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    // New login method that returns AuthResponse with both tokens
-    public AuthResponse loginWithTokens(LoginRequest request){
+    // New login method that returns AuthResponse with both tokens and user info
+    public AuthResponse loginWithTokens(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
 
-        String accessToken = jwtUtil.generateAccessToken(user.getUsername());
+        // Generate access token with user information
+        String accessToken = jwtUtil.generateAccessToken(user.getUsername(), user);
         String refreshToken = refreshTokenService.generateRefreshToken(user.getId());
+        UserResponse userResponse = convertUserToResponse(user);
 
-        return new AuthResponse(accessToken, refreshToken);
+        AuthResponse response = new AuthResponse();
+        response.setUser(userResponse);
+        response.setAccessToken(accessToken);
+        response.setRefreshToken(refreshToken);
+        response.setTokenType("Bearer");
+
+        return response;
     }
 
     // Keep old login method for backward compatibility
-    public String login(LoginRequest request){
+    public String login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("Invalid email"));
 
-        if(!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid password");
         }
+        currentUser.setId(user.getId());
+        currentUser.setUsername(user.getUsername());
+        currentUser.setEmail(user.getEmail());
+        currentUser.setFullName(user.getFullName());
+        currentUser.setRoles(user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet()));
 
         return jwtUtil.generateToken(user.getUsername());
+    }
+
+    public UserResponse getCurrentUser() {
+
+        return currentUser;
+    }
+
+    // Helper method to convert User entity to UserResponse
+    private UserResponse convertUserToResponse(User user) {
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .roles(roleNames)
+                .enabled(user.isEnabled())
+                .build();
     }
 }
 

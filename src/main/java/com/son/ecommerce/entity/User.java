@@ -52,6 +52,9 @@ public class User {
     @Column(nullable = false)
     private boolean enabled;
 
+    private String phone;
+    private String address;
+
     private LocalDateTime createdAt;
 
     @PrePersist

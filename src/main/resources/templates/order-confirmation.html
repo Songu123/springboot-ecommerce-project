@@ -1,100 +1,204 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-    <title>Order Confirmation</title>
-</head>
+<head><title>Đặt hàng thành công - LifestyleShop</title></head>
 <body>
 <div th:fragment="content">
-    <div class="order-confirmation-page">
-        <div class="container py-5">
-            <div class="text-center mb-5">
-                <div class="success-icon mb-3">
-                    <i class="fas fa-check-circle fa-5x text-success"></i>
+
+    <!-- Success Hero -->
+    <div class="order-success-hero">
+        <div class="container">
+            <div class="success-anim-wrap">
+                <div class="success-circle">
+                    <i class="fas fa-check"></i>
                 </div>
-                <h1 class="display-4 mb-3">Order Placed Successfully!</h1>
-                <p class="lead text-muted">Thank you for your order</p>
-                <p class="text-muted">Order #<span class="fw-bold" th:text="${order.id}">12345</span></p>
+            </div>
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-sub">Cảm ơn bạn đã tin tưởng LifestyleShop. Chúng tôi sẽ xử lý đơn hàng sớm nhất.</p>
+            <div class="order-id-badge">
+                <i class="fas fa-hashtag me-1"></i>Mã đơn hàng:&nbsp;<strong th:text="${order.id}">12345</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center g-4">
+
+            <!-- Order Info Card -->
+            <div class="col-lg-8">
+
+                <!-- Status Steps -->
+                <div class="checkout-step mb-4">
+                    <div class="order-status-steps">
+                        <div class="status-step active">
+                            <div class="status-step-icon"><i class="fas fa-check-circle"></i></div>
+                            <span>Đã đặt hàng</span>
+                        </div>
+                        <div class="status-line"></div>
+                        <div class="status-step">
+                            <div class="status-step-icon"><i class="fas fa-box"></i></div>
+                            <span>Đang xử lý</span>
+                        </div>
+                        <div class="status-line"></div>
+                        <div class="status-step">
+                            <div class="status-step-icon"><i class="fas fa-truck"></i></div>
+                            <span>Đang giao</span>
+                        </div>
+                        <div class="status-line"></div>
+                        <div class="status-step">
+                            <div class="status-step-icon"><i class="fas fa-home"></i></div>
+                            <span>Đã nhận</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Details Grid -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="order-info-card">
+                            <div class="order-info-icon" style="background:rgba(77,109,154,.1);color:var(--clr-primary)">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div>
+                                <span class="order-info-label">Ngày đặt hàng</span>
+                                <span class="order-info-value"
+                                      th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order-info-card">
+                            <div class="order-info-icon" style="background:rgba(153,206,211,.15);color:#2D7D82">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div>
+                                <span class="order-info-label">Thanh toán</span>
+                                <span class="order-info-value" th:text="${order.paymentMethod}">COD</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order-info-card">
+                            <div class="order-info-icon" style="background:rgba(237,181,191,.15);color:#8B3A4A">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <span class="order-info-label">Địa chỉ giao hàng</span>
+                                <span class="order-info-value"
+                                      th:text="${order.shippingAddress + ', ' + order.shippingCity}">Địa chỉ</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order-info-card">
+                            <div class="order-info-icon" style="background:rgba(77,109,154,.08);color:var(--clr-primary)">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div>
+                                <span class="order-info-label">Số điện thoại</span>
+                                <span class="order-info-value" th:text="${order.shippingPhone}">0901234567</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Items -->
+                <div class="checkout-step mb-4">
+                    <div class="checkout-step-title">
+                        <div class="step-num"><i class="fas fa-box-open" style="font-size:.7rem"></i></div>
+                        Sản phẩm đã đặt
+                    </div>
+
+                    <div class="order-items-list">
+                        <div th:each="item : ${order.items}"
+                             class="d-flex align-items-center gap-3 mb-3 pb-3"
+                             style="border-bottom:1px solid var(--border);">
+                            <img th:src="${item.product.image} ?: '/img/product-default.jpg'"
+                                 th:alt="${item.product.name}"
+                                 style="width:64px;height:64px;border-radius:var(--radius-md);object-fit:cover;background:var(--bg-soft);flex-shrink:0;border:1px solid var(--border);">
+                            <div class="flex-grow-1 min-w-0">
+                                <p style="font-size:.9rem;font-weight:600;color:var(--txt);margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"
+                                   th:text="${item.product.name}">Tên sản phẩm</p>
+                                <p style="font-size:.78rem;color:var(--txt-muted);margin:3px 0 0;">
+                                    x<span th:text="${item.quantity}">1</span> &nbsp;·&nbsp;
+                                    <span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ/sp'">0 VNĐ/sp</span>
+                                </p>
+                            </div>
+                            <span style="font-size:.95rem;font-weight:700;color:var(--clr-primary);white-space:nowrap;"
+                                  th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                        </div>
+                    </div>
+
+                    <!-- Totals -->
+                    <div class="summary-row">
+                        <span style="color:var(--txt-muted)">Tạm tính</span>
+                        <span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                    </div>
+                    <div class="summary-row">
+                        <span style="color:var(--txt-muted)">Phí vận chuyển</span>
+                        <span th:if="${order.shippingFee == 0}" style="color:var(--clr-success);font-weight:600">Miễn phí</span>
+                        <span th:if="${order.shippingFee > 0}"
+                              th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                    </div>
+                    <div class="summary-row summary-total" style="border-bottom:none;padding-top:16px;">
+                        <span>Tổng thanh toán</span>
+                        <span class="summary-total-price"
+                              th:text="${#numbers.formatDecimal(order.finalTotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                    </div>
+                </div>
+
+                <!-- Note if any -->
+                <div th:if="${order.note != null and !order.note.isBlank()}" class="checkout-step mb-4">
+                    <div class="checkout-step-title">
+                        <div class="step-num"><i class="fas fa-sticky-note" style="font-size:.7rem"></i></div>
+                        Ghi chú đơn hàng
+                    </div>
+                    <p style="color:var(--txt-muted);font-size:.9rem;margin:0;font-style:italic;"
+                       th:text="${order.note}">Không có ghi chú</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="/products" class="btn-primary-ls btn-lg">
+                        <i class="fas fa-shopping-bag me-2"></i>Tiếp tục mua sắm
+                    </a>
+                    <a href="/orders" class="btn-outline-ls btn-lg">
+                        <i class="fas fa-list me-2"></i>Xem tất cả đơn hàng
+                    </a>
+                </div>
             </div>
 
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="order-details-card">
-                        <h5 class="card-title mb-4">Order Details</h5>
-
-                        <div class="info-section mb-4">
-                            <h6 class="text-muted mb-3">Order Information</h6>
-                            <div class="row">
-                                <div class="col-md-6 mb-2">
-                                    <strong>Order Date:</strong>
-                                    <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">Date</span>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <strong>Status:</strong>
-                                    <span class="badge bg-warning" th:text="${order.status}">PENDING</span>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <strong>Payment Method:</strong>
-                                    <span th:text="${order.paymentMethod}">COD</span>
-                                </div>
-                                <div class="col-md-6 mb-2">
-                                    <strong>Payment Status:</strong>
-                                    <span class="badge bg-secondary" th:text="${order.paymentStatus}">UNPAID</span>
-                                </div>
-                            </div>
+            <!-- Side Info -->
+            <div class="col-lg-4">
+                <div class="cart-summary-box">
+                    <h6 style="font-weight:700;margin-bottom:20px;color:var(--txt);">
+                        <i class="fas fa-shield-alt me-2" style="color:var(--clr-success)"></i>Cam kết của chúng tôi
+                    </h6>
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon"><i class="fas fa-undo-alt"></i></div>
+                        <div>
+                            <strong>Đổi trả dễ dàng</strong>
+                            <p>30 ngày đổi trả không cần lý do</p>
                         </div>
-
-                        <div class="info-section mb-4">
-                            <h6 class="text-muted mb-3">Shipping Address</h6>
-                            <p class="mb-1" th:text="${order.shippingAddress}">Address</p>
-                            <p class="mb-1" th:text="${order.shippingCity}">City</p>
-                            <p class="mb-0">Phone: <span th:text="${order.shippingPhone}">Phone</span></p>
+                    </div>
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon"><i class="fas fa-truck-fast"></i></div>
+                        <div>
+                            <strong>Giao hàng nhanh</strong>
+                            <p>Xử lý trong 1-2 ngày làm việc</p>
                         </div>
-
-                        <div class="info-section mb-4">
-                            <h6 class="text-muted mb-3">Order Items</h6>
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Product</th>
-                                            <th class="text-center">Quantity</th>
-                                            <th class="text-end">Price</th>
-                                            <th class="text-end">Subtotal</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr th:each="item : ${order.items}">
-                                            <td th:text="${item.product.name}">Product</td>
-                                            <td class="text-center" th:text="${item.quantity}">1</td>
-                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(item.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">99 VNĐ</span></td>
-                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(item.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">99 VNĐ</span></td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot>
-                                        <tr>
-                                            <td colspan="3" class="text-end"><strong>Subtotal:</strong></td>
-                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(order.totalPrice, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="3" class="text-end"><strong>Shipping:</strong></td>
-                                            <td class="text-end"><span th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></td>
-                                        </tr>
-                                        <tr class="table-active">
-                                            <td colspan="3" class="text-end"><strong>Total:</strong></td>
-                                            <td class="text-end"><strong><span th:text="${#numbers.formatDecimal(order.finalTotal, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span></strong></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
+                    </div>
+                    <div class="guarantee-item">
+                        <div class="guarantee-icon"><i class="fas fa-lock"></i></div>
+                        <div>
+                            <strong>Thanh toán bảo mật</strong>
+                            <p>Mã hóa SSL 256-bit</p>
                         </div>
-
-                        <div class="text-center">
-                            <a href="/products" class="btn btn-primary btn-lg me-2">
-                                <i class="fas fa-shopping-bag me-2"></i>Continue Shopping
-                            </a>
-                            <a href="/admin/orders" class="btn btn-outline-primary btn-lg">
-                                <i class="fas fa-list me-2"></i>View All Orders
-                            </a>
+                    </div>
+                    <div class="guarantee-item" style="border-bottom:none">
+                        <div class="guarantee-icon"><i class="fas fa-headset"></i></div>
+                        <div>
+                            <strong>Hỗ trợ 24/7</strong>
+                            <p>Đội ngũ tư vấn luôn sẵn sàng</p>
                         </div>
                     </div>
                 </div>
@@ -103,169 +207,142 @@
     </div>
 
     <style>
-        .order-confirmation-page {
-            background: linear-gradient(135deg, #F9FAFB 0%, #EEF2FF 100%);
-            min-height: 100vh;
-            padding: 2rem 0;
+        /* ---- Order Success Hero ---- */
+        .order-success-hero {
+            background: var(--clr-primary);
+            padding: 64px 0 56px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .order-success-hero::before {
+            content: '';
+            position: absolute; top: -50%; right: -5%;
+            width: 400px; height: 400px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.06);
+        }
+        .order-success-hero::after {
+            content: '';
+            position: absolute; bottom: -60%; left: -5%;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.04);
         }
 
-        .success-icon {
-            animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .success-anim-wrap {
+            display: flex; justify-content: center; margin-bottom: 24px;
+        }
+        .success-circle {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.15);
+            border: 3px solid rgba(255,255,255,.4);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.2rem; color: white;
+            animation: successPop 0.5s cubic-bezier(.175,.885,.32,1.275) both;
+            position: relative; z-index: 1;
+        }
+        @keyframes successPop {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes scaleIn {
-            from { transform: scale(0) rotate(-180deg); opacity: 0; }
-            to { transform: scale(1) rotate(0deg); opacity: 1; }
+        .success-title {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 800; color: white;
+            margin-bottom: 10px; position: relative; z-index: 1;
+        }
+        .success-sub {
+            color: rgba(255,255,255,.85); font-size: 1rem;
+            margin-bottom: 24px; position: relative; z-index: 1;
+        }
+        .order-id-badge {
+            display: inline-flex; align-items: center;
+            background: rgba(255,255,255,.15);
+            border: 1px solid rgba(255,255,255,.3);
+            backdrop-filter: blur(8px);
+            color: white; border-radius: var(--radius-full);
+            padding: 8px 20px; font-size: .9rem;
+            position: relative; z-index: 1;
         }
 
-        .success-icon i {
-            color: #10B981;
-            filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
+        /* ---- Status Steps ---- */
+        .order-status-steps {
+            display: flex; align-items: center;
+            gap: 0; padding: 8px 0;
         }
-
-        .display-4 {
-            font-weight: 600;
-            background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+        .status-step {
+            display: flex; flex-direction: column; align-items: center;
+            gap: 8px; flex: 0 0 auto;
         }
-
-        .order-details-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border: 1px solid #E5E7EB;
+        .status-step-icon {
+            width: 44px; height: 44px;
+            border-radius: 50%;
+            background: var(--bg-soft);
+            border: 2px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--txt-faint); font-size: 1rem;
+            transition: all .3s;
         }
-
-        .card-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #111827;
-            border-bottom: 2px solid #7B68EE;
-            padding-bottom: 0.75rem;
+        .status-step span {
+            font-size: .72rem; font-weight: 600;
+            color: var(--txt-faint); white-space: nowrap;
         }
-
-        .info-section {
-            padding: 1.5rem;
-            background: #F9FAFB;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            border: 1px solid #E5E7EB;
-        }
-
-        .info-section h6 {
-            font-weight: 600;
-            color: #7B68EE;
-            margin-bottom: 1rem;
-            font-size: 0.875rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .info-section strong {
-            color: #4B5563;
-            font-weight: 500;
-        }
-
-        .badge {
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.8125rem;
-        }
-
-        .bg-warning {
-            background: #FFB84D !important;
-            color: #111827 !important;
-        }
-
-        .bg-secondary {
-            background: #6B7280 !important;
-        }
-
-        .table {
-            font-size: 0.875rem;
-        }
-
-        .table thead th {
-            background: #F9FAFB;
-            color: #4B5563;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            padding: 1rem;
-            border-bottom: 2px solid #E5E7EB;
-        }
-
-        .table tbody td {
-            padding: 1rem;
-            vertical-align: middle;
-            border-bottom: 1px solid #F3F4F6;
-        }
-
-        .table tfoot tr {
-            font-weight: 600;
-        }
-
-        .table-active {
-            background: #EEF2FF !important;
-        }
-
-        .table-active td {
-            color: #7B68EE !important;
-            font-size: 1.125rem;
-        }
-
-        .btn {
-            padding: 0.875rem 1.75rem;
-            border-radius: 10px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            border: none;
-            font-size: 0.9375rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #7B68EE 0%, #9B8AF5 100%);
-            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(123, 104, 238, 0.4);
-        }
-
-        .btn-outline-primary {
-            border: 2px solid #7B68EE;
-            color: #7B68EE;
-            background: white;
-        }
-
-        .btn-outline-primary:hover {
-            background: #7B68EE;
+        .status-step.active .status-step-icon {
+            background: var(--clr-primary);
+            border-color: var(--clr-primary);
             color: white;
-            transform: translateY(-2px);
+            box-shadow: 0 0 0 4px var(--clr-primary-glow);
+        }
+        .status-step.active span { color: var(--clr-primary); }
+        .status-line {
+            flex: 1; height: 2px;
+            background: var(--border);
+            margin: 0 4px;
+            margin-bottom: 22px;
         }
 
-        .lead {
-            font-size: 1.125rem;
+        /* ---- Order Info Card ---- */
+        .order-info-card {
+            display: flex; align-items: flex-start; gap: 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px 18px;
+            height: 100%;
+        }
+        .order-info-icon {
+            width: 40px; height: 40px; flex-shrink: 0;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .95rem;
+        }
+        .order-info-label {
+            display: block; font-size: .72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .06em;
+            color: var(--txt-faint); margin-bottom: 4px;
+        }
+        .order-info-value {
+            display: block; font-size: .88rem; font-weight: 600;
+            color: var(--txt);
         }
 
-        @media (max-width: 768px) {
-            .order-details-card {
-                padding: 1.5rem;
-            }
-
-            .btn {
-                width: 100%;
-                margin-bottom: 0.5rem;
-            }
+        /* ---- Guarantee Items ---- */
+        .guarantee-item {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 14px 0; border-bottom: 1px solid var(--border);
         }
+        .guarantee-icon {
+            width: 38px; height: 38px;
+            border-radius: 10px;
+            background: var(--clr-primary-glow);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--clr-primary); font-size: .9rem; flex-shrink: 0;
+        }
+        .guarantee-item strong { display: block; font-size: .88rem; color: var(--txt); margin-bottom: 2px; }
+        .guarantee-item p { margin: 0; font-size: .78rem; color: var(--txt-muted); }
     </style>
 </div>
 </body>
 </html>
-

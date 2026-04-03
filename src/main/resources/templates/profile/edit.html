@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Chỉnh sửa hồ sơ | LifestyleShop</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div th:replace="~{profile/sidebar :: sidebar}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+
+                <!-- Flash messages -->
+                <div th:if="${success}" class="alert-ls alert-ls-success animate-up mb-4">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}">Thành công</span>
+                </div>
+                <div th:if="${error}" class="alert-ls alert-ls-danger animate-up mb-4">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}">Lỗi</span>
+                </div>
+
+                <div class="checkout-step animate-up delay-1">
+                    <div class="checkout-step-title">
+                        <div class="step-num"><i class="fas fa-user-edit" style="font-size:.7rem"></i></div>
+                        Chỉnh sửa hồ sơ cá nhân
+                    </div>
+                    <p style="font-size:.85rem;color:var(--txt-muted);margin-bottom:24px;margin-top:-8px;">
+                        Cập nhật thông tin liên hệ và địa chỉ giao hàng của bạn
+                    </p>
+
+                    <form th:action="@{/profile/update}" method="post">
+                        <div class="row g-3">
+
+                            <!-- Username (readonly) -->
+                            <div class="col-md-6">
+                                <label class="form-label-ls">
+                                    <i class="fas fa-at me-1" style="color:var(--clr-primary)"></i>Tên đăng nhập
+                                </label>
+                                <div class="input-wrapper-ls">
+                                    <i class="fas fa-lock input-icon-ls"></i>
+                                    <input type="text" class="form-control-ls"
+                                           th:value="${user.username}" disabled
+                                           style="background:var(--bg-soft);color:var(--txt-muted);cursor:not-allowed;">
+                                </div>
+                                <small style="font-size:.75rem;color:var(--txt-faint);margin-top:4px;display:block;">
+                                    Tên đăng nhập không thể thay đổi
+                                </small>
+                            </div>
+
+                            <!-- Full Name -->
+                            <div class="col-md-6">
+                                <label class="form-label-ls">
+                                    <i class="fas fa-signature me-1" style="color:var(--clr-primary)"></i>Họ và Tên *
+                                </label>
+                                <div class="input-wrapper-ls">
+                                    <i class="fas fa-user input-icon-ls"></i>
+                                    <input type="text" id="fullName" name="fullName"
+                                           class="form-control-ls"
+                                           th:value="${user.fullName}"
+                                           placeholder="Nguyễn Văn A" required>
+                                </div>
+                            </div>
+
+                            <!-- Email -->
+                            <div class="col-md-6">
+                                <label class="form-label-ls">
+                                    <i class="fas fa-envelope me-1" style="color:var(--clr-primary)"></i>Địa chỉ Email *
+                                </label>
+                                <div class="input-wrapper-ls">
+                                    <i class="fas fa-envelope input-icon-ls"></i>
+                                    <input type="email" id="email" name="email"
+                                           class="form-control-ls"
+                                           th:value="${user.email}"
+                                           placeholder="example@email.com" required>
+                                </div>
+                            </div>
+
+                            <!-- Phone -->
+                            <div class="col-md-6">
+                                <label class="form-label-ls">
+                                    <i class="fas fa-phone me-1" style="color:var(--clr-primary)"></i>Số điện thoại
+                                </label>
+                                <div class="input-wrapper-ls">
+                                    <i class="fas fa-phone input-icon-ls"></i>
+                                    <input type="tel" id="phone" name="phone"
+                                           class="form-control-ls"
+                                           th:value="${user.phone}"
+                                           placeholder="0901234567">
+                                </div>
+                            </div>
+
+                            <!-- Address -->
+                            <div class="col-12">
+                                <label class="form-label-ls">
+                                    <i class="fas fa-map-marker-alt me-1" style="color:var(--clr-primary)"></i>Địa chỉ giao hàng mặc định
+                                </label>
+                                <div class="input-wrapper-ls">
+                                    <i class="fas fa-map-marker-alt input-icon-ls" style="top:14px;transform:none;"></i>
+                                    <textarea id="address" name="address"
+                                              class="form-control-ls" rows="3"
+                                              th:text="${user.address}"
+                                              placeholder="Số nhà, tên đường, phường/xã, quận/huyện, tỉnh/thành phố..."
+                                              style="padding-top:10px;resize:none;"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Buttons -->
+                            <div class="col-12 d-flex gap-3 flex-wrap mt-2">
+                                <button type="submit" class="btn-primary-ls btn-lg">
+                                    <i class="fas fa-save me-2"></i>Lưu thông tin
+                                </button>
+                                <a th:href="@{/profile}" class="btn-outline-ls btn-lg">
+                                    <i class="fas fa-times me-2"></i>Hủy bỏ
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

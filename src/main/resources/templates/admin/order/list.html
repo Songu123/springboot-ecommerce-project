@@ -1,872 +1,142 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-    <title>Order Management</title>
-    <style>
-      /* ID Badge Style */
-      .id-badge {
-        background: #ffc107 !important;
-        color: white !important;
-        padding: 8px 14px !important;
-        border-radius: 20px !important;
-        font-weight: bold !important;
-        font-size: 13px !important;
-        display: inline-block !important;
-        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3) !important;
-        transition: all 0.3s ease !important;
-      }
-
-      .id-badge:hover {
-        background: #ffb300 !important;
-        box-shadow: 0 4px 14px rgba(255, 193, 7, 0.4) !important;
-        transform: scale(1.05) !important;
-      }
-
-      /* ========== Global Badge Override ========== */
-      .badge {
-        display: inline-block !important;
-        padding: 0.5rem 0.75rem !important;
-        font-size: 0.8rem !important;
-        font-weight: 500 !important;
-        border-radius: 20px !important;
-        border: none !important;
-      }
-
-      /* Badge Colors - Global Override */
-      .badge-danger {
-        background-color: #dc3545 !important;
-        color: white !important;
-      }
-
-      .badge-warning {
-        background-color: #ff9800 !important;
-        color: white !important;
-      }
-
-      .badge-info {
-        background-color: #17a2b8 !important;
-        color: white !important;
-      }
-
-      .pagination .page-item.active .page-link {
-        background-color: #2563EB !important;
-        border-color: #2563EB !important;
-        color: white !important;
-        font-weight: 600 !important;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
-        position: relative !important;
-        z-index: 1 !important;
-      }
-
-      .pagination .page-item.active .page-link:hover {
-        background-color: #1E40AF !important;
-        border-color: #1E40AF !important;
-        box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4) !important;
-        transform: translateY(-2px) !important;
-      }
-
-      .badge-success {
-        background-color: #28a745 !important;
-        color: white !important;
-      }
-
-      .badge-primary {
-        background-color: #007bff !important;
-        color: white !important;
-      }
-
-      /* ========== Order Status Badge Styles ========== */
-      .badge {
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
-        transition: all 0.3s ease !important;
-      }
-
-      .badge:hover {
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
-        transform: translateY(-2px) !important;
-      }
-
-      /* Badge Pill styles */
-      .badge-pill {
-        border-radius: 20px !important;
-        padding: 0.5rem 1rem !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        gap: 0.5rem !important;
-        font-size: 0.8rem !important;
-      }
-
-      .badge-pill i {
-        font-size: 0.75rem !important;
-      }
-
-      /* ========== ClickUp-Style Pagination - Professional Design ========== */
-      .pagination-wrapper {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1.25rem 1.5rem;
-        background: linear-gradient(180deg, #ffffff 0%, #f9fafb 100%);
-        border-top: 1px solid #e5e7eb;
-        border-bottom: 1px solid #e5e7eb;
-        border-radius: 0 0 12px 12px;
-        flex-wrap: wrap;
-        gap: 2rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-      }
-
-      .pagination-info {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        color: #9ca3af;
-        padding: 0.5rem 0;
-        white-space: nowrap;
-      }
-
-      .pagination-info strong {
-        color: #1f2937;
-        font-weight: 700;
-        font-size: 0.9375rem;
-      }
-
-      .pagination-info span {
-        color: #9ca3af;
-      }
-
-      .pagination-controls {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-
-      .pagination {
-        display: flex;
-        list-style: none;
-        gap: 0.35rem;
-        margin: 0;
-        padding: 0;
-        align-items: center;
-        background: white;
-        padding: 0.5rem 0.75rem;
-        border-radius: 8px;
-        border: 1px solid #e5e7eb;
-      }
-
-      .pagination .page-item {
-        display: inline-block;
-      }
-
-      .pagination .page-link {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 36px;
-        height: 36px;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid transparent;
-        border-radius: 6px;
-        background: transparent;
-        color: #6b7280;
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.875rem;
-        cursor: pointer;
-        user-select: none;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-      }
-
-      .pagination .page-link:hover:not(.disabled) {
-        background: #f3f4f6;
-        color: #1f2937;
-        border-color: #d1d5db;
-        transform: translateY(-1px);
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
-
-      .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-color: transparent;
-        color: white;
-        font-weight: 600;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.35),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        position: relative;
-        z-index: 1;
-      }
-
-      .pagination .page-item.active .page-link:hover {
-        background: linear-gradient(135deg, #5568d3 0%, #6b3a92 100%);
-        box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4),
-                    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-        transform: translateY(-2px);
-      }
-
-      .pagination .page-link i {
-        font-size: 0.8rem;
-        transition: transform 0.3s ease;
-      }
-
-      .pagination .page-link:hover:not(.disabled) i {
-        transform: scale(1.15);
-      }
-
-      .pagination .page-item.active .page-link i {
-        color: white;
-      }
-
-      .pagination .page-item.disabled .page-link {
-        opacity: 0.4;
-        cursor: not-allowed;
-        color: #d1d5db;
-        background: transparent;
-        border-color: transparent;
-        pointer-events: none;
-      }
-
-      .pagination .page-item.disabled .page-link:hover {
-        background: transparent;
-        transform: none;
-        box-shadow: none;
-      }
-
-      .pagination .ellipsis {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-width: 36px;
-        height: 36px;
-        color: #9ca3af;
-        font-weight: 600;
-        font-size: 1rem;
-        padding: 0 0.25rem;
-      }
-
-      .page-size-selector {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        font-size: 0.875rem;
-        color: #6b7280;
-        white-space: nowrap;
-      }
-
-      .page-size-selector label {
-        font-weight: 500;
-        color: #4b5563;
-      }
-
-      .page-size-selector select {
-        padding: 0.5rem 0.85rem;
-        border: 1px solid #d1d5db;
-        border-radius: 6px;
-        background: white;
-        color: #1f2937;
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        appearance: none;
-        padding-right: 2rem;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-        background-repeat: no-repeat;
-        background-position: right 0.6rem center;
-        padding-right: 2.2rem;
-      }
-
-      .page-size-selector select:hover {
-        border-color: #9ca3af;
-        background-color: #f9fafb;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-      }
-
-      .page-size-selector select:focus {
-        outline: none;
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1),
-                    0 2px 4px rgba(0, 0, 0, 0.05) !important;
-      }
-
-      @media (max-width: 1024px) {
-        .pagination-wrapper {
-          gap: 1.5rem;
-          padding: 1rem 1.25rem;
-        }
-
-        .pagination-controls {
-          order: 2;
-          width: 100%;
-          justify-content: center;
-        }
-
-        .pagination-info {
-          order: 1;
-          width: 100%;
-          justify-content: center;
-        }
-
-        .page-size-selector {
-          order: 3;
-          width: 100%;
-          justify-content: center;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .pagination-wrapper {
-          flex-direction: column;
-          gap: 1rem;
-          padding: 1rem;
-        }
-
-        .pagination-info {
-          order: 1;
-          width: 100%;
-          justify-content: center;
-          font-size: 0.8125rem;
-        }
-
-        .pagination-controls {
-          order: 2;
-          width: 100%;
-          justify-content: center;
-        }
-
-        .page-size-selector {
-          order: 3;
-          width: 100%;
-          justify-content: center;
-        }
-
-        .pagination {
-          padding: 0.4rem 0.5rem;
-          gap: 0.25rem;
-        }
-
-        .pagination .page-link {
-          min-width: 32px;
-          height: 32px;
-          padding: 0.4rem 0.6rem;
-          font-size: 0.8125rem;
-        }
-
-        .pagination .page-link i {
-          font-size: 0.7rem;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .pagination-wrapper {
-          gap: 0.75rem;
-          padding: 0.85rem;
-        }
-
-        .pagination-info {
-          font-size: 0.75rem;
-        }
-
-        .pagination-info strong {
-          font-size: 0.875rem;
-        }
-
-        .pagination {
-          padding: 0.3rem 0.4rem;
-          gap: 0.2rem;
-        }
-
-        .pagination .page-link {
-          min-width: 28px;
-          height: 28px;
-          padding: 0.3rem 0.5rem;
-          font-size: 0.75rem;
-        }
-
-        .pagination .ellipsis {
-          min-width: 28px;
-          height: 28px;
-          font-size: 0.9rem;
-        }
-
-        .page-size-selector {
-          gap: 0.5rem;
-          font-size: 0.8125rem;
-        }
-
-        .page-size-selector select {
-          padding: 0.35rem 0.65rem;
-          font-size: 0.75rem;
-        }
-      }
-
-      @media print {
-        .pagination-wrapper {
-          display: none;
-        }
-      }
-
-      @media (prefers-reduced-motion: reduce) {
-        .pagination .page-link,
-        .page-size-selector select {
-          transition: none;
-        }
-
-        .pagination .page-link:hover:not(.disabled) {
-          transform: none;
-        }
-      }
-
-        .pagination-info {
-          justify-content: center;
-          width: 100%;
-        }
-
-        .pagination-controls {
-          justify-content: center;
-          width: 100%;
-        }
-
-        .page-size-selector {
-          justify-content: center;
-          width: 100%;
-        }
-      }
-    </style>
-</head>
+<head><title>Đơn hàng</title></head>
 <body>
 <div th:fragment="content">
-    <div class="container-fluid">
-        <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="h3 mb-1 text-gray-800">
-                    <i class="zmdi zmdi-shopping-cart text-primary"></i> Order Management
-                </h1>
-                <p class="text-muted small mb-0">Quản lý đơn hàng và theo dõi giao hàng</p>
+
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title">Quản lý đơn hàng</h1>
+            <ul class="breadcrumb"><li><a href="/admin">Admin</a></li><li><span class="bc-active">Đơn hàng</span></li></ul>
+        </div>
+    </div>
+
+    <!-- KPI mini -->
+    <div class="row g-3 mb-3">
+        <div class="col-6 col-lg-3">
+            <a href="/admin/orders?status=PENDING" style="text-decoration:none;">
+                <div class="stat-card" style="padding:14px;">
+                    <div class="stat-icon si-amber" style="width:40px;height:40px;font-size:1rem;"><i class="fas fa-clock"></i></div>
+                    <div><p class="stat-label">Chờ xử lý</p><p class="stat-value" style="font-size:1.3rem;" th:text="${statistics?.get('PENDING')}?:0">0</p></div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a href="/admin/orders?status=SHIPPED" style="text-decoration:none;">
+                <div class="stat-card" style="padding:14px;">
+                    <div class="stat-icon si-purple" style="width:40px;height:40px;font-size:1rem;"><i class="fas fa-truck"></i></div>
+                    <div><p class="stat-label">Đang giao</p><p class="stat-value" style="font-size:1.3rem;" th:text="${statistics?.get('SHIPPED')}?:0">0</p></div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <a href="/admin/orders?status=DELIVERED" style="text-decoration:none;">
+                <div class="stat-card" style="padding:14px;">
+                    <div class="stat-icon si-green" style="width:40px;height:40px;font-size:1rem;"><i class="fas fa-check-circle"></i></div>
+                    <div><p class="stat-label">Đã giao</p><p class="stat-value" style="font-size:1.3rem;" th:text="${statistics?.get('DELIVERED')}?:0">0</p></div>
+                </div>
+            </a>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="stat-card" style="padding:14px;">
+                <div class="stat-icon si-green" style="width:40px;height:40px;font-size:1rem;"><i class="fas fa-dollar-sign"></i></div>
+                <div>
+                    <p class="stat-label">Doanh thu</p>
+                    <p class="stat-value" style="font-size:1rem;" th:text="${#numbers.formatDecimal(totalRevenue?:0,0,'COMMA',0,'POINT')}+'₫'">0₫</p>
+                </div>
             </div>
-            <div>
-                <a href="#" class="btn btn-outline-primary" onclick="window.print()">
-                    <i class="fas fa-print"></i> In báo cáo
-                </a>
+        </div>
+    </div>
+
+    <!-- Filters -->
+    <form method="get" action="/admin/orders">
+        <div class="adm-toolbar">
+            <div class="toolbar-search">
+                <i class="fas fa-search si"></i>
+                <input type="text" name="search" placeholder="Tìm theo tên KH, mã đơn..." th:value="${searchKeyword}">
             </div>
+            <select name="status" class="toolbar-select" onchange="this.form.submit()">
+                <option value="">Tất cả trạng thái</option>
+                <option value="PENDING"   th:selected="${selectedStatus=='PENDING'}">Chờ xử lý</option>
+                <option value="CONFIRMED" th:selected="${selectedStatus=='CONFIRMED'}">Đã xác nhận</option>
+                <option value="SHIPPED"   th:selected="${selectedStatus=='SHIPPED'}">Đang giao</option>
+                <option value="DELIVERED" th:selected="${selectedStatus=='DELIVERED'}">Đã giao</option>
+                <option value="CANCELLED" th:selected="${selectedStatus=='CANCELLED'}">Đã hủy</option>
+            </select>
+            <button type="submit" class="btn-a btn-primary btn-sm"><i class="fas fa-search"></i> Tìm</button>
+            <a href="/admin/orders" class="btn-a btn-ghost btn-sm"><i class="fas fa-redo"></i> Reset</a>
+            <span class="toolbar-info">Tổng: <strong th:text="${totalItems}?:0">0</strong> đơn</span>
         </div>
+    </form>
 
-        <!-- Alert Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
-        </div>
-
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
-            <button type="button" class="close" data-dismiss="alert">
-                <span>&times;</span>
-            </button>
-        </div>
-
-        <!-- Statistics Cards -->
-        <div class="row mb-4">
-            <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card border-left-primary shadow-sm h-100">
-                    <div class="card-body py-3">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                    Tổng đơn hàng
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                     th:text="${statistics['TOTAL']}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="zmdi zmdi-shopping-cart zmdi-hc-2x text-gray-300"></i>
+    <div class="adm-card">
+        <div class="adm-card-body p-0">
+            <table class="adm-table">
+                <thead>
+                <tr>
+                    <th>Mã đơn</th>
+                    <th>Khách hàng</th>
+                    <th>Địa chỉ</th>
+                    <th>Tổng tiền</th>
+                    <th>Trạng thái</th>
+                    <th>Thanh toán</th>
+                    <th>Ngày tạo</th>
+                    <th style="text-align:right;">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="o : ${orders}">
+                    <td>
+                        <a th:href="@{/admin/orders/{id}(id=${o.id})}" style="font-weight:700;color:var(--adm-primary);" th:text="'#'+${o.id}">#0</a>
+                    </td>
+                    <td>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="tbl-avatar" th:text="${(o.user?.fullName ?: (o.user?.username ?: 'U')).substring(0,1).toUpperCase()}">U</div>
+                            <div>
+                                <p style="font-size:.82rem;font-weight:600;margin:0;" th:text="${o.user?.fullName ?: (o.user?.username ?: 'N/A')}">User</p>
+                                <p style="font-size:.72rem;color:var(--adm-txt-faint);margin:0;" th:text="${o.user?.email}?:''">email</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card border-left-warning shadow-sm h-100">
-                    <div class="card-body py-3">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                    Chờ xử lý
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                     th:text="${statistics['PENDING']}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="zmdi zmdi-time zmdi-hc-2x text-gray-300"></i>
-                            </div>
+                    </td>
+                    <td style="max-width:150px;">
+                        <p style="font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:0;" th:text="${o.shippingCity}?:'N/A'">City</p>
+                    </td>
+                    <td style="font-weight:700;color:var(--adm-success);" th:text="${#numbers.formatDecimal(o.totalPrice?:0,0,'COMMA',0,'POINT')}+'₫'">0₫</td>
+                    <td>
+                        <span class="bdg"
+                              th:classappend="${o.status=='PENDING'?'bdg-pending':o.status=='CONFIRMED'?'bdg-confirmed':o.status=='PROCESSING'?'bdg-processing':o.status=='SHIPPED'?'bdg-shipped':o.status=='DELIVERED'?'bdg-delivered':'bdg-cancelled'}"
+                              th:text="${o.status}?:'N/A'">-</span>
+                    </td>
+                    <td>
+                        <span class="bdg" th:classappend="${o.paymentStatus=='PAID'?'bdg-paid':'bdg-unpaid'}"
+                              th:text="${o.paymentStatus}?:'UNPAID'">-</span>
+                    </td>
+                    <td style="font-size:.78rem;color:var(--adm-txt-muted);"
+                        th:text="${o.createdAt!=null}?${#temporals.format(o.createdAt,'dd/MM/yy')}:'—'">Date</td>
+                    <td>
+                        <div class="d-flex justify-content-end gap-1">
+                            <a th:href="@{/admin/orders/{id}(id=${o.id})}" class="btn-a btn-ghost btn-icon btn-sm" title="Chi tiết"><i class="fas fa-eye"></i></a>
+                            <a th:href="@{/admin/orders/edit/{id}(id=${o.id})}" class="btn-a btn-outline btn-icon btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>
+                            <a th:href="@{/admin/orders/{id}/print(id=${o.id})}" class="btn-a btn-info btn-icon btn-sm" title="In" target="_blank"><i class="fas fa-print"></i></a>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card border-left-info shadow-sm h-100">
-                    <div class="card-body py-3">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    Đang giao
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800"
-                                     th:text="${statistics['SHIPPED']}">0</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="zmdi zmdi-truck zmdi-hc-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-xl-3 col-md-6 mb-3">
-                <div class="card border-left-success shadow-sm h-100">
-                    <div class="card-body py-3">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                    Doanh thu
-                                </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                                    <span th:text="${#numbers.formatDecimal(totalRevenue, 0, 'COMMA', 0, 'POINT')}">0</span>đ
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="zmdi zmdi-money zmdi-hc-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    </td>
+                </tr>
+                <tr th:if="${orders==null or #lists.isEmpty(orders)}">
+                    <td colspan="8" class="tbl-empty"><i class="fas fa-shopping-bag tbl-empty-icon"></i>Không tìm thấy đơn hàng</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
-        <!-- Filters and Search -->
-        <div class="card shadow-lg border-0 mb-4">
-            <div class="card-body">
-                <form method="get" th:action="@{/admin/orders}" class="row align-items-end">
-                    <div class="col-md-4 mb-2">
-                        <label class="form-label small font-weight-bold">
-                            <i class="fas fa-search"></i> Tìm kiếm
-                        </label>
-                        <input type="text"
-                               name="search"
-                               class="form-control"
-                               placeholder="ID, tên, email, SĐT..."
-                               th:value="${searchKeyword}">
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <label class="form-label small font-weight-bold">
-                            <i class="fas fa-filter"></i> Trạng thái
-                        </label>
-                        <select name="status" class="form-control">
-                            <option value="">Tất cả</option>
-                            <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">Chờ xử lý</option>
-                            <option value="CONFIRMED" th:selected="${selectedStatus == 'CONFIRMED'}">Đã xác nhận</option>
-                            <option value="PROCESSING" th:selected="${selectedStatus == 'PROCESSING'}">Đang xử lý</option>
-                            <option value="SHIPPED" th:selected="${selectedStatus == 'SHIPPED'}">Đang giao</option>
-                            <option value="DELIVERED" th:selected="${selectedStatus == 'DELIVERED'}">Đã giao</option>
-                            <option value="CANCELLED" th:selected="${selectedStatus == 'CANCELLED'}">Đã hủy</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3 mb-2">
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fas fa-search"></i> Tìm kiếm
-                        </button>
-                    </div>
-                    <div class="col-md-2 mb-2">
-                        <a th:href="@{/admin/orders}" class="btn btn-outline-secondary btn-block">
-                            <i class="fas fa-redo"></i> Reset
-                        </a>
-                    </div>
-                </form>
-            </div>
-        </div>
-
-        <!-- Orders Table -->
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-gradient-primary text-white py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold">
-                        <i class="fas fa-list"></i> Danh sách đơn hàng
-                    </h6>
-                    <span class="badge badge-light" th:text="${#lists.size(orders)} + ' orders'">0 orders</span>
-                </div>
-            </div>
-
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-hover table-borderless mb-0" id="ordersTable">
-                        <thead class="bg-light">
-                        <tr>
-                            <th class="border-0 text-center" style="width: 80px;">
-                                <small class="text-uppercase font-weight-bold">ID</small>
-                            </th>
-                            <th class="border-0">
-                                <small class="text-uppercase font-weight-bold">Khách hàng</small>
-                            </th>
-                            <th class="border-0 text-center">
-                                <small class="text-uppercase font-weight-bold">Sản phẩm</small>
-                            </th>
-                            <th class="border-0 text-right">
-                                <small class="text-uppercase font-weight-bold">Tổng tiền</small>
-                            </th>
-                            <th class="border-0 text-center">
-                                <small class="text-uppercase font-weight-bold">Thanh toán</small>
-                            </th>
-                            <th class="border-0 text-center">
-                                <small class="text-uppercase font-weight-bold">Trạng thái</small>
-                            </th>
-                            <th class="border-0">
-                                <small class="text-uppercase font-weight-bold">Ngày tạo</small>
-                            </th>
-                            <th class="border-0 text-center">
-                                <small class="text-uppercase font-weight-bold">Thao tác</small>
-                            </th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-                        <tr th:if="${#lists.isEmpty(orders)}">
-                            <td colspan="8" class="text-center py-5">
-                                <div class="text-muted">
-                                    <i class="zmdi zmdi-shopping-cart zmdi-hc-3x mb-3 d-block"></i>
-                                    <p class="mb-0">Không có đơn hàng nào</p>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <tr th:each="order : ${orders}" class="border-bottom">
-                            <td class="text-center align-middle">
-                                <span class="id-badge" th:text="'#' + ${order.id}">1</span>
-                            </td>
-                            <td class="align-middle">
-                                <div>
-                                    <strong th:text="${order.user?.fullName}">Customer Name</strong>
-                                    <br>
-                                    <small class="text-muted">
-                                        <i class="fas fa-envelope"></i>
-                                        <span th:text="${order.user?.email}">email</span>
-                                    </small>
-                                    <br th:if="${order.shippingPhone}">
-                                    <small class="text-muted" th:if="${order.shippingPhone}">
-                                        <i class="fas fa-phone"></i>
-                                        <span th:text="${order.shippingPhone}">phone</span>
-                                    </small>
-                                </div>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span class="badge badge-info" th:text="${order.totalItems} + ' items'">0 items</span>
-                            </td>
-                            <td class="text-right align-middle">
-                                <strong class="text-success">
-                                    <span th:text="${#numbers.formatDecimal(order.finalTotal, 0, 'COMMA', 0, 'POINT')}">0</span>đ
-                                </strong>
-                                <br th:if="${order.shippingFee > 0}">
-                                <small class="text-muted" th:if="${order.shippingFee > 0}">
-                                    Ship: <span th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')}">0</span>đ
-                                </small>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span th:if="${order.paymentStatus == 'PAID'}"
-                                      class="badge badge-success badge-pill">
-                                    <i class="fas fa-check-circle"></i> Đã thanh toán
-                                </span>
-                                <span th:if="${order.paymentStatus == 'UNPAID'}"
-                                      class="badge badge-warning badge-pill">
-                                    <i class="fas fa-clock"></i> Chưa thanh toán
-                                </span>
-                                <span th:if="${order.paymentStatus == 'REFUNDED'}"
-                                      class="badge badge-danger badge-pill">
-                                    <i class="fas fa-undo"></i> Đã hoàn tiền
-                                </span>
-                            </td>
-                            <td class="text-center align-middle">
-                                <span th:if="${order.status == 'PENDING'}"
-                                      class="badge badge-warning badge-pill px-3">
-                                    <i class="fas fa-clock"></i> Chờ xử lý
-                                </span>
-                                <span th:if="${order.status == 'CONFIRMED'}"
-                                      class="badge badge-info badge-pill px-3">
-                                    <i class="fas fa-check"></i> Đã xác nhận
-                                </span>
-                                <span th:if="${order.status == 'PROCESSING'}"
-                                      class="badge badge-primary badge-pill px-3">
-                                    <i class="fas fa-cog"></i> Đang xử lý
-                                </span>
-                                <span th:if="${order.status == 'SHIPPED'}"
-                                      class="badge badge-info badge-pill px-3">
-                                    <i class="fas fa-shipping-fast"></i> Đang giao
-                                </span>
-                                <span th:if="${order.status == 'DELIVERED'}"
-                                      class="badge badge-success badge-pill px-3">
-                                    <i class="fas fa-check-double"></i> Đã giao
-                                </span>
-                                <span th:if="${order.status == 'CANCELLED'}"
-                                      class="badge badge-danger badge-pill px-3">
-                                    <i class="fas fa-times-circle"></i> Đã hủy
-                                </span>
-                            </td>
-                            <td class="align-middle">
-                                <small th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}">
-                                    01/01/2024
-                                </small>
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="btn-group" role="group">
-                                    <a th:href="@{/admin/orders/{id}(id=${order.id})}"
-                                       class="btn btn-sm btn-outline-info"
-                                       title="Xem chi tiết">
-                                        <i class="fas fa-eye"></i>
-                                    </a>
-                                    <a th:href="@{/admin/orders/edit/{id}(id=${order.id})}"
-                                       class="btn btn-sm btn-outline-primary"
-                                       title="Chỉnh sửa">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <a th:href="@{/admin/orders/{id}/print(id=${order.id})}"
-                                       class="btn btn-sm btn-outline-secondary"
-                                       title="In đơn"
-                                       target="_blank">
-                                        <i class="fas fa-print"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-wrapper" th:if="${totalPages > 0}">
-                <div class="pagination-info">
-                    <span>Hiển thị</span>
-                    <strong th:text="${displayStartIndex}">1</strong>
-                    <span>-</span>
-                    <strong th:text="${displayEndIndex}">10</strong>
-                    <span>trong</span>
-                    <strong th:text="${totalItems}">0</strong>
-                </div>
-
-                <div class="pagination-controls">
-                    <ul class="pagination">
-                        <li class="page-item" th:classappend="${currentPage <= 1 ? 'disabled' : ''}">
-                            <a th:if="${currentPage > 1}" class="page-link" th:href="@{/admin/orders(page=${currentPage-1}, status=${selectedStatus}, search=${searchKeyword})}" title="Trang trước">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                            <span th:unless="${currentPage > 1}" class="page-link disabled">
-                                <i class="fas fa-chevron-left"></i>
-                            </span>
-                        </li>
-
-                        <th:block th:if="${totalPages <= 7}">
-                            <li class="page-item" th:each="p : ${#numbers.sequence(1, totalPages)}" th:classappend="${p == currentPage ? 'active' : ''}">
-                                <a th:if="${p != currentPage}" class="page-link" th:href="@{/admin/orders(page=${p}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${p}">1</a>
-                                <span th:unless="${p != currentPage}" class="page-link" th:text="${p}">1</span>
-                            </li>
-                        </th:block>
-
-                        <th:block th:if="${totalPages > 7}">
-                            <li class="page-item" th:classappend="${currentPage == 1 ? 'active' : ''}">
-                                <a th:if="${currentPage != 1}" class="page-link" th:href="@{/admin/orders(page=1, status=${selectedStatus}, search=${searchKeyword})}">1</a>
-                                <span th:unless="${currentPage != 1}" class="page-link">1</span>
-                            </li>
-
-                            <th:block th:if="${currentPage <= 3}">
-                                <li class="page-item" th:classappend="${currentPage == 2 ? 'active' : ''}">
-                                    <a th:if="${currentPage != 2}" class="page-link" th:href="@{/admin/orders(page=2, status=${selectedStatus}, search=${searchKeyword})}">2</a>
-                                    <span th:unless="${currentPage != 2}" class="page-link">2</span>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == 3 ? 'active' : ''}">
-                                    <a th:if="${currentPage != 3}" class="page-link" th:href="@{/admin/orders(page=3, status=${selectedStatus}, search=${searchKeyword})}">3</a>
-                                    <span th:unless="${currentPage != 3}" class="page-link">3</span>
-                                </li>
-                            </th:block>
-                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                                <li class="page-item">
-                                    <span class="ellipsis">...</span>
-                                </li>
-                            </th:block>
-
-                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                                <li class="page-item">
-                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage - 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${currentPage - 1}"></a>
-                                </li>
-                                <li class="page-item active">
-                                    <span class="page-link" th:text="${currentPage}"></span>
-                                </li>
-                                <li class="page-item">
-                                    <a class="page-link" th:href="@{/admin/orders(page=${currentPage + 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${currentPage + 1}"></a>
-                                </li>
-                            </th:block>
-
-                            <th:block th:if="${currentPage >= totalPages - 2}">
-                                <li class="page-item" th:classappend="${currentPage == totalPages - 2 ? 'active' : ''}">
-                                    <a th:if="${currentPage != totalPages - 2}" class="page-link" th:href="@{/admin/orders(page=${totalPages - 2}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages - 2}"></a>
-                                    <span th:unless="${currentPage != totalPages - 2}" class="page-link" th:text="${totalPages - 2}"></span>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'active' : ''}">
-                                    <a th:if="${currentPage != totalPages - 1}" class="page-link" th:href="@{/admin/orders(page=${totalPages - 1}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages - 1}"></a>
-                                    <span th:unless="${currentPage != totalPages - 1}" class="page-link" th:text="${totalPages - 1}"></span>
-                                </li>
-                            </th:block>
-                            <th:block th:if="${currentPage < totalPages - 2}">
-                                <li class="page-item">
-                                    <span class="ellipsis">...</span>
-                                </li>
-                            </th:block>
-
-                            <li class="page-item" th:classappend="${currentPage == totalPages ? 'active' : ''}">
-                                <a th:if="${currentPage != totalPages}" class="page-link" th:href="@{/admin/orders(page=${totalPages}, status=${selectedStatus}, search=${searchKeyword})}" th:text="${totalPages}"></a>
-                                <span th:unless="${currentPage != totalPages}" class="page-link" th:text="${totalPages}"></span>
-                            </li>
-                        </th:block>
-
-                        <li class="page-item" th:classappend="${currentPage >= totalPages ? 'disabled' : ''}">
-                            <a th:if="${currentPage < totalPages}" class="page-link" th:href="@{/admin/orders(page=${currentPage+1}, status=${selectedStatus}, search=${searchKeyword})}" title="Trang tiếp">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                            <span th:unless="${currentPage < totalPages}" class="page-link disabled">
-                                <i class="fas fa-chevron-right"></i>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="page-size-selector">
-                    <label for="orderPageSizeSelect">Hiển thị:</label>
-                    <select id="orderPageSizeSelect" onchange="if(this.value) window.location.href='/admin/orders?pageSize=' + this.value + '&status=' + (new URLSearchParams(window.location.search).get('status') || '');">
-                        <option value="5" th:selected="${pageSize == 5}">5 / trang</option>
-                        <option value="10" th:selected="${pageSize == 10}">10 / trang</option>
-                        <option value="20" th:selected="${pageSize == 20}">20 / trang</option>
-                        <option value="50" th:selected="${pageSize == 50}">50 / trang</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Card Footer -->
-            <div class="card-footer bg-light py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle"></i>
-                        Trang <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong>
-                    </small>
-                    <small class="text-muted">
-                        <i class="fas fa-database mr-2"></i>Tổng: <strong th:text="${totalItems}">0</strong> đơn hàng
-                    </small>
-                    </small>
-                </div>
+        <div class="adm-pagination" th:if="${totalPages>1}">
+            <span class="pg-info">Hiển thị <strong th:text="${displayStartIndex}">1</strong>–<strong th:text="${displayEndIndex}">10</strong> / <strong th:text="${totalItems}">0</strong></span>
+            <div class="pg-btns">
+                <a th:href="@{/admin/orders(page=${currentPage-1},status=${selectedStatus},search=${searchKeyword})}" class="pg-btn" th:classappend="${currentPage<=1}?'disabled'"><i class="fas fa-chevron-left"></i></a>
+                <a th:each="p : ${#numbers.sequence(1,totalPages)}" th:href="@{/admin/orders(page=${p},status=${selectedStatus},search=${searchKeyword})}" class="pg-btn" th:classappend="${p==currentPage}?'active'" th:text="${p}">1</a>
+                <a th:href="@{/admin/orders(page=${currentPage+1},status=${selectedStatus},search=${searchKeyword})}" class="pg-btn" th:classappend="${currentPage>=totalPages}?'disabled'"><i class="fas fa-chevron-right"></i></a>
             </div>
         </div>
     </div>
 </div>
 </body>
 </html>
-

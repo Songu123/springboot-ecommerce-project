@@ -1,0 +1,334 @@
+<!-- 🛒 Cart Page - Thymeleaf Template Example -->
+<!-- This is a sample implementation for cart.html fragment -->
+
+<div class="container mt-5">
+    <!-- ========================================
+         USER INFO SECTION
+         ======================================== -->
+    <div th:if="${currentUser}" class="alert alert-info">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Welcome, <span th:text="${currentUser.fullName}"></span>!</h5>
+                <p class="mb-0">Email: <span th:text="${currentUser.email}"></span></p>
+            </div>
+            <div class="col-md-6 text-right">
+                <small class="text-muted">
+                    User ID: <span th:text="${currentUser.id}"></span>
+                </small>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         LOGIN REQUIRED MESSAGE
+         ======================================== -->
+    <div th:unless="${currentUser}" class="alert alert-warning text-center">
+        <h4>🔒 Login Required</h4>
+        <p>Please <a href="/login" class="btn btn-primary">Login</a> to view your shopping cart.</p>
+        <p>Don't have an account? <a href="/register" class="btn btn-secondary">Register here</a></p>
+    </div>
+
+    <!-- ========================================
+         MAIN CART CONTENT (Only show if logged in)
+         ======================================== -->
+    <div th:if="${currentUser}">
+
+        <!-- ========================================
+             ERROR/SUCCESS MESSAGES
+             ======================================== -->
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>⚠️ Error!</strong> <span th:text="${error}"></span>
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>✅ Success!</strong> <span th:text="${success}"></span>
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <div th:if="${info}" class="alert alert-info alert-dismissible fade show" role="alert">
+            <strong>ℹ️ Info:</strong> <span th:text="${info}"></span>
+            <button type="button" class="close" data-dismiss="alert">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+
+        <!-- ========================================
+             EMPTY CART MESSAGE
+             ======================================== -->
+        <div th:if="${cartItems == null or cartItems.isEmpty()}" class="text-center py-5">
+            <i class="fas fa-shopping-cart" style="font-size: 3rem; color: #ccc;"></i>
+            <h3 class="mt-3">Your cart is empty</h3>
+            <p class="text-muted">Start shopping to add items to your cart</p>
+            <a href="/products" class="btn btn-primary btn-lg">
+                <i class="fas fa-shopping-bag"></i> Continue Shopping
+            </a>
+        </div>
+
+        <!-- ========================================
+             CART ITEMS TABLE
+             ======================================== -->
+        <div th:if="${cartItems != null and !cartItems.isEmpty()}" class="card">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">
+                    <i class="fas fa-shopping-cart"></i> Your Shopping Cart
+                    <span class="badge badge-light float-right" th:text="${cartItems.size()}"></span>
+                </h4>
+            </div>
+
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th width="100">Price</th>
+                                <th width="150">Quantity</th>
+                                <th width="120">Total</th>
+                                <th width="100">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Loop through cart items -->
+                            <tr th:each="item : ${cartItems}" th:data-product-id="${item.product.id}">
+                                <!-- Product Name & Image -->
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img th:src="@{${item.product.image}}"
+                                             alt="product"
+                                             style="width: 50px; height: 50px; object-fit: cover; margin-right: 10px;"
+                                             class="rounded">
+                                        <a th:href="@{/products/{id}(id=${item.product.id})}"
+                                           th:text="${item.product.name}"
+                                           class="product-link"></a>
+                                    </div>
+                                </td>
+
+                                <!-- Price per unit -->
+                                <td>
+                                    <strong>$<span th:text="${#numbers.formatDecimal(item.product.price, 1, 2)}"></span></strong>
+                                </td>
+
+                                <!-- Quantity input with update form -->
+                                <td>
+                                    <form th:action="@{/cart/update/{id}(id=${item.product.id})}"
+                                          method="POST"
+                                          class="form-inline"
+                                          onsubmit="return validateQuantity(this);">
+                                        <input type="number"
+                                               name="quantity"
+                                               th:value="${item.quantity}"
+                                               min="1"
+                                               max="100"
+                                               class="form-control form-control-sm"
+                                               style="width: 70px;">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-primary ml-2"
+                                                title="Update quantity">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                    </form>
+                                </td>
+
+                                <!-- Line total -->
+                                <td>
+                                    <strong class="text-success">
+                                        $<span th:text="${#numbers.formatDecimal(item.quantity * item.product.price, 1, 2)}"></span>
+                                    </strong>
+                                </td>
+
+                                <!-- Remove button -->
+                                <td>
+                                    <a th:href="@{/cart/remove/{id}(id=${item.product.id})}"
+                                       class="btn btn-sm btn-danger"
+                                       onclick="return confirm('Remove this item from cart?');"
+                                       title="Remove from cart">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================
+             CART TOTALS SECTION
+             ======================================== -->
+        <div th:if="${cartItems != null and !cartItems.isEmpty()}" class="row mt-4">
+            <!-- Left: Coupon section -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-ticket-alt"></i> Coupon Code
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/cart/apply-coupon}" method="POST" class="form-inline">
+                            <input type="text"
+                                   name="couponCode"
+                                   placeholder="Enter coupon code"
+                                   class="form-control form-control-sm flex-grow-1 mr-2"
+                                   required>
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fas fa-check"></i> Apply
+                            </button>
+                        </form>
+                        <small class="text-muted d-block mt-2">
+                            ℹ️ Coupon feature coming soon
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Order Summary -->
+            <div class="col-md-6">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="fas fa-clipboard-list"></i> Order Summary
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Subtotal -->
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal:</span>
+                            <strong>$<span th:text="${#numbers.formatDecimal(subtotal, 1, 2)}"></span></strong>
+                        </div>
+
+                        <!-- Shipping Fee -->
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>
+                                Shipping Fee:
+                                <small class="text-muted" th:if="${shippingFee == 0}">
+                                    (FREE - orders over $50)
+                                </small>
+                            </span>
+                            <strong th:classappend="${shippingFee == 0 ? 'text-success' : ''}">
+                                $<span th:text="${#numbers.formatDecimal(shippingFee, 1, 2)}"></span>
+                            </strong>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="d-flex justify-content-between mb-3 pb-3 border-bottom"
+                             th:if="${discount != null and discount > 0}">
+                            <span>Discount:</span>
+                            <strong class="text-danger">
+                                -$<span th:text="${#numbers.formatDecimal(discount, 1, 2)}"></span>
+                            </strong>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="d-flex justify-content-between">
+                            <span class="h5 mb-0">Total:</span>
+                            <h5 class="mb-0 text-success">
+                                $<span th:text="${#numbers.formatDecimal(total, 1, 2)}"></span>
+                            </h5>
+                        </div>
+
+                        <!-- Buttons -->
+                        <div class="mt-4">
+                            <a href="/checkout" class="btn btn-success btn-block btn-lg mb-2">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </a>
+                            <a href="/products" class="btn btn-outline-primary btn-block mb-2">
+                                <i class="fas fa-shopping-bag"></i> Continue Shopping
+                            </a>
+                            <a th:href="@{/cart/clear}"
+                               class="btn btn-outline-danger btn-block"
+                               onclick="return confirm('Are you sure you want to clear your entire cart?');">
+                                <i class="fas fa-trash"></i> Clear Cart
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ========================================
+     JAVASCRIPT & VALIDATION
+     ======================================== -->
+<script th:inline="javascript">
+    // Validate quantity input
+    function validateQuantity(form) {
+        const quantityInput = form.querySelector('input[name="quantity"]');
+        const quantity = parseInt(quantityInput.value);
+
+        if (quantity < 1) {
+            alert('⚠️ Quantity must be at least 1');
+            return false;
+        }
+
+        if (quantity > 100) {
+            alert('⚠️ Maximum quantity is 100');
+            return false;
+        }
+
+        return true;
+    }
+
+    // Log current user info to console
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentUserElement = document.querySelector('[data-current-user]');
+        if (currentUserElement) {
+            console.log('✅ User logged in and cart loaded');
+            console.log('🛒 Cart items count: ' + document.querySelectorAll('tbody tr').length);
+        }
+    });
+
+    // Show confirmation before removing item
+    function confirmRemove(productName) {
+        return confirm('Are you sure you want to remove "' + productName + '" from cart?');
+    }
+</script>
+
+<!-- ========================================
+     CSS STYLING
+     ======================================== -->
+<style>
+    .product-link {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 500;
+    }
+
+    .product-link:hover {
+        color: #0056b3;
+        text-decoration: underline;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+
+    .badge {
+        padding: 0.5rem 0.75rem;
+        border-radius: 50px;
+    }
+
+    .order-summary {
+        position: sticky;
+        top: 20px;
+    }
+
+    @media (max-width: 768px) {
+        .table-responsive {
+            font-size: 0.875rem;
+        }
+
+        .order-summary {
+            position: static;
+            margin-top: 2rem;
+        }
+    }
+</style>
+

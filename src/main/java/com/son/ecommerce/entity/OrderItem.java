@@ -22,6 +22,10 @@ public class OrderItem {
     private int quantity;
     private double price;
 
+    // ✅ ADD: Explicit productId field for Jackson deserialization from Android JSON
+    @Column(name = "product_id", insertable = false, updatable = false)
+    private Long productId;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id")
     @JsonIgnoreProperties({"items", "user"})
@@ -34,3 +38,5 @@ public class OrderItem {
 
     // getter & setter
 }
+
+

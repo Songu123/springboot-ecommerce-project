@@ -1,528 +1,114 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-    <title>Category Form</title>
-    <style>
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-control:focus {
-            border-color: #7B68EE;
-            box-shadow: 0 0 0 0.2rem rgba(123, 104, 238, 0.25);
-        }
-
-        .form-label {
-            transition: color 0.2s ease;
-        }
-
-        .form-control {
-            transition: all 0.3s ease;
-        }
-
-        .form-control:hover {
-            border-color: #7B68EE;
-        }
-
-        .slug-preview {
-            background: #f8f9fa;
-            border: 1px dashed #dee2e6;
-            border-radius: 6px;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            color: #495057;
-            margin-top: 0.5rem;
-        }
-
-        .slug-preview.active {
-            background: #f0f4ff;
-            border-color: #7B68EE;
-            color: #7B68EE;
-        }
-
-        .btn-lg {
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(123, 104, 238, 0.4);
-        }
-
-        .btn-outline-secondary:hover {
-            transform: translateY(-2px);
-        }
-
-        .info-card {
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .input-icon {
-            position: relative;
-        }
-
-        .input-icon i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #7B68EE;
-            pointer-events: none;
-        }
-
-        .input-icon input {
-            padding-left: 38px;
-        }
-
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .validation-feedback {
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-        }
-
-        .success-text {
-            color: #28a745;
-        }
-
-        .error-text {
-            color: #dc3545;
-        }
-    </style>
-</head>
+<head><title>Form Danh mục</title></head>
 <body>
 <div th:fragment="content">
-    <div class="container-fluid">
-        <!-- Alert Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show fade-in" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-check-circle mr-2"></i>
-                <div>
-                    <strong>Thành công!</strong>
-                    <span th:text="${success}"></span>
-                </div>
-            </div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title" th:text="${category.id!=null}?'Chỉnh sửa danh mục':'Thêm danh mục mới'">Form</h1>
+            <ul class="breadcrumb">
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="/admin/categories">Danh mục</a></li>
+                <li><span class="bc-active" th:text="${category.id!=null}?'Chỉnh sửa':'Thêm mới'">Form</span></li>
+            </ul>
         </div>
+        <a href="/admin/categories" class="btn-a btn-ghost"><i class="fas fa-arrow-left"></i> Quay lại</a>
+    </div>
 
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fade-in" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-circle mr-2"></i>
-                <div>
-                    <strong>Lỗi!</strong>
-                    <span th:text="${error}"></span>
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-tag" style="color:var(--adm-primary)"></i> Thông tin danh mục</span>
                 </div>
-            </div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+                <div class="adm-card-body">
+                    <!--
+                        Category entity only has: id, name, slug
+                        Do NOT submit 'description' — it doesn't exist on the entity
+                    -->
+                    <form th:action="@{/admin/categories/save}" method="post">
+                        <input type="hidden" name="id" th:value="${category.id}">
+                        <div class="form-group">
+                            <label class="form-label">Tên danh mục <span style="color:var(--adm-danger)">*</span></label>
+                            <input type="text" name="name" class="form-control" required
+                                   placeholder="VD: Thời trang, Gia dụng..."
+                                   th:value="${category.name}"
+                                   oninput="if(!editingSlug) genSlug(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Slug (URL) <span style="color:var(--adm-danger)">*</span></label>
+                            <div class="input-icon-wrap">
+                                <i class="fas fa-link icon"></i>
+                                <input type="text" name="slug" id="slugField" class="form-control" required
+                                       placeholder="thoi-trang, gia-dung..."
+                                       th:value="${category.slug}"
+                                       pattern="[a-z0-9-]+"
+                                       title="Chỉ dùng chữ thường, số và dấu gạch ngang"
+                                       oninput="editingSlug=true">
+                            </div>
+                            <p class="form-hint">Chỉ dùng chữ thường, số và dấu gạch ngang (&mdash;)</p>
+                        </div>
 
-        <!-- Breadcrumb -->
-        <nav aria-label="breadcrumb" class="mb-4">
-            <ol class="breadcrumb bg-light px-3 py-2 rounded">
-                <li class="breadcrumb-item">
-                    <a th:href="@{/admin/dashboard}" class="text-decoration-none">
-                        <i class="fas fa-home mr-1"></i>Dashboard
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a th:href="@{/admin/categories}" class="text-decoration-none">
-                        <i class="fas fa-folder mr-1"></i>Categories
-                    </a>
-                </li>
-                <li class="breadcrumb-item active" th:text="${category.id != null ? 'Edit Category' : 'Create Category'}">Form</li>
-            </ol>
-        </nav>
-
-        <!-- Page Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="h3 mb-2 text-gray-800">
-                    <i class="fas fa-folder text-primary"></i>
-                    <span th:text="${category.id != null ? 'Chỉnh sửa danh mục' : 'Thêm danh mục mới'}">Form</span>
-                </h1>
-                <p class="text-muted small mb-0">
-                    <i class="fas fa-info-circle mr-1"></i>
-                    <span th:if="${category.id != null}">Cập nhật thông tin danh mục sản phẩm</span>
-                    <span th:unless="${category.id != null}">Tạo danh mục sản phẩm mới cho hệ thống</span>
-                </p>
-            </div>
-            <div>
-                <a th:href="@{/admin/categories}" class="btn btn-outline-secondary btn-lg" data-toggle="tooltip" title="Quay lại danh sách">
-                    <i class="fas fa-arrow-left mr-2"></i>Quay lại
-                </a>
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn-a btn-primary btn-lg">
+                                <i class="fas fa-save"></i>
+                                <span th:text="${category.id!=null}?'Lưu thay đổi':'Tạo danh mục'">Lưu</span>
+                            </button>
+                            <a href="/admin/categories" class="btn-a btn-ghost btn-lg">Hủy bỏ</a>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <!-- Form Card -->
-        <div class="row">
-            <div class="col-lg-8">
-                <div class="card shadow-lg border-0">
-                    <div class="card-header bg-gradient-primary text-white py-4">
-                        <h6 class="m-0 font-weight-bold">
-                            <i class="fas fa-edit mr-2"></i> Thông tin danh mục
-                        </h6>
+        <div class="col-lg-5">
+            <!-- Info (edit mode) -->
+            <div class="adm-card mb-3" th:if="${category.id != null}">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-info-circle" style="color:var(--adm-primary)"></i> Thông tin</span>
+                </div>
+                <div class="adm-card-body">
+                    <div class="detail-row"><span class="detail-row-label">ID</span><strong th:text="${category.id}">0</strong></div>
+                    <div class="detail-row"><span class="detail-row-label">Tên</span><strong th:text="${category.name}">—</strong></div>
+                    <div class="detail-row"><span class="detail-row-label">Slug</span>
+                        <code style="color:var(--adm-primary);" th:text="${category.slug}?:'—'">slug</code>
                     </div>
-
-                    <div class="card-body p-4">
-                        <form th:action="@{/admin/categories/save}"
-                              th:object="${category}"
-                              method="post"
-                              id="categoryForm"
-                              novalidate>
-
-                            <input type="hidden" name="id" th:value="${category.id}">
-
-                            <!-- Category Name -->
-                            <div class="form-group mb-4">
-                                <label class="form-label font-weight-bold mb-2">
-                                    <i class="fas fa-tag text-primary mr-2"></i>Tên danh mục
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-icon">
-                                    <i class="fas fa-folder"></i>
-                                    <input type="text"
-                                           name="name"
-                                           id="categoryName"
-                                           class="form-control form-control-lg"
-                                           th:value="${category.name}"
-                                           placeholder="Ví dụ: Điện thoại, Laptop, Phụ kiện..."
-                                           required
-                                           autofocus
-                                           data-toggle="tooltip"
-                                           title="Nhập tên danh mục - tên này sẽ hiển thị trên website">
-                                </div>
-                                <small class="form-text text-muted d-block mt-2">
-                                    <i class="fas fa-info-circle"></i> Tên hiển thị của danh mục, nên rõ ràng và dễ hiểu
-                                </small>
-                                <div class="validation-feedback text-right">
-                                    <small id="nameLength" class="text-muted"></small>
-                                </div>
-                            </div>
-
-                            <!-- Slug -->
-                            <div class="form-group mb-4">
-                                <label class="form-label font-weight-bold mb-2">
-                                    <i class="fas fa-link text-info mr-2"></i>Slug (URL)
-                                    <span class="text-danger">*</span>
-                                </label>
-                                <div class="input-icon">
-                                    <i class="fas fa-link"></i>
-                                    <input type="text"
-                                           name="slug"
-                                           id="categorySlug"
-                                           class="form-control form-control-lg"
-                                           th:value="${category.slug}"
-                                           placeholder="Ví dụ: dien-thoai, laptop, phu-kien"
-                                           required
-                                           data-toggle="tooltip"
-                                           title="Slug là đường dẫn URL thân thiện - tự động sinh từ tên hoặc có thể tùy chỉnh">
-                                </div>
-                                <small class="form-text text-muted d-block mt-2">
-                                    <i class="fas fa-info-circle"></i> Đường dẫn URL thân thiện (chỉ chữ thường, số và dấu gạch ngang)
-                                </small>
-                                <div class="slug-preview" id="slugPreview">
-                                    /category/<span id="slugPreviewText" th:text="${category.slug ?: 'slug-nam-day'}">slug-nam-day</span>
-                                </div>
-                                <div class="validation-feedback text-right mt-2">
-                                    <small id="slugStatus" class="text-muted"></small>
-                                </div>
-                            </div>
-
-                            <!-- Divider -->
-                            <hr class="my-4">
-
-                            <!-- Action Buttons -->
-                            <div class="d-flex justify-content-between align-items-center mt-4 pt-3">
-                                <a th:href="@{/admin/categories}" class="btn btn-outline-secondary btn-lg px-4" data-toggle="tooltip" title="Hủy bỏ thay đổi">
-                                    <i class="fas fa-times mr-2"></i>Hủy bỏ
-                                </a>
-                                <button type="submit" class="btn btn-primary btn-lg px-5" id="submitBtn" data-toggle="tooltip" title="Lưu danh mục">
-                                    <i class="fas fa-save mr-2"></i>
-                                    <span th:text="${category.id != null ? 'Cập nhật' : 'Tạo mới'}">Lưu</span>
-                                </button>
-                            </div>
-                        </form>
+                    <div class="detail-row">
+                        <span class="detail-row-label">Số sản phẩm</span>
+                        <strong th:text="${category.products != null ? category.products.size() : 0}+' sản phẩm'">0 sản phẩm</strong>
                     </div>
                 </div>
             </div>
 
-            <!-- Info Panel -->
-            <div class="col-lg-4">
-                <!-- Quick Guide -->
-                <div class="card shadow border-0 mb-3 info-card">
-                    <div class="card-header bg-light py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-book-open mr-2"></i>Hướng dẫn
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <h6 class="font-weight-bold text-gray-800">
-                                <i class="fas fa-check-circle text-success mr-2"></i>Tên danh mục
-                            </h6>
-                            <p class="small text-muted mb-0">
-                                Tên hiển thị sẽ xuất hiện trên website. Nên đặt tên ngắn gọn, dễ hiểu. Ví dụ: "Điện thoại", "Laptop", "Phụ kiện"...
-                            </p>
-                        </div>
-
-                        <hr>
-
-                        <div class="mb-4">
-                            <h6 class="font-weight-bold text-gray-800">
-                                <i class="fas fa-check-circle text-success mr-2"></i>Slug (URL)
-                            </h6>
-                            <p class="small text-muted mb-0">
-                                Slug là đường dẫn URL thân thiện. Tự động sinh từ tên danh mục. Ví dụ: "dien-thoai" tạo URL: /category/dien-thoai
-                            </p>
-                        </div>
-
-                        <hr>
-
-                        <div>
-                            <h6 class="font-weight-bold text-gray-800">
-                                <i class="fas fa-lightbulb text-warning mr-2"></i>Lưu ý
-                            </h6>
-                            <ul class="small text-muted mb-0 pl-3">
-                                <li>Tên nên rõ ràng, không quá dài</li>
-                                <li>Slug chỉ dùng chữ thường và dấu gạch ngang</li>
-                                <li>Không để trắng hoặc ký tự đặc biệt</li>
-                                <li>Slug phải duy nhất trong hệ thống</li>
-                            </ul>
-                        </div>
-                    </div>
+            <!-- Guide -->
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-lightbulb" style="color:var(--adm-warning)"></i> Hướng dẫn</span>
                 </div>
-
-                <!-- Category Info (Edit Mode) -->
-                <div class="card shadow border-0 info-card" th:if="${category.id != null}">
-                    <div class="card-header bg-light py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">
-                            <i class="fas fa-info-circle mr-2"></i>Thông tin danh mục
-                        </h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted small font-weight-bold">ID:</span>
-                            <span class="badge badge-secondary badge-lg" th:text="${category.id}">1</span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <span class="text-muted small font-weight-bold">Trạng thái:</span>
-                            <span class="badge badge-success">
-                                <i class="fas fa-check-circle mr-1"></i>Hoạt động
-                            </span>
-                        </div>
-                        <hr>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span class="text-muted small font-weight-bold">Loại:</span>
-                            <span class="badge badge-info">Danh mục</span>
-                        </div>
-                    </div>
+                <div class="adm-card-body">
+                    <ul style="font-size:.84rem;color:var(--adm-txt-muted);padding-left:20px;line-height:2.2;">
+                        <li><strong>Tên danh mục</strong> sẽ hiển thị trên cửa hàng</li>
+                        <li><strong>Slug</strong> tạo URL thân thiện — VD:
+                            <code style="color:var(--adm-primary);">thoi-trang</code></li>
+                        <li>Slug chỉ dùng <strong>chữ thường, số và dấu gạch ngang</strong></li>
+                        <li>Slug phải <strong>duy nhất</strong> trong hệ thống</li>
+                    </ul>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Enhanced Validation & Auto-generation Script -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const nameInput = document.querySelector('#categoryName');
-            const slugInput = document.querySelector('#categorySlug');
-            const categoryForm = document.getElementById('categoryForm');
-            const submitBtn = document.getElementById('submitBtn');
-            const slugPreview = document.getElementById('slugPreview');
-            const slugPreviewText = document.getElementById('slugPreviewText');
-            const nameLength = document.getElementById('nameLength');
-            const slugStatus = document.getElementById('slugStatus');
-
-            // Initialize tooltips
-            $('[data-toggle="tooltip"]').tooltip();
-
-            // Check if this is edit mode (slug already has value)
-            const isEditMode = slugInput.value.trim().length > 0;
-
-            // Function to generate slug from name
-            function generateSlug(text) {
-                return text
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .replace(/đ/g, 'd')
-                    .replace(/[^a-z0-9\s-]/g, '')
-                    .replace(/\s+/g, '-')
-                    .replace(/-+/g, '-')
-                    .trim()
-                    .replace(/^-+|-+$/g, '');
-            }
-
-            // Update slug preview
-            function updateSlugPreview() {
-                const slug = slugInput.value.trim();
-                if (slug) {
-                    slugPreviewText.textContent = slug;
-                    slugPreview.classList.add('active');
-                } else {
-                    slugPreviewText.textContent = 'slug-nam-day';
-                    slugPreview.classList.remove('active');
-                }
-            }
-
-            // Validate slug format
-            function validateSlug(slug) {
-                const slugPattern = /^[a-z0-9-]+$/;
-                if (!slug) return { valid: false, message: 'Slug không được để trống' };
-                if (!slugPattern.test(slug)) {
-                    return { valid: false, message: '❌ Slug chỉ chứa chữ thường, số và dấu gạch ngang' };
-                }
-                if (slug.startsWith('-') || slug.endsWith('-')) {
-                    return { valid: false, message: '❌ Slug không được bắt đầu hoặc kết thúc bằng dấu gạch ngang' };
-                }
-                return { valid: true, message: '✓ Slug hợp lệ' };
-            }
-
-            // Display slug validation feedback
-            function updateSlugStatus() {
-                const slug = slugInput.value.trim();
-                const validation = validateSlug(slug);
-
-                if (validation.valid) {
-                    slugStatus.classList.add('success-text');
-                    slugStatus.classList.remove('error-text');
-                } else {
-                    slugStatus.classList.remove('success-text');
-                    slugStatus.classList.add('error-text');
-                }
-                slugStatus.textContent = validation.message;
-            }
-
-            // Display name length
-            function updateNameLength() {
-                const length = nameInput.value.trim().length;
-                if (length === 0) {
-                    nameLength.textContent = '';
-                } else if (length < 3) {
-                    nameLength.classList.add('error-text');
-                    nameLength.classList.remove('success-text');
-                    nameLength.textContent = `⚠️ Tên quá ngắn (${length}/3 ký tự tối thiểu)`;
-                } else if (length > 100) {
-                    nameLength.classList.add('error-text');
-                    nameLength.classList.remove('success-text');
-                    nameLength.textContent = `⚠️ Tên quá dài (${length}/100 ký tự tối đa)`;
-                } else {
-                    nameLength.classList.remove('error-text');
-                    nameLength.classList.add('success-text');
-                    nameLength.textContent = `✓ ${length} ký tự`;
-                }
-            }
-
-            // Auto-generate slug from name (only in create mode)
-            nameInput.addEventListener('input', function() {
-                updateNameLength();
-
-                if (!isEditMode && this.value.trim()) {
-                    const generatedSlug = generateSlug(this.value);
-                    slugInput.value = generatedSlug;
-                    updateSlugPreview();
-                    updateSlugStatus();
-                }
-            });
-
-            // Update slug preview when slug changes
-            slugInput.addEventListener('input', function() {
-                updateSlugPreview();
-                updateSlugStatus();
-            });
-
-            // Form submission validation
-            categoryForm.addEventListener('submit', function(e) {
-                const name = nameInput.value.trim();
-                const slug = slugInput.value.trim();
-
-                // Reset all errors first
-                nameInput.classList.remove('is-invalid');
-                slugInput.classList.remove('is-invalid');
-
-                let hasError = false;
-
-                // Name validation
-                if (!name) {
-                    e.preventDefault();
-                    nameInput.classList.add('is-invalid');
-                    nameLength.classList.add('error-text');
-                    nameLength.textContent = '❌ Tên danh mục không được để trống';
-                    hasError = true;
-                }
-
-                if (name.length < 3) {
-                    e.preventDefault();
-                    nameInput.classList.add('is-invalid');
-                    nameLength.classList.add('error-text');
-                    nameLength.textContent = '❌ Tên quá ngắn (tối thiểu 3 ký tự)';
-                    hasError = true;
-                }
-
-                if (name.length > 100) {
-                    e.preventDefault();
-                    nameInput.classList.add('is-invalid');
-                    nameLength.classList.add('error-text');
-                    nameLength.textContent = '❌ Tên quá dài (tối đa 100 ký tự)';
-                    hasError = true;
-                }
-
-                // Slug validation
-                if (!slug) {
-                    e.preventDefault();
-                    slugInput.classList.add('is-invalid');
-                    slugStatus.classList.add('error-text');
-                    slugStatus.textContent = '❌ Slug không được để trống';
-                    hasError = true;
-                }
-
-                const validation = validateSlug(slug);
-                if (!validation.valid) {
-                    e.preventDefault();
-                    slugInput.classList.add('is-invalid');
-                    slugStatus.classList.add('error-text');
-                    slugStatus.textContent = validation.message;
-                    hasError = true;
-                }
-
-                if (!hasError) {
-                    submitBtn.disabled = true;
-                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang lưu...';
-                }
-
-                return !hasError;
-            });
-
-            // Initialize on page load
-            updateNameLength();
-            updateSlugPreview();
-            updateSlugStatus();
-        });
+        let editingSlug = false;
+        function genSlug(name) {
+            const s = name.toLowerCase()
+                .replace(/[àáảãạăắặẳẵầấậẩẫ]/g,'a').replace(/[èéẻẽẹêếệểễề]/g,'e')
+                .replace(/[ìíỉĩị]/g,'i').replace(/[òóỏõọôồốộổỗơờớợởỡ]/g,'o')
+                .replace(/[ùúủũụưừứựửữ]/g,'u').replace(/[ỳýỷỹỵ]/g,'y').replace(/đ/g,'d')
+                .replace(/[^a-z0-9 ]/g,'').trim().replace(/\s+/g,'-');
+            document.getElementById('slugField').value = s;
+        }
     </script>
 </div>
 </body>

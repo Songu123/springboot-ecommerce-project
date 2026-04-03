@@ -1,257 +1,131 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-  <title>User Form</title>
-</head>
+<head><title>Form Người dùng</title></head>
 <body>
 <div th:fragment="content">
-  <div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h3 mb-1 text-gray-800">
-          <i class="zmdi zmdi-account-box text-primary"></i>
-          <span th:text="${user.id != null ? 'Chỉnh sửa người dùng' : 'Thêm người dùng mới'}">User Form</span>
-        </h1>
-        <p class="text-muted small mb-0">
-          <a th:href="@{/admin/users}" class="text-muted">
-            <i class="fas fa-arrow-left"></i> Quay lại danh sách
-          </a>
-        </p>
-      </div>
+
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title" th:text="${user.id!=null}?'Chỉnh sửa người dùng':'Thêm người dùng mới'">Form</h1>
+            <ul class="breadcrumb">
+                <li><a href="/admin">Admin</a></li>
+                <li><a href="/admin/users">Người dùng</a></li>
+                <li><span class="bc-active" th:text="${user.id!=null}?'Chỉnh sửa':'Thêm mới'">Form</span></li>
+            </ul>
+        </div>
+        <a href="/admin/users" class="btn-a btn-ghost"><i class="fas fa-arrow-left"></i> Quay lại</a>
     </div>
 
-    <div class="row">
-      <div class="col-lg-8">
-        <form th:action="@{/admin/users/save}" th:object="${user}" method="post">
-          <input type="hidden" name="id" th:value="${user.id}">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <form th:action="@{/admin/users/save}" method="post">
+                <input type="hidden" name="id" th:value="${user.id}">
+                <input type="hidden" name="enabled" th:value="${user.enabled}">
 
-          <!-- Basic Information Card -->
-          <div class="card shadow-lg border-0 mb-4">
-            <div class="card-header bg-gradient-primary text-white">
-              <h6 class="mb-0 font-weight-bold">
-                <i class="fas fa-user"></i> Thông tin cơ bản
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label class="form-label font-weight-bold">
-                    <i class="fas fa-user-circle text-primary"></i> Username
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input type="text"
-                         name="username"
-                         class="form-control form-control-lg"
-                         th:value="${user.username}"
-                         placeholder="Nhập username"
-                         required>
-                  <small class="form-text text-muted">
-                    <i class="fas fa-info-circle"></i> Username để đăng nhập hệ thống
-                  </small>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label font-weight-bold">
-                    <i class="fas fa-id-card text-primary"></i> Họ và tên
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input type="text"
-                         name="fullName"
-                         class="form-control form-control-lg"
-                         th:value="${user.fullName}"
-                         placeholder="Nhập họ và tên đầy đủ"
-                         required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label font-weight-bold">
-                    <i class="fas fa-envelope text-primary"></i> Email
-                    <span class="text-danger">*</span>
-                  </label>
-                  <input type="email"
-                         name="email"
-                         class="form-control form-control-lg"
-                         th:value="${user.email}"
-                         placeholder="example@email.com"
-                         required>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                  <label class="form-label font-weight-bold">
-                    <i class="fas fa-lock text-primary"></i> Password
-                    <span class="text-danger" th:if="${user.id == null}">*</span>
-                  </label>
-                  <input type="password"
-                         name="password"
-                         class="form-control form-control-lg"
-                         th:placeholder="${user.id != null} ? '••••••••' : 'Nhập password'"
-                         th:required="${user.id == null}">
-                  <small class="form-text text-muted" th:if="${user.id != null}">
-                    <i class="fas fa-shield-alt"></i> Để trống nếu không muốn đổi mật khẩu
-                  </small>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Roles & Permissions Card -->
-          <div class="card shadow-lg border-0 mb-4">
-            <div class="card-header bg-gradient-warning text-white">
-              <h6 class="mb-0 font-weight-bold">
-                <i class="fas fa-user-shield"></i> Phân quyền
-              </h6>
-            </div>
-            <div class="card-body">
-              <label class="form-label font-weight-bold mb-3">
-                <i class="fas fa-shield-alt text-warning"></i> Chọn Roles
-                <span class="text-danger">*</span>
-              </label>
-
-              <div class="row">
-                <div th:each="role : ${allRoles}" class="col-md-6 mb-3">
-                  <div class="card border h-100 role-card">
-                    <div class="card-body">
-                      <div class="custom-control custom-checkbox">
-                        <input type="checkbox"
-                               name="roleIds"
-                               th:value="${role.id}"
-                               th:id="'role_' + ${role.id}"
-                               th:checked="${user.roles != null && user.roles.contains(role)}"
-                               class="custom-control-input">
-                        <label th:for="'role_' + ${role.id}" class="custom-control-label w-100">
-                          <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                              <strong class="d-block" th:text="${role.name}">ROLE_NAME</strong>
-                              <small class="text-muted" th:if="${role.description}" th:text="${role.description}">
-                                Description
-                              </small>
-                            </div>
-                            <span th:if="${role.name == 'ROLE_ADMIN'}" class="badge badge-danger">Admin</span>
-                            <span th:if="${role.name == 'ROLE_MANAGER'}" class="badge badge-warning">Manager</span>
-                            <span th:if="${role.name == 'ROLE_USER'}" class="badge badge-info">User</span>
-                            <span th:if="${role.name == 'ROLE_CUSTOMER'}" class="badge badge-secondary">Customer</span>
-                          </div>
-                        </label>
-                      </div>
+                <div class="adm-card mb-4">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-user" style="color:var(--adm-primary)"></i> Thông tin cơ bản</span>
                     </div>
-                  </div>
+                    <div class="adm-card-body">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Tên đăng nhập <span style="color:var(--adm-danger)">*</span></label>
+                                    <input type="text" name="username" class="form-control" required th:value="${user.username}" placeholder="username123">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Họ tên đầy đủ</label>
+                                    <input type="text" name="fullName" class="form-control" th:value="${user.fullName}" placeholder="Nguyễn Văn A">
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label">Email <span style="color:var(--adm-danger)">*</span></label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-envelope icon"></i>
+                                        <input type="email" name="email" class="form-control" required th:value="${user.email}" placeholder="email@example.com">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label class="form-label" th:text="${user.id!=null}?'Mật khẩu mới (để trống nếu không đổi)':'Mật khẩu *'">Mật khẩu</label>
+                                    <div class="input-icon-wrap">
+                                        <i class="fas fa-lock icon"></i>
+                                        <input type="password" name="password" class="form-control" id="pwdField"
+                                               th:required="${user.id==null}" placeholder="••••••••"
+                                               minlength="6">
+                                    </div>
+                                    <p class="form-hint" th:if="${user.id!=null}">Để trống nếu không thay đổi mật khẩu (tối thiểu 6 ký tự khi đổi)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              </div>
 
-              <div class="alert alert-info mt-3">
-                <i class="fas fa-info-circle"></i>
-                <strong>Lưu ý:</strong> Nếu không chọn role nào, hệ thống sẽ tự động gán ROLE_USER
-              </div>
-            </div>
-          </div>
+                <div class="adm-card mb-4">
+                    <div class="adm-card-header">
+                        <span class="adm-card-title"><i class="fas fa-shield-alt" style="color:var(--adm-primary)"></i> Quyền & trạng thái</span>
+                    </div>
+                    <div class="adm-card-body">
+                        <div class="form-group">
+                            <label class="form-label">Vai trò</label>
+                            <div class="row g-2 mt-1">
+                                <div th:each="role : ${allRoles}" class="col-6 col-md-4">
+                                    <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 10px;background:var(--adm-bg-input);border-radius:var(--radius-sm);font-size:.84rem;">
+                                        <input type="checkbox" name="roleIds" th:value="${role.id}"
+                                               th:checked="${user.roles!=null and user.roles.contains(role)}"
+                                               style="accent-color:var(--adm-primary);">
+                                        <span class="bdg" th:classappend="${role.name=='ROLE_ADMIN'?'bdg-admin':role.name=='ROLE_MANAGER'?'bdg-shipped':'bdg-user'}"
+                                              th:text="${role.name?.replace('ROLE_','')}">ROLE</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Trạng thái tài khoản</label>
+                            <select name="enabled" class="form-control">
+                                <option value="true" th:selected="${user.enabled}">Hoạt động</option>
+                                <option value="false" th:selected="${!user.enabled}">Vô hiệu hóa</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
-          <!-- Status Card -->
-          <div class="card shadow-lg border-0 mb-4">
-            <div class="card-header bg-gradient-success text-white">
-              <h6 class="mb-0 font-weight-bold">
-                <i class="fas fa-toggle-on"></i> Trạng thái tài khoản
-              </h6>
-            </div>
-            <div class="card-body">
-              <div class="custom-control custom-switch custom-switch-lg">
-                <input type="checkbox"
-                       name="enabled"
-                       class="custom-control-input"
-                       id="enabledCheck"
-                       th:checked="${user.enabled}">
-                <label class="custom-control-label font-weight-bold" for="enabledCheck">
-                  <i class="fas fa-check-circle text-success"></i> Kích hoạt tài khoản
-                </label>
-              </div>
-              <small class="form-text text-muted ml-4">
-                <i class="fas fa-info-circle"></i> Tài khoản phải được kích hoạt để có thể đăng nhập
-              </small>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="card shadow-lg border-0 mb-4">
-            <div class="card-body bg-light">
-              <div class="d-flex justify-content-between align-items-center">
-                <a th:href="@{/admin/users}" class="btn btn-outline-secondary btn-lg">
-                  <i class="fas fa-times"></i> Hủy bỏ
-                </a>
-                <button type="submit" class="btn btn-primary btn-lg px-5">
-                  <i class="fas fa-save"></i> Lưu thông tin
-                </button>
-              </div>
-            </div>
-          </div>
-        </form>
-      </div>
-
-      <!-- Sidebar Info -->
-      <div class="col-lg-4">
-        <div class="card shadow-lg border-0 mb-4">
-          <div class="card-header bg-gradient-info text-white">
-            <h6 class="mb-0 font-weight-bold">
-              <i class="fas fa-info-circle"></i> Hướng dẫn
-            </h6>
-          </div>
-          <div class="card-body">
-            <h6 class="font-weight-bold mb-2">
-              <i class="fas fa-user-plus text-primary"></i> Thêm người dùng mới
-            </h6>
-            <ul class="small text-muted mb-3">
-              <li>Điền đầy đủ thông tin bắt buộc (*)</li>
-              <li>Username phải là duy nhất</li>
-              <li>Password tối thiểu 6 ký tự</li>
-              <li>Chọn ít nhất 1 role</li>
-            </ul>
-
-            <h6 class="font-weight-bold mb-2">
-              <i class="fas fa-shield-alt text-warning"></i> Các loại Role
-            </h6>
-            <ul class="small text-muted mb-3">
-              <li><strong>ADMIN:</strong> Toàn quyền hệ thống</li>
-              <li><strong>MANAGER:</strong> Quản lý sản phẩm, đơn hàng</li>
-              <li><strong>USER:</strong> Người dùng cơ bản</li>
-              <li><strong>CUSTOMER:</strong> Khách hàng mua sắm</li>
-            </ul>
-
-            <h6 class="font-weight-bold mb-2">
-              <i class="fas fa-exclamation-triangle text-danger"></i> Lưu ý
-            </h6>
-            <ul class="small text-muted">
-              <li>Không thể xóa tài khoản đang đăng nhập</li>
-              <li>Cẩn thận khi phân quyền ADMIN</li>
-              <li>Tài khoản inactive không thể đăng nhập</li>
-            </ul>
-          </div>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn-a btn-primary btn-lg">
+                        <i class="fas fa-save"></i>
+                        <span th:text="${user.id!=null}?'Lưu thay đổi':'Tạo tài khoản'">Lưu</span>
+                    </button>
+                    <a href="/admin/users" class="btn-a btn-ghost btn-lg">Hủy bỏ</a>
+                </div>
+            </form>
         </div>
 
-        <div class="card shadow-lg border-0" th:if="${user.id != null}">
-          <div class="card-header bg-secondary text-white">
-            <h6 class="mb-0 font-weight-bold">
-              <i class="fas fa-history"></i> Thông tin bổ sung
-            </h6>
-          </div>
-          <div class="card-body">
-            <p class="small mb-2">
-              <strong>User ID:</strong>
-              <span class="badge badge-secondary" th:text="${user.id}">1</span>
-            </p>
-            <p class="small mb-2">
-              <strong>Trạng thái:</strong>
-              <span th:if="${user.enabled}" class="badge badge-success">Active</span>
-              <span th:unless="${user.enabled}" class="badge badge-danger">Inactive</span>
-            </p>
-            <p class="small mb-0">
-              <strong>Số roles:</strong>
-              <span class="badge badge-info" th:text="${#lists.size(user.roles)}">0</span>
-            </p>
-          </div>
+        <div class="col-lg-5">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-info-circle" style="color:var(--adm-primary)"></i> Thông tin bổ sung</span>
+                </div>
+                <div class="adm-card-body" th:if="${user.id!=null}">
+                    <div class="detail-row"><span class="detail-row-label">ID</span><strong th:text="${user.id}">0</strong></div>
+                    <div class="detail-row"><span class="detail-row-label">Ngày tạo</span><strong th:text="${user.createdAt!=null}?${#temporals.format(user.createdAt,'dd/MM/yyyy HH:mm')}:'—'">Date</strong></div>
+                    <div class="detail-row"><span class="detail-row-label">Trạng thái</span>
+                        <span class="bdg" th:classappend="${user.enabled}?'bdg-active':'bdg-inactive'" th:text="${user.enabled}?'Hoạt động':'Vô hiệu'">-</span>
+                    </div>
+                </div>
+                <div class="adm-card-body" th:if="${user.id==null}">
+                    <ul style="font-size:.84rem;color:var(--adm-txt-muted);padding-left:18px;line-height:2.0;">
+                        <li>Tên đăng nhập chỉ dùng chữ thường, số, dấu gạch dưới</li>
+                        <li>Mật khẩu tối thiểu 6 ký tự</li>
+                        <li>Email phải là địa chỉ hợp lệ và chưa được sử dụng</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 </div>
 </body>
 </html>
-

@@ -1,0 +1,372 @@
+// 📋 CartController Integration Test Cases
+
+/*
+ * Test Cases for CartController with CustomUserDetails Integration
+ */
+
+// ========================================
+// 1. VIEW CART TESTS
+// ========================================
+
+/**
+ * TEST: User logged in - view cart with items
+ * Expected: Display cart with all user info
+ */
+GIVEN user is logged in with id=1
+AND user has 3 items in cart
+WHEN GET /cart
+THEN
+  - currentUser is not null ✅
+  - currentUser.getId() == 1 ✅
+  - currentUser.getEmail() == "user@example.com" ✅
+  - currentUser.getFullName() == "John Doe" ✅
+  - cartItems.size() == 3 ✅
+  - subtotal > 0 ✅
+  - shippingFee calculated correctly ✅
+  - total == subtotal + shippingFee ✅
+  - Model has 'currentUser' attribute ✅
+  - Response returns "layout/main" ✅
+
+/**
+ * TEST: User not logged in - redirect to login
+ */
+GIVEN user is NOT logged in
+AND currentUser == null
+WHEN GET /cart
+THEN
+  - Redirect to /login ✅
+  - Flash message: "Please login to view your cart" ✅
+  - No NullPointerException ✅
+
+/**
+ * TEST: User logged in - cart is empty
+ */
+GIVEN user is logged in
+AND user has NO items in cart
+WHEN GET /cart
+THEN
+  - cartItems.isEmpty() == true ✅
+  - subtotal == 0 ✅
+  - shippingFee == 10 (min shipping) ✅
+  - total == 10 ✅
+  - Display empty cart message ✅
+
+// ========================================
+// 2. UPDATE ITEM TESTS
+// ========================================
+
+/**
+ * TEST: Update item quantity
+ */
+GIVEN user is logged in with id=1
+AND productId=5 exists in cart with quantity=2
+WHEN POST /cart/update/5 with quantity=3
+THEN
+  - currentUser is not null ✅
+  - cartService.updateCartItemQuantity(1, 5, 3) called ✅
+  - Flash message: "Cart updated successfully!" ✅
+  - Redirect to /cart ✅
+  - Item quantity updated in database ✅
+
+/**
+ * TEST: Update item with quantity=0 (should remove)
+ */
+GIVEN user is logged in with id=1
+AND productId=5 exists in cart
+WHEN POST /cart/update/5 with quantity=0
+THEN
+  - quantity <= 0 detected ✅
+  - cartService.removeItemFromCart(1, 5) called ✅
+  - Flash message: "Item removed from cart!" ✅
+  - Item removed from database ✅
+
+/**
+ * TEST: Update item - user not logged in
+ */
+GIVEN user is NOT logged in
+WHEN POST /cart/update/5 with quantity=3
+THEN
+  - currentUser == null ✅
+  - Redirect to /login ✅
+  - Flash message: "Please login to update cart" ✅
+
+/**
+ * TEST: Update non-existent item
+ */
+GIVEN user is logged in with id=1
+AND productId=999 does NOT exist in cart
+WHEN POST /cart/update/999 with quantity=3
+THEN
+  - RuntimeException thrown: "Cart item not found" ✅
+  - Flash message: "Failed to update cart: Cart item not found" ✅
+  - Redirect to /cart ✅
+
+// ========================================
+// 3. REMOVE ITEM TESTS
+// ========================================
+
+/**
+ * TEST: Remove item from cart
+ */
+GIVEN user is logged in with id=1
+AND productId=5 exists in cart
+WHEN GET /cart/remove/5
+THEN
+  - currentUser is not null ✅
+  - cartService.removeItemFromCart(1, 5) called ✅
+  - Flash message: "Item removed from cart!" ✅
+  - Redirect to /cart ✅
+  - Item removed from database ✅
+
+/**
+ * TEST: Remove item - user not logged in
+ */
+GIVEN user is NOT logged in
+WHEN GET /cart/remove/5
+THEN
+  - currentUser == null ✅
+  - Redirect to /login ✅
+  - Flash message: "Please login to remove items" ✅
+
+/**
+ * TEST: Remove non-existent item
+ */
+GIVEN user is logged in with id=1
+AND productId=999 does NOT exist in cart
+WHEN GET /cart/remove/999
+THEN
+  - RuntimeException thrown ✅
+  - Flash message shows error ✅
+  - Redirect to /cart ✅
+
+// ========================================
+// 4. CLEAR CART TESTS
+// ========================================
+
+/**
+ * TEST: Clear entire cart
+ */
+GIVEN user is logged in with id=1
+AND user has 5 items in cart
+WHEN GET /cart/clear
+THEN
+  - currentUser is not null ✅
+  - cartService.clearCart(1) called ✅
+  - All items removed from cart ✅
+  - Flash message: "Cart cleared successfully!" ✅
+  - Redirect to /cart ✅
+  - cartItems.isEmpty() == true after reload ✅
+
+/**
+ * TEST: Clear cart - user not logged in
+ */
+GIVEN user is NOT logged in
+WHEN GET /cart/clear
+THEN
+  - currentUser == null ✅
+  - Redirect to /login ✅
+  - Flash message: "Please login to clear cart" ✅
+
+// ========================================
+// 5. APPLY COUPON TESTS
+// ========================================
+
+/**
+ * TEST: Apply coupon - feature not implemented
+ */
+GIVEN user is logged in with id=1
+AND couponCode="SAVE10"
+WHEN POST /cart/apply-coupon with coupon=SAVE10
+THEN
+  - currentUser is not null ✅
+  - Flash message: "Coupon feature coming soon!" ✅
+  - Redirect to /cart ✅
+
+/**
+ * TEST: Apply coupon - user not logged in
+ */
+GIVEN user is NOT logged in
+WHEN POST /cart/apply-coupon
+THEN
+  - currentUser == null ✅
+  - Redirect to /login ✅
+  - Flash message: "Please login to apply coupon" ✅
+
+// ========================================
+// 6. CUSTOMUSERDETAILS TESTS
+// ========================================
+
+/**
+ * TEST: CustomUserDetails contains full user info
+ */
+GIVEN User entity with all fields filled:
+  - id = 1
+  - username = "john_doe"
+  - email = "john@example.com"
+  - fullName = "John Doe"
+  - password = bcrypt hash
+  - roles = {ROLE_USER, ROLE_CUSTOMER}
+  - enabled = true
+
+WHEN CustomUserDetails created with this user
+THEN
+  - getId() == 1 ✅
+  - getUsername() == "john_doe" ✅
+  - getEmail() == "john@example.com" ✅
+  - getFullName() == "John Doe" ✅
+  - getPassword() != null ✅
+  - getAuthorities().size() >= 2 ✅
+  - isEnabled() == true ✅
+  - isAccountNonLocked() == true ✅
+
+/**
+ * TEST: CustomUserDetails with disabled user
+ */
+GIVEN User with enabled = false
+WHEN CustomUserDetails created
+THEN
+  - isEnabled() == false ✅
+  - isAccountNonLocked() == false ✅
+  - User cannot authenticate ✅
+
+// ========================================
+// 7. CUSTOMUSERDETAILSERVICE TESTS
+// ========================================
+
+/**
+ * TEST: Load user by username
+ */
+GIVEN username = "john_doe"
+AND user with this username exists
+WHEN CustomUserDetailsService.loadUserByUsername("john_doe")
+THEN
+  - User found in database ✅
+  - CustomUserDetails object created ✅
+  - customUserDetails.getUsername() == "john_doe" ✅
+
+/**
+ * TEST: Load user by email (fallback)
+ */
+GIVEN username = "john@example.com" (email instead)
+AND user with this email exists
+WHEN CustomUserDetailsService.loadUserByUsername("john@example.com")
+THEN
+  - Username lookup fails ✅
+  - Email lookup succeeds ✅
+  - CustomUserDetails object created ✅
+  - customUserDetails.getEmail() == "john@example.com" ✅
+
+/**
+ * TEST: Load user - not found
+ */
+GIVEN username = "nonexistent"
+AND user does NOT exist
+WHEN CustomUserDetailsService.loadUserByUsername("nonexistent")
+THEN
+  - UsernameNotFoundException thrown ✅
+  - Error message contains username ✅
+
+// ========================================
+// 8. LOGGING TESTS
+// ========================================
+
+/**
+ * TEST: Debug logging for each operation
+ */
+WHEN any CartController method executed
+THEN logs contain:
+  - ✅ [CartController] prefix in all logs
+  - ✅ Operation description (View/Update/Remove/Clear)
+  - ✅ User ID being processed
+  - ✅ Product IDs involved
+  - ✅ Success (✅) or Error (❌) indicator
+  - ✅ Exception stack traces on error
+
+// ========================================
+// 9. INTEGRATION TESTS
+// ========================================
+
+/**
+ * TEST: Full user flow
+ */
+SCENARIO: Complete shopping cart flow
+
+1️⃣  User registers
+    POST /api/auth/register
+    → User created in database
+
+2️⃣  User logs in
+    POST /api/auth/login
+    → CustomUserDetails created with full user info
+    → Authentication token issued
+
+3️⃣  User views cart
+    GET /cart with @AuthenticationPrincipal CustomUserDetails
+    → currentUser loaded with id, email, fullName, roles
+    → Cart displayed with user info
+
+4️⃣  User adds item
+    POST /api/cart/add (or via product page)
+    → Item added to cart
+
+5️⃣  User updates quantity
+    POST /cart/update/5?quantity=3
+    → currentUser not null ✅
+    → Item updated in database ✅
+    → Redirect to /cart with success message ✅
+
+6️⃣  User removes item
+    GET /cart/remove/5
+    → Item removed from cart
+    → Success message displayed
+
+7️⃣  User clears cart
+    GET /cart/clear
+    → All items removed
+    → Cart is empty
+
+8️⃣  User logs out
+    → Authentication cleared
+    → Next /cart request redirects to /login
+
+// ========================================
+// 10. ERROR HANDLING TESTS
+// ========================================
+
+/**
+ * TEST: Null pointer exception prevention
+ */
+FOR each CartController method:
+  WHEN currentUser == null
+  THEN
+    - No NullPointerException thrown ✅
+    - currentUser.getId() not called ✅
+    - currentUser.getEmail() not called ✅
+    - Redirect to /login instead ✅
+
+/**
+ * TEST: Database error handling
+ */
+WHEN database query fails
+THEN
+  - Exception caught ✅
+  - Error logged with stack trace ✅
+  - Flash message shown to user ✅
+  - User not shown technical details ✅
+  - User redirected to cart page ✅
+
+/**
+ * TEST: Invalid request parameters
+ */
+WHEN quantity < 0 in update request
+THEN
+  - Parameter validated ✅
+  - Item removed instead of update ✅
+  - Success message shown ✅
+
+WHEN productId is non-numeric
+THEN
+  - BadRequest response ✅
+  - Error message shown ✅
+
+

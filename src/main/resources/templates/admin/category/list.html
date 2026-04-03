@@ -1,912 +1,128 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-    <title>Danh sách danh mục</title>
-        <style>
-        .fade-in {
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .table-row-hover {
-            transition: all 0.2s ease;
-        }
-
-        .table-row-hover:hover {
-            background-color: rgba(123, 104, 238, 0.05);
-            transform: translateX(5px);
-        }
-
-        .btn-group-sm .btn {
-            transition: all 0.2s ease;
-        }
-
-        .btn-outline-primary:hover {
-            transform: scale(1.05);
-        }
-
-        .btn-outline-danger:hover {
-            transform: scale(1.05);
-        }
-
-        .stat-card {
-            transition: all 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1) !important;
-        }
-
-        .search-box {
-            position: relative;
-        }
-
-        .search-box input {
-            padding-right: 40px;
-        }
-
-        .search-icon {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #999;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .empty-state i {
-            color: #ddd;
-        }
-
-        /* ID Badge Style */
-        .id-badge {
-            background: #007bff !important;
-            color: white !important;
-            padding: 8px 14px !important;
-            border-radius: 20px !important;
-            font-weight: bold !important;
-            font-size: 13px !important;
-            display: inline-block !important;
-            box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3) !important;
-            transition: all 0.3s ease !important;
-        }
-
-        .id-badge:hover {
-            background: #0056b3 !important;
-            box-shadow: 0 4px 14px rgba(0, 123, 255, 0.4) !important;
-            transform: scale(1.05) !important;
-        }
-
-        /* ========== ClickUp-Style Pagination - Professional Design ========== */
-        .pagination-wrapper {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1.25rem 1.5rem;
-            background: #ffffff;
-            border-top: 1px solid #e5e7eb;
-            border-bottom: 1px solid #e5e7eb;
-            border-radius: 0 0 12px 12px;
-            flex-wrap: wrap;
-            gap: 2rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-        }
-
-        .pagination-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            color: #9ca3af;
-            padding: 0.5rem 0;
-            white-space: nowrap;
-        }
-
-        .pagination-info strong {
-            color: #1f2937;
-            font-weight: 700;
-            font-size: 0.9375rem;
-        }
-
-        .pagination-info span {
-            color: #9ca3af;
-        }
-
-        .pagination-controls {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .pagination {
-            display: flex;
-            list-style: none;
-            gap: 0.35rem;
-            margin: 0;
-            padding: 0;
-            align-items: center;
-            background: white;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .pagination .page-item {
-            display: inline-block;
-        }
-
-        .pagination .page-link {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 36px;
-            height: 36px;
-            padding: 0.5rem 0.75rem;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            background: transparent;
-            color: #6b7280;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.875rem;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-        }
-
-        .pagination .page-link:hover:not(.disabled) {
-            background: #f3f4f6;
-            color: #1f2937;
-            border-color: #d1d5db;
-            transform: translateY(-1px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .pagination .page-item.active .page-link {
-            background: #2563EB;
-            border-color: #2563EB;
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-            position: relative;
-            z-index: 1;
-        }
-
-        .pagination .page-item.active .page-link:hover {
-            background: #1E40AF;
-            border-color: #1E40AF;
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .pagination .page-link i {
-            font-size: 0.8rem;
-            transition: transform 0.3s ease;
-        }
-
-        .pagination .page-link:hover:not(.disabled) i {
-            transform: scale(1.15);
-        }
-
-        .pagination .page-item.active .page-link i {
-            color: white;
-        }
-
-        .pagination .page-item.disabled .page-link {
-            opacity: 0.4;
-            cursor: not-allowed;
-            color: #d1d5db;
-            background: transparent;
-            border-color: transparent;
-            pointer-events: none;
-        }
-
-        .pagination .page-item.disabled .page-link:hover {
-            background: transparent;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .pagination .ellipsis {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 36px;
-            height: 36px;
-            color: #9ca3af;
-            font-weight: 600;
-            font-size: 1rem;
-            padding: 0 0.25rem;
-        }
-
-        .page-size-selector {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            font-size: 0.875rem;
-            color: #6b7280;
-            white-space: nowrap;
-        }
-
-        .page-size-selector label {
-            font-weight: 500;
-            color: #4b5563;
-        }
-
-        .page-size-selector select {
-            padding: 0.5rem 0.85rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            background: white;
-            color: #1f2937;
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            appearance: none;
-            padding-right: 2rem;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: right 0.6rem center;
-            padding-right: 2.2rem;
-        }
-
-        .page-size-selector select:hover {
-            border-color: #9ca3af;
-            background-color: #f9fafb;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        .page-size-selector select:focus {
-            outline: none;
-            border-color: #2563EB;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1),
-                        0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        @media (max-width: 1024px) {
-            .pagination-wrapper {
-                gap: 1.5rem;
-                padding: 1rem 1.25rem;
-            }
-
-            .pagination-controls {
-                order: 2;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .pagination-info {
-                order: 1;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .page-size-selector {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .pagination-wrapper {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-
-            .pagination-info {
-                order: 1;
-                width: 100%;
-                justify-content: center;
-                font-size: 0.8125rem;
-            }
-
-            .pagination-controls {
-                order: 2;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .page-size-selector {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .pagination {
-                padding: 0.4rem 0.5rem;
-                gap: 0.25rem;
-            }
-
-            .pagination .page-link {
-                min-width: 32px;
-                height: 32px;
-                padding: 0.4rem 0.6rem;
-                font-size: 0.8125rem;
-            }
-
-            .pagination .page-link i {
-                font-size: 0.7rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .pagination-wrapper {
-                gap: 0.75rem;
-                padding: 0.85rem;
-            }
-
-            .pagination-info {
-                font-size: 0.75rem;
-            }
-
-            .pagination-info strong {
-                font-size: 0.875rem;
-            }
-
-            .pagination {
-                padding: 0.3rem 0.4rem;
-                gap: 0.2rem;
-            }
-
-            .pagination .page-link {
-                min-width: 28px;
-                height: 28px;
-                padding: 0.3rem 0.5rem;
-                font-size: 0.75rem;
-            }
-
-            .pagination .ellipsis {
-                min-width: 28px;
-                height: 28px;
-                font-size: 0.9rem;
-            }
-
-            .page-size-selector {
-                gap: 0.5rem;
-                font-size: 0.8125rem;
-            }
-
-            .page-size-selector select {
-                padding: 0.35rem 0.65rem;
-                font-size: 0.75rem;
-            }
-        }
-
-        @media print {
-            .pagination-wrapper {
-                display: none;
-            }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-            .pagination .page-link,
-            .page-size-selector select {
-                transition: none;
-            }
-
-            .pagination .page-link:hover:not(.disabled) {
-                transform: none;
-            }
-        }
-    </style>
-</head>
+<head><title>Danh mục</title></head>
 <body>
 <div th:fragment="content">
-    <div class="container-fluid">
-        <!-- Alert Messages -->
-        <div th:if="${success}" class="alert alert-success alert-dismissible fade show fade-in" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-check-circle mr-2"></i>
-                <div>
-                    <strong>Thành công!</strong>
-                    <span th:text="${success}"></span>
-                </div>
-            </div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
+
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title">Quản lý danh mục</h1>
+            <ul class="breadcrumb"><li><a href="/admin">Admin</a></li><li><span class="bc-active">Danh mục</span></li></ul>
         </div>
+        <a href="/admin/categories/create" class="btn-a btn-primary"><i class="fas fa-plus"></i> Thêm danh mục</a>
+    </div>
 
-        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show fade-in" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-circle mr-2"></i>
-                <div>
-                    <strong>Lỗi!</strong>
-                    <span th:text="${error}"></span>
+    <div class="row g-4">
+        <!-- LEFT: list -->
+        <div class="col-lg-8">
+            <div class="adm-toolbar" style="margin-bottom:16px;">
+                <div class="toolbar-search">
+                    <i class="fas fa-search si"></i>
+                    <input type="text" id="srchCat" placeholder="Tìm danh mục..." oninput="filterTable('srchCat','catTbody')">
                 </div>
+                <span class="toolbar-info">Tổng: <strong th:text="${totalItems}?:0">0</strong> danh mục</span>
             </div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <div th:if="${warning}" class="alert alert-warning alert-dismissible fade show fade-in" role="alert">
-            <div class="d-flex align-items-center">
-                <i class="fas fa-exclamation-triangle mr-2"></i>
-                <div>
-                    <strong>Cảnh báo!</strong>
-                    <span th:text="${warning}"></span>
-                </div>
-            </div>
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-
-        <!-- Page Header with Actions -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h1 class="h3 mb-1 text-gray-800">
-                    <i class="fas fa-folder text-primary"></i> Category Management
-                </h1>
-                <p class="text-muted small mb-0">Quản lý danh mục sản phẩm trên hệ thống</p>
-            </div>
-            <div>
-                <a th:href="@{/admin/categories/create}" class="btn btn-primary btn-lg" data-toggle="tooltip" title="Tạo danh mục mới">
-                    <i class="fas fa-plus"></i> Thêm danh mục mới
-                </a>
-            </div>
-        </div>
-
-        <!-- Stats Cards Row -->
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card border-left-primary shadow-sm h-100 stat-card">
-                    <div class="card-body py-4">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-primary text-uppercase mb-2">
-                                    <i class="fas fa-list mr-1"></i> Tổng Danh Mục
-                                </div>
-                                <div class="h4 mb-0 font-weight-bold text-gray-800">
-                                    <span th:text="${#lists.size(categories)}">0</span>
-                                </div>
-                                <small class="text-muted">danh mục trong hệ thống</small>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-folder fa-3x text-primary opacity-25"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <div class="card border-left-success shadow-sm h-100 stat-card">
-                    <div class="card-body py-4">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-success text-uppercase mb-2">
-                                    <i class="fas fa-check-circle mr-1"></i> Danh Mục Hoạt Động
-                                </div>
-                                <div class="h4 mb-0 font-weight-bold text-gray-800">
-                                    <span th:text="${#lists.size(categories)}">0</span>
-                                </div>
-                                <small class="text-muted">sẵn sàng sử dụng</small>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-check fa-3x text-success opacity-25"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-3">
-                <div class="card border-left-info shadow-sm h-100 stat-card">
-                    <div class="card-body py-4">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-2">
-                                    <i class="fas fa-star mr-1"></i> Danh Mục Mới Nhất
-                                </div>
-                                <div class="h6 mb-0 font-weight-bold text-gray-800" style="max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"
-                                     th:text="${!#lists.isEmpty(categories)} ? ${categories[#lists.size(categories) - 1].name} : 'N/A'">N/A
-                                </div>
-                                <small class="text-muted">vừa được thêm</small>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-star fa-3x text-info opacity-25"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Search & Filter Section -->
-        <div class="card shadow-sm mb-4 border-0">
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="search-box">
-                            <input type="text"
-                                   id="searchInput"
-                                   class="form-control form-control-lg"
-                                   placeholder="🔍 Tìm kiếm theo tên hoặc slug..."
-                                   data-toggle="tooltip"
-                                   title="Nhập tên danh mục hoặc slug để tìm kiếm">
-                        </div>
-                    </div>
-                    <div class="col-md-6 text-right">
-                        <button type="button"
-                                class="btn btn-outline-secondary"
-                                onclick="resetSearch()"
-                                data-toggle="tooltip"
-                                title="Xóa tất cả tìm kiếm">
-                            <i class="fas fa-redo"></i> Đặt lại
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Main Table Card -->
-        <div class="card shadow-lg border-0">
-            <div class="card-header bg-gradient-primary text-white py-3">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h6 class="m-0 font-weight-bold">
-                        <i class="fas fa-table"></i> Danh sách danh mục
-                    </h6>
-                    <span class="badge badge-light badge-lg" th:text="${#lists.size(categories)} + ' danh mục'">0 danh mục</span>
-                </div>
-            </div>
-
-            <div class="card-body p-0">
-                <div th:if="${#lists.isEmpty(categories)}" class="empty-state">
-                    <i class="fas fa-folder-open fa-5x mb-4"></i>
-                    <h5 class="text-muted mb-2">Chưa có danh mục nào</h5>
-                    <p class="text-muted mb-4">Hệ thống chưa có danh mục sản phẩm. Hãy tạo danh mục đầu tiên ngay bây giờ!</p>
-                    <a th:href="@{/admin/categories/create}" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Tạo danh mục mới
-                    </a>
-                </div>
-
-                <div th:if="${!#lists.isEmpty(categories)}" class="table-responsive">
-                    <table class="table table-hover table-borderless mb-0" id="categoriesTable">
-                        <thead class="bg-light">
+            <div class="adm-card">
+                <div class="adm-card-body p-0">
+                    <table class="adm-table">
+                        <thead>
                         <tr>
-                            <th class="border-0 text-center" style="width: 70px;">
-                                <small class="text-uppercase font-weight-bold">
-                                    <i class="fas fa-hashtag"></i> ID
-                                </small>
-                            </th>
-                            <th class="border-0" style="width: 40%;">
-                                <small class="text-uppercase font-weight-bold">
-                                    <i class="fas fa-folder"></i> Tên danh mục
-                                </small>
-                            </th>
-                            <th class="border-0" style="width: 35%;">
-                                <small class="text-uppercase font-weight-bold">
-                                    <i class="fas fa-link"></i> Slug
-                                </small>
-                            </th>
-                            <th class="border-0 text-center" style="width: 15%;">
-                                <small class="text-uppercase font-weight-bold">
-                                    <i class="fas fa-cog"></i> Thao tác
-                                </small>
-                            </th>
+                            <th style="width:40px">#</th>
+                            <th>Tên danh mục</th>
+                            <th>Slug</th>
+                            <th>Sản phẩm</th>
+                            <th style="text-align:right;">Thao tác</th>
                         </tr>
                         </thead>
-
-                        <tbody>
-                        <tr th:each="category : ${categories}" class="table-row-hover border-bottom" th:data-name="${category.name}" th:data-slug="${category.slug}">
-                            <td class="text-center align-middle">
-                                <span class="id-badge" th:text="${category.id}">ID: 1</span>
+                        <tbody id="catTbody">
+                        <tr th:each="c,stat : ${categories}">
+                            <td style="color:var(--adm-txt-faint);font-size:.78rem;" th:text="${(currentPage-1)*pageSize+stat.count}">1</td>
+                            <td style="font-weight:600;" th:text="${c.name}">Name</td>
+                            <td>
+                                <code style="font-size:.77rem;color:var(--adm-primary);background:var(--adm-primary-pale);padding:2px 7px;border-radius:4px;"
+                                      th:text="${c.slug}?:'—'">slug</code>
                             </td>
-                            <td class="align-middle">
-                                <div class="d-flex align-items-center">
-                                    <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mr-3"
-                                         style="width: 40px; height: 40px; font-size: 16px; flex-shrink: 0;">
-                                        <i class="fas fa-folder"></i>
-                                    </div>
-                                    <div>
-                                        <strong class="text-gray-800" th:text="${category.name}">Category Name</strong>
-                                        <br>
-                                        <small class="text-muted">
-                                            <i class="fas fa-id-card-alt mr-1"></i>ID: <span th:text="${category.id}">1</span>
-                                        </small>
-                                    </div>
+                            <td>
+                                <span class="bdg bdg-user"
+                                      th:text="${c.products != null ? c.products.size() : 0}+' sp'">0 sp</span>
+                            </td>
+                            <td>
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a th:href="@{/admin/categories/edit/{id}(id=${c.id})}" class="btn-a btn-outline btn-icon btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>
+                                    <a th:href="@{/admin/categories/delete/{id}(id=${c.id})}" class="btn-a btn-danger btn-icon btn-sm" title="Xóa"
+                                       th:attr="onclick='return confirmDel(\''+${c.name}+'\')'"><i class="fas fa-trash"></i></a>
                                 </div>
                             </td>
-                            <td class="align-middle">
-                                <div class="d-flex align-items-center">
-                                    <code class="text-info" th:text="${category.slug}">category-slug</code>
-                                    <i class="fas fa-copy ml-2 text-muted"
-                                       style="cursor: pointer;"
-                                       onclick="copyToClipboard(this)"
-                                       data-toggle="tooltip"
-                                       title="Sao chép slug"
-                                       th:data-slug="${category.slug}"></i>
-                                </div>
-                            </td>
-                            <td class="text-center align-middle">
-                                <div class="btn-group btn-group-sm" role="group">
-                                    <a th:href="@{/admin/categories/edit/{id}(id=${category.id})}"
-                                       class="btn btn-outline-primary"
-                                       data-toggle="tooltip"
-                                       title="Chỉnh sửa danh mục này">
-                                        <i class="fas fa-edit"></i>
-                                    </a>
-                                    <button type="button"
-                                            class="btn btn-outline-danger"
-                                            data-toggle="modal"
-                                            data-target="#deleteModal"
-                                            th:data-id="${category.id}"
-                                            th:data-name="${category.name}"
-                                            title="Xóa danh mục này">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </div>
-                            </td>
+                        </tr>
+                        <tr th:if="${categories==null or #lists.isEmpty(categories)}">
+                            <td colspan="5" class="tbl-empty"><i class="fas fa-tags tbl-empty-icon"></i>Chưa có danh mục nào</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
-            </div>
-
-            <!-- Pagination -->
-            <div class="pagination-wrapper" th:if="${totalPages > 0}">
-                <div class="pagination-info">
-                    <span>Hiển thị</span>
-                    <strong th:text="${displayStartIndex}">1</strong>
-                    <span>-</span>
-                    <strong th:text="${displayEndIndex}">10</strong>
-                    <span>trong</span>
-                    <strong th:text="${totalItems}">0</strong>
+                <div class="adm-pagination" th:if="${totalPages > 1}">
+                    <span class="pg-info">Trang <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong></span>
+                    <div class="pg-btns">
+                        <a th:href="@{/admin/categories(page=${currentPage-1})}" class="pg-btn" th:classappend="${currentPage<=1}?'disabled'"><i class="fas fa-chevron-left"></i></a>
+                        <a th:each="p : ${#numbers.sequence(1,totalPages)}" th:href="@{/admin/categories(page=${p})}" class="pg-btn" th:classappend="${p==currentPage}?'active'" th:text="${p}">1</a>
+                        <a th:href="@{/admin/categories(page=${currentPage+1})}" class="pg-btn" th:classappend="${currentPage>=totalPages}?'disabled'"><i class="fas fa-chevron-right"></i></a>
+                    </div>
                 </div>
-
-                <div class="pagination-controls">
-                    <ul class="pagination">
-                        <!-- Previous -->
-                        <li class="page-item" th:classappend="${currentPage <= 1 ? 'disabled' : ''}">
-                            <a th:if="${currentPage > 1}" class="page-link" th:href="@{/admin/categories(page=${currentPage-1})}" title="Trang trước">
-                                <i class="fas fa-chevron-left"></i>
-                            </a>
-                            <span th:unless="${currentPage > 1}" class="page-link disabled">
-                                <i class="fas fa-chevron-left"></i>
-                            </span>
-                        </li>
-
-                        <!-- Page Numbers - Smart Pagination -->
-                        <th:block th:if="${totalPages <= 7}">
-                            <!-- Show all pages if less than 7 -->
-                            <li class="page-item" th:each="p : ${#numbers.sequence(1, totalPages)}" th:classappend="${p == currentPage ? 'active' : ''}">
-                                <a th:if="${p != currentPage}" class="page-link" th:href="@{/admin/categories(page=${p})}" th:text="${p}">1</a>
-                                <span th:unless="${p != currentPage}" class="page-link" th:text="${p}">1</span>
-                            </li>
-                        </th:block>
-
-                        <th:block th:if="${totalPages > 7}">
-                            <!-- Show smart pagination for many pages -->
-                            <!-- First page -->
-                            <li class="page-item" th:classappend="${currentPage == 1 ? 'active' : ''}">
-                                <a th:if="${currentPage != 1}" class="page-link" th:href="@{/admin/categories(page=1)}">1</a>
-                                <span th:unless="${currentPage != 1}" class="page-link">1</span>
-                            </li>
-
-                            <!-- Ellipsis or page 2 -->
-                            <th:block th:if="${currentPage <= 3}">
-                                <li class="page-item" th:classappend="${currentPage == 2 ? 'active' : ''}">
-                                    <a th:if="${currentPage != 2}" class="page-link" th:href="@{/admin/categories(page=2)}">2</a>
-                                    <span th:unless="${currentPage != 2}" class="page-link">2</span>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == 3 ? 'active' : ''}">
-                                    <a th:if="${currentPage != 3}" class="page-link" th:href="@{/admin/categories(page=3)}">3</a>
-                                    <span th:unless="${currentPage != 3}" class="page-link">3</span>
-                                </li>
-                            </th:block>
-                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                                <li class="page-item">
-                                    <span class="ellipsis">...</span>
-                                </li>
-                            </th:block>
-
-                            <!-- Middle pages (around current) -->
-                            <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                                <li class="page-item" th:classappend="${currentPage - 1 == currentPage ? 'active' : ''}">
-                                    <a class="page-link" th:href="@{/admin/categories(page=${currentPage - 1})}" th:text="${currentPage - 1}"></a>
-                                </li>
-                                <li class="page-item active">
-                                    <span class="page-link" th:text="${currentPage}"></span>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage + 1 == currentPage ? 'active' : ''}">
-                                    <a class="page-link" th:href="@{/admin/categories(page=${currentPage + 1})}" th:text="${currentPage + 1}"></a>
-                                </li>
-                            </th:block>
-
-                            <!-- Ellipsis or last pages -->
-                            <th:block th:if="${currentPage >= totalPages - 2}">
-                                <li class="page-item" th:classappend="${currentPage == totalPages - 2 ? 'active' : ''}">
-                                    <a th:if="${currentPage != totalPages - 2}" class="page-link" th:href="@{/admin/categories(page=${totalPages - 2})}" th:text="${totalPages - 2}"></a>
-                                    <span th:unless="${currentPage != totalPages - 2}" class="page-link" th:text="${totalPages - 2}"></span>
-                                </li>
-                                <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'active' : ''}">
-                                    <a th:if="${currentPage != totalPages - 1}" class="page-link" th:href="@{/admin/categories(page=${totalPages - 1})}" th:text="${totalPages - 1}"></a>
-                                    <span th:unless="${currentPage != totalPages - 1}" class="page-link" th:text="${totalPages - 1}"></span>
-                                </li>
-                            </th:block>
-                            <th:block th:if="${currentPage < totalPages - 2}">
-                                <li class="page-item">
-                                    <span class="ellipsis">...</span>
-                                </li>
-                            </th:block>
-
-                            <!-- Last page -->
-                            <li class="page-item" th:classappend="${currentPage == totalPages ? 'active' : ''}">
-                                <a th:if="${currentPage != totalPages}" class="page-link" th:href="@{/admin/categories(page=${totalPages})}" th:text="${totalPages}"></a>
-                                <span th:unless="${currentPage != totalPages}" class="page-link" th:text="${totalPages}"></span>
-                            </li>
-                        </th:block>
-
-                        <!-- Next -->
-                        <li class="page-item" th:classappend="${currentPage >= totalPages ? 'disabled' : ''}">
-                            <a th:if="${currentPage < totalPages}" class="page-link" th:href="@{/admin/categories(page=${currentPage+1})}" title="Trang tiếp">
-                                <i class="fas fa-chevron-right"></i>
-                            </a>
-                            <span th:unless="${currentPage < totalPages}" class="page-link disabled">
-                                <i class="fas fa-chevron-right"></i>
-                            </span>
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="page-size-selector">
-                    <label for="pageSizeSelect">Hiển thị:</label>
-                    <select id="pageSizeSelect" onchange="if(this.value) window.location.href='/admin/categories?pageSize=' + this.value;">
-                        <option value="5" th:selected="${pageSize == 5}">5 / trang</option>
-                        <option value="10" th:selected="${pageSize == 10}">10 / trang</option>
-                        <option value="20" th:selected="${pageSize == 20}">20 / trang</option>
-                        <option value="50" th:selected="${pageSize == 50}">50 / trang</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Card Footer with Info -->
-            <div class="card-footer bg-light py-3" th:if="${#lists.isEmpty(categories) == false}">
-                <div class="d-flex justify-content-between align-items-center flex-wrap">
-                    <small class="text-muted">
-                        <i class="fas fa-info-circle"></i>
-                        Trang <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong>
-                    </small>
-                    <small class="text-muted">
-                        <i class="fas fa-database mr-2"></i>Tổng: <strong th:text="${totalItems}">0</strong> danh mục
-                    </small>
-                </div>
-            </div>
             </div>
         </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content border-0 shadow-lg">
-                <div class="modal-header bg-danger text-white border-0">
-                    <h5 class="modal-title font-weight-bold">
-                        <i class="fas fa-exclamation-triangle mr-2"></i>Xác nhận xóa
-                    </h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+        <!-- RIGHT: quick add (only name + slug, matching entity) -->
+        <div class="col-lg-4">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-plus-circle" style="color:var(--adm-primary)"></i> Thêm nhanh</span>
                 </div>
-                <div class="modal-body">
-                    <p class="mb-2">Bạn có chắc chắn muốn xóa danh mục này?</p>
-                    <p class="font-weight-bold text-danger mb-3">
-                        <i class="fas fa-folder mr-2"></i><span id="categoryName">Category Name</span>
-                    </p>
-                    <div class="alert alert-warning" role="alert">
-                        <i class="fas fa-info-circle mr-2"></i>
-                        <strong>Lưu ý:</strong> Hành động này không thể hoàn tác!
-                    </div>
-                </div>
-                <div class="modal-footer border-top">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                        <i class="fas fa-times mr-2"></i>Hủy bỏ
-                    </button>
-                    <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
-                        <i class="fas fa-trash-alt mr-2"></i>Xóa danh mục
-                    </a>
+                <div class="adm-card-body">
+                    <form th:action="@{/admin/categories/save}" method="post">
+                        <div class="form-group">
+                            <label class="form-label">Tên danh mục <span style="color:var(--adm-danger)">*</span></label>
+                            <input type="text" name="name" class="form-control" required
+                                   placeholder="VD: Thời trang nam"
+                                   id="catNameInput" oninput="genSlug(this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Slug <span style="color:var(--adm-danger)">*</span></label>
+                            <input type="text" name="slug" id="catSlugInput" class="form-control"
+                                   required placeholder="thoi-trang-nam"
+                                   pattern="[a-z0-9-]+" title="Chỉ dùng chữ thường, số và dấu gạch ngang">
+                            <p class="form-hint">Dùng chữ thường và dấu gạch ngang</p>
+                        </div>
+                        <button type="submit" class="btn-a btn-primary btn-lg w-full">
+                            <i class="fas fa-plus"></i> Tạo danh mục
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Initialize tooltips
-        document.addEventListener('DOMContentLoaded', function() {
-            $('[data-toggle="tooltip"]').tooltip();
-
-            // Auto-hide alerts after 5 seconds
-            setTimeout(function() {
-                $('.alert').fadeOut('slow', function() { $(this).remove(); });
-            }, 5000);
-        });
-
-        // Delete modal setup
-        $('#deleteModal').on('show.bs.modal', function(event) {
-            const button = $(event.relatedTarget);
-            const categoryId = button.data('id');
-            const categoryName = button.data('name');
-
-            const modal = $(this);
-            modal.find('#categoryName').text(categoryName);
-            modal.find('#confirmDeleteBtn').attr('href', '/admin/categories/delete/' + categoryId);
-        });
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('keyup', function() {
-            const searchTerm = this.value.toLowerCase();
-            const tableRows = document.querySelectorAll('#categoriesTable tbody tr');
-            let visibleCount = 0;
-
-            tableRows.forEach(row => {
-                const name = row.getAttribute('data-name').toLowerCase();
-                const slug = row.getAttribute('data-slug').toLowerCase();
-
-                if (name.includes(searchTerm) || slug.includes(searchTerm)) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Update counter
-            document.getElementById('totalCategories').textContent = visibleCount;
-
-            // Show "no results" message if needed
-            if (visibleCount === 0) {
-                const tbody = document.querySelector('#categoriesTable tbody');
-                const noResultsRow = tbody.querySelector('.no-results');
-                if (!noResultsRow) {
-                    const tr = document.createElement('tr');
-                    tr.className = 'no-results';
-                    tr.innerHTML = '<td colspan="4" class="text-center py-5"><i class="fas fa-search text-muted fa-2x mb-3 d-block"></i><p class="text-muted">Không tìm thấy danh mục nào</p></td>';
-                    tbody.appendChild(tr);
-                }
-            } else {
-                const noResultsRow = document.querySelector('.no-results');
-                if (noResultsRow) noResultsRow.remove();
-            }
-        });
-
-        // Reset search
-        function resetSearch() {
-            document.getElementById('searchInput').value = '';
-            document.getElementById('searchInput').dispatchEvent(new Event('keyup'));
+        function genSlug(name) {
+            const slug = name.toLowerCase()
+                .replace(/[àáảãạăắặẳẵầấậẩẫ]/g, 'a')
+                .replace(/[èéẻẽẹêếệểễề]/g, 'e')
+                .replace(/[ìíỉĩị]/g, 'i')
+                .replace(/[òóỏõọôồốộổỗơờớợởỡ]/g, 'o')
+                .replace(/[ùúủũụưừứựửữ]/g, 'u')
+                .replace(/[ỳýỷỹỵ]/g, 'y')
+                .replace(/đ/g, 'd')
+                .replace(/[^a-z0-9 ]/g, '')
+                .trim().replace(/\s+/g, '-');
+            document.getElementById('catSlugInput').value = slug;
         }
-
-        // Copy to clipboard
-        function copyToClipboard(element) {
-            const slug = element.getAttribute('data-slug');
-            navigator.clipboard.writeText(slug).then(function() {
-                element.classList.add('text-success');
-                element.title = 'Đã sao chép!';
-                setTimeout(() => {
-                    element.classList.remove('text-success');
-                    element.title = 'Sao chép slug';
-                }, 2000);
+        function filterTable(inputId, tbodyId) {
+            const q = document.getElementById(inputId).value.toLowerCase();
+            document.querySelectorAll('#' + tbodyId + ' tr').forEach(r => {
+                r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
             });
+        }
+        function confirmDel(name) {
+            return confirm('Bạn có chắc muốn xóa danh mục "' + name + '"?');
         }
     </script>
 </div>

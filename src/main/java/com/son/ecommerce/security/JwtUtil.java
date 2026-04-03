@@ -1,10 +1,14 @@
 package com.son.ecommerce.security;
 
+import com.son.ecommerce.entity.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -12,7 +16,26 @@ public class JwtUtil {
     private final long ACCESS_TOKEN_EXPIRATION = 900000; // 15 minutes
     private final long REFRESH_TOKEN_EXPIRATION = 604800000; // 7 days
 
-    // Generate Access Token (short-lived)
+    // Generate Access Token with user information
+    public String generateAccessToken(String username, User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+        claims.put("email", user.getEmail());
+        claims.put("fullName", user.getFullName());
+        claims.put("roles", user.getRoles().stream()
+                .map(role -> role.getName())
+                .collect(Collectors.toList()));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(username)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+    // Generate Access Token (backward compatibility - without user info)
     public String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
@@ -22,7 +45,21 @@ public class JwtUtil {
                 .compact();
     }
 
-    // Generate Refresh Token (long-lived)
+    // Generate Refresh Token with user id
+    public String generateRefreshToken(User user) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", user.getId());
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
+    // Generate Refresh Token (backward compatibility - without user info)
     public String generateRefreshToken(String username) {
         return Jwts.builder()
                 .setSubject(username)

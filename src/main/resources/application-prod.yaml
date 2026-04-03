@@ -1,0 +1,87 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    min-response-size: 1024
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        web: INFO
+        security: INFO
+      hibernate: WARN
+  file:
+    name: logs/application.log
+    max-size: 10MB
+    max-history: 30
+
+spring:
+
+  application:
+    name: ecommerce-api
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://mysql:3306/ecommerce?useSSL=false&serverTimezone=Asia/Ho_Chi_Minh&allowPublicKeyRetrieval=true}
+    username: ${SPRING_DATASOURCE_USERNAME:appuser}
+    password: ${SPRING_DATASOURCE_PASSWORD:apppass123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      auto-commit: true
+
+  jpa:
+    hibernate:
+      ddl-auto: ${SPRING_JPA_HIBERNATE_DDL_AUTO:update}
+      dialect: org.hibernate.dialect.MySQL8Dialect
+    show-sql: ${SPRING_JPA_SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL:false}
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+    open-in-view: false
+
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+  mvc:
+    throw-exception-if-no-handler-found: true
+
+  resources:
+    add-mappings: true
+
+  security:
+    user:
+      name: admin
+      password: admin123
+
+jwt:
+  secret: ${JWT_SECRET:mySecretKeyForJWTTokenGenerationInProductionChangeThis}
+  expiration: ${JWT_EXPIRATION:3600000}
+
+app:
+  name: E-Commerce API
+  version: 1.0.0
+

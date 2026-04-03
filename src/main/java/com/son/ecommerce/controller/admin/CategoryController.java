@@ -7,6 +7,7 @@ import com.son.ecommerce.service.CategoryService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.dao.DataIntegrityViolationException;
 import java.util.List;
 
 
@@ -115,6 +116,8 @@ public class CategoryController {
             categoryService.deleteById(id);
 
             redirectAttributes.addFlashAttribute("success", "Xóa danh mục '" + categoryName + "' thành công!");
+        } catch (DataIntegrityViolationException e) {
+            redirectAttributes.addFlashAttribute("error", "Không thể xóa danh mục này vì đang có sản phẩm thuộc danh mục!");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "Lỗi khi xóa danh mục: " + e.getMessage());
         }

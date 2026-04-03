@@ -1,281 +1,250 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head><title>Dashboard</title></head>
+<body>
 <div th:fragment="content">
-    <style>
-        :root {
-            --primary: #6366f1; --primary-dark: #4f46e5;
-            --success: #10b981; --warning: #f59e0b;
-            --danger: #ef4444;  --info: #3b82f6;
-            --light-bg: #f8fafc; --border-color: #e2e8f0;
-        }
-        .container-fluid { padding: 2rem; }
-        .header-section { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; flex-wrap:wrap; gap:1rem; }
-        .header-title { font-size:2rem; font-weight:800; color:#0f172a; display:flex; align-items:center; gap:.8rem; margin:0; }
-        .header-title i { font-size:2.2rem; background:linear-gradient(135deg,var(--primary),var(--primary-dark)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
-        .header-subtitle { color:#64748b; font-size:.95rem; margin-top:.3rem; }
-        .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem; }
-        .kpi-card { background:#fff; border:1px solid var(--border-color); border-radius:12px; padding:1.8rem; transition:all .3s ease; position:relative; overflow:hidden; }
-        .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--primary),var(--primary-dark)); }
-        .kpi-card:nth-child(2)::before { background:linear-gradient(90deg,#10b981,#059669); }
-        .kpi-card:nth-child(3)::before { background:linear-gradient(90deg,#3b82f6,#1d4ed8); }
-        .kpi-card:nth-child(4)::before { background:linear-gradient(90deg,#f59e0b,#d97706); }
-        .kpi-card:hover { transform:translateY(-8px); box-shadow:0 12px 30px rgba(0,0,0,.12); }
-        .kpi-icon { width:50px; height:50px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.5rem; margin-bottom:1rem; }
-        .kpi-card:nth-child(1) .kpi-icon { background:rgba(99,102,241,.1); color:var(--primary); }
-        .kpi-card:nth-child(2) .kpi-icon { background:rgba(16,185,129,.1); color:var(--success); }
-        .kpi-card:nth-child(3) .kpi-icon { background:rgba(59,130,246,.1); color:var(--info); }
-        .kpi-card:nth-child(4) .kpi-icon { background:rgba(245,158,11,.1); color:var(--warning); }
-        .kpi-label { color:#64748b; font-size:.85rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-bottom:.8rem; }
-        .kpi-value { font-size:2rem; font-weight:800; color:#0f172a; }
-        .muted { color:#64748b; }
-        .panel-card { background:#fff; border:1px solid var(--border-color); border-radius:12px; overflow:hidden; transition:all .3s ease; }
-        .panel-card:hover { box-shadow:0 12px 30px rgba(0,0,0,.08); }
-        .panel-header { padding:1.5rem; background:linear-gradient(135deg,var(--light-bg),#f1f5f9); border-bottom:1px solid var(--border-color); display:flex; justify-content:space-between; align-items:center; }
-        .panel-title { font-size:1.1rem; font-weight:700; color:#0f172a; display:flex; align-items:center; gap:.7rem; margin:0; }
-        .panel-title i { color:var(--primary); font-size:1.2rem; }
-        .panel-body { padding:1.5rem; }
-        .chart-wrap { height:300px; position:relative; }
-        .grid-2 { display:grid; grid-template-columns:repeat(auto-fit,minmax(450px,1fr)); gap:1.5rem; margin-bottom:2rem; }
-        .badge-badge { font-size:.75rem; padding:.4rem .8rem; border-radius:6px; font-weight:600; }
-        @keyframes slideIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-        .kpi-grid > * { animation:slideIn .3s ease-out; }
-        @media (max-width:768px) { .kpi-grid{grid-template-columns:1fr} .grid-2{grid-template-columns:1fr} }
-    </style>
 
-    <div class="container-fluid">
-        <div class="header-section">
+    <!-- Page header -->
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title">Dashboard</h1>
+            <ul class="breadcrumb">
+                <li><a href="/admin">Admin</a></li>
+                <li><span class="bc-active">Dashboard</span></li>
+            </ul>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="/admin/products/create" class="btn-a btn-primary"><i class="fas fa-plus"></i> Thêm sản phẩm</a>
+            <a href="/admin/orders" class="btn-a btn-ghost"><i class="fas fa-shopping-bag"></i> Đơn hàng</a>
+        </div>
+    </div>
+
+    <!-- KPI -->
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-icon si-purple"><i class="fas fa-shopping-bag"></i></div>
             <div>
-                <h1 class="header-title"><i class="fas fa-chart-line"></i> Dashboard</h1>
-                <p class="header-subtitle">Xin chào! Đây là bản tóm tắt hiệu suất hôm nay</p>
+                <p class="stat-label">Tổng đơn hàng</p>
+                <p class="stat-value" th:text="${totalOrders} ?: 0">0</p>
             </div>
         </div>
-
-        <!-- KPI -->
-        <div class="kpi-grid">
-            <div class="kpi-card">
-                <div class="kpi-icon"><i class="fas fa-shopping-cart"></i></div>
-                <div class="kpi-label">Tổng Đơn Hàng</div>
-                <div class="kpi-value" th:text="${totalOrders}">0</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon"><i class="fas fa-box"></i></div>
-                <div class="kpi-label">Tổng Sản Phẩm</div>
-                <div class="kpi-value" th:text="${totalProducts}">0</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon"><i class="fas fa-users"></i></div>
-                <div class="kpi-label">Tổng Người Dùng</div>
-                <div class="kpi-value" th:text="${totalUsers}">0</div>
-            </div>
-            <div class="kpi-card">
-                <div class="kpi-icon"><i class="fas fa-coins"></i></div>
-                <div class="kpi-label">Tổng Doanh Thu</div>
-                <div class="kpi-value">
-                    <span th:text="${#numbers.formatDecimal(totalRevenue / 1000000, 0, 'POINT', 1, 'POINT')}">0</span>
-                    <span class="muted" style="font-size:1rem"> M&#8363;</span>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon si-green"><i class="fas fa-money-bill-wave"></i></div>
+            <div>
+                <p class="stat-label">Doanh thu</p>
+                <p class="stat-value" style="font-size:1.15rem;"
+                   th:text="${#numbers.formatDecimal(totalRevenue ?: 0, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</p>
             </div>
         </div>
-
-        <!-- Charts -->
-        <div class="grid-2">
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-chart-pie"></i> Trạng Thái Đơn Hàng</h3>
-                    <span class="badge-badge" style="background:var(--light-bg);color:#475569">Realtime</span>
-                </div>
-                <div class="panel-body">
-                    <div class="chart-wrap">
-                        <canvas id="orderStatusChart"
-                                th:data-pending="${orderStatuses.get('PENDING')}"
-                                th:data-confirmed="${orderStatuses.get('CONFIRMED')}"
-                                th:data-shipped="${orderStatuses.get('SHIPPED')}"
-                                th:data-delivered="${orderStatuses.get('DELIVERED')}"
-                                th:data-cancelled="${orderStatuses.get('CANCELLED')}">
-                        </canvas>
-                    </div>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon si-blue"><i class="fas fa-users"></i></div>
+            <div>
+                <p class="stat-label">Người dùng</p>
+                <p class="stat-value" th:text="${totalUsers} ?: 0">0</p>
             </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-orange"><i class="fas fa-box"></i></div>
+            <div>
+                <p class="stat-label">Sản phẩm</p>
+                <p class="stat-value" th:text="${totalProducts} ?: 0">0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-amber"><i class="fas fa-clock"></i></div>
+            <div>
+                <p class="stat-label">Chờ xử lý</p>
+                <p class="stat-value" th:text="${pendingCount} ?: 0">0</p>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-icon si-green"><i class="fas fa-check-circle"></i></div>
+            <div>
+                <p class="stat-label">Đã giao</p>
+                <p class="stat-value" th:text="${deliveredCount} ?: 0">0</p>
+            </div>
+        </div>
+    </div>
 
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-chart-line"></i> Doanh Thu 6 Tháng</h3>
-                    <span class="badge-badge" style="background:var(--light-bg);color:#475569">VN&#8363;</span>
+    <!-- Charts -->
+    <div class="row g-3 mb-3">
+        <div class="col-lg-8">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-chart-area" style="color:var(--adm-primary)"></i> Doanh thu 6 tháng</span>
+                    <span class="bdg bdg-instock">6 tháng gần đây</span>
                 </div>
-                <div class="panel-body">
-                    <div class="chart-wrap">
-                        <div id="revenue-data" style="display:none">
-                            <span th:each="entry : ${monthlyRevenue}"
-                                  th:data-label="${'Thang ' + entry.key.monthValue}"
-                                  th:data-value="${entry.value}"></span>
-                        </div>
+                <div class="adm-card-body">
+                    <div class="chart-wrap" style="height:250px;">
                         <canvas id="revenueChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
-
-        <!-- Tables -->
-        <div class="grid-2">
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h3 class="panel-title"><i class="fas fa-receipt"></i> Đơn Hàng Gần Đây</h3>
-                    <a th:href="@{/admin/orders}" class="badge-badge" style="background:var(--primary);color:#fff;text-decoration:none">
-                        <i class="fas fa-arrow-right"></i> Xem tất cả
-                    </a>
+        <div class="col-lg-4">
+            <div class="adm-card h-100" style="min-height:0;">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-chart-donut" style="color:var(--adm-primary)"></i> Trạng thái đơn</span>
                 </div>
-                <div class="panel-body">
-                    <div th:if="${#lists.isEmpty(recentOrders)}" style="text-align:center;padding:2rem;color:#94a3b8">
-                        <i class="fas fa-inbox" style="font-size:2rem;margin-bottom:1rem;display:block;color:#cbd5e1"></i>
-                        <p>Chưa có đơn hàng</p>
+                <div class="adm-card-body">
+                    <div class="chart-wrap" style="height:180px;">
+                        <canvas id="statusChart"></canvas>
                     </div>
-                    <div th:unless="${#lists.isEmpty(recentOrders)}">
-                        <table style="width:100%;border-collapse:collapse">
-                            <thead style="background:var(--light-bg)">
-                            <tr>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase">Mã Đơn</th>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase">Tổng Tiền</th>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase;text-align:center">Trạng Thái</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="order : ${recentOrders}">
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem">
-                                    <a th:href="@{/admin/orders/{id}(id=${order.id})}"
-                                       style="color:var(--primary);font-weight:600;text-decoration:none"
-                                       th:text="'#' + ${order.id}">#0</a>
-                                </td>
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem;font-weight:600"
-                                    th:text="${#numbers.formatDecimal(order.totalPrice,0,'COMMA',0,'POINT')} + '&#8363;'">0</td>
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem;text-align:center">
-                                        <span th:switch="${order.status}">
-                                            <span th:case="'PENDING'"   class="badge-badge" style="background:#fef08a;color:#92400e">Đang Chờ</span>
-                                            <span th:case="'CONFIRMED'" class="badge-badge" style="background:#dbeafe;color:#1e40af">Xác Nhận</span>
-                                            <span th:case="'SHIPPED'"   class="badge-badge" style="background:#e0e7ff;color:#3730a3">Đã Gửi</span>
-                                            <span th:case="'DELIVERED'" class="badge-badge" style="background:#dcfce7;color:#15803d">Đã Giao</span>
-                                            <span th:case="'CANCELLED'" class="badge-badge" style="background:#fee2e2;color:#991b1b">Hủy</span>
-                                            <span th:case="*"           class="badge-badge" style="background:#f1f5f9;color:#64748b" th:text="${order.status}">-</span>
-                                        </span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="panel-card">
-                <div class="panel-header">
-                    <h3 class="panel-title">
-                        <i class="fas fa-fire" style="color:var(--warning)"></i> Top Sản Phẩm Bán Chạy
-                    </h3>
-                    <a th:href="@{/admin/products}" class="badge-badge" style="background:var(--primary);color:#fff;text-decoration:none">
-                        <i class="fas fa-arrow-right"></i> Xem tất cả
-                    </a>
-                </div>
-                <div class="panel-body">
-                    <div th:if="${#lists.isEmpty(bestSellers)}" style="text-align:center;padding:2rem;color:#94a3b8">
-                        <i class="fas fa-box-open" style="font-size:2rem;margin-bottom:1rem;display:block;color:#cbd5e1"></i>
-                        <p>Chưa có sản phẩm bán chạy</p>
-                    </div>
-                    <div th:unless="${#lists.isEmpty(bestSellers)}">
-                        <table style="width:100%;border-collapse:collapse">
-                            <thead style="background:var(--light-bg)">
-                            <tr>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase;width:50px">#</th>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase">Tên Sản Phẩm</th>
-                                <th style="border:1px solid var(--border-color);padding:.8rem 1rem;color:#475569;font-size:.8rem;text-transform:uppercase;text-align:right">Đã Bán</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr th:each="entry, idx : ${bestSellers}">
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem;text-align:center">
-                                        <span style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;font-weight:700;color:#fff;background:linear-gradient(135deg,#6366f1,#4f46e5)"
-                                              th:text="${idx.count}">1</span>
-                                </td>
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem;font-weight:600"
-                                    th:text="${entry.key.name}">Sản phẩm</td>
-                                <td style="border:1px solid var(--border-color);padding:.8rem 1rem;text-align:right">
-                                        <span class="badge-badge" style="background:#e0e7ff;color:#3730a3"
-                                              th:text="${entry.value}">0</span>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <div class="mt-3 d-flex flex-column gap-1">
+                        <div class="d-flex justify-content-between" style="font-size:.77rem;">
+                            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#F59E0B;margin-right:5px;"></span>Chờ xử lý</span>
+                            <strong th:text="${pendingCount} ?: 0">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:.77rem;">
+                            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#3B82F6;margin-right:5px;"></span>Đã xác nhận</span>
+                            <strong th:text="${confirmedCount} ?: 0">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:.77rem;">
+                            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#7C3AED;margin-right:5px;"></span>Đang giao</span>
+                            <strong th:text="${shippedCount} ?: 0">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:.77rem;">
+                            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#10B981;margin-right:5px;"></span>Đã giao</span>
+                            <strong th:text="${deliveredCount} ?: 0">0</strong>
+                        </div>
+                        <div class="d-flex justify-content-between" style="font-size:.77rem;">
+                            <span><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#EF4444;margin-right:5px;"></span>Đã hủy</span>
+                            <strong th:text="${cancelledCount} ?: 0">0</strong>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
+    <!-- Quick Actions -->
+    <div class="adm-card mb-3">
+        <div class="adm-card-header">
+            <span class="adm-card-title"><i class="fas fa-bolt" style="color:var(--adm-primary)"></i> Thao tác nhanh</span>
+        </div>
+        <div class="adm-card-body">
+            <div class="row g-2">
+                <div class="col-6 col-md-4 col-lg-2"><a href="/admin/products/create" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-primary)"><i class="fas fa-plus-circle"></i></div>Thêm sản phẩm</a></div>
+                <div class="col-6 col-md-4 col-lg-2"><a href="/admin/orders?status=PENDING" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-warning)"><i class="fas fa-clock"></i></div>Đơn chờ xử lý</a></div>
+                <div class="col-6 col-md-4 col-lg-2"><a href="/admin/users/create" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-info)"><i class="fas fa-user-plus"></i></div>Thêm người dùng</a></div>
+                <div class="col-6 col-md-4 col-lg-2"><a href="/admin/categories/create" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-success)"><i class="fas fa-folder-plus"></i></div>Thêm danh mục</a></div>
+                <div class="col-6 col-md-4 col-lg-2"><a href="/admin/reports" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-orange)"><i class="fas fa-chart-bar"></i></div>Xem báo cáo</a></div>
+                <div class="col-6 col-md-4 col-lg-2"><a href="/" target="_blank" class="quick-action"><div class="quick-action-icon" style="color:var(--adm-txt-muted)"><i class="fas fa-store"></i></div>Xem website</a></div>
+            </div>
+        </div>
+    </div>
 
-            // ── Doughnut: order status ─────────────────────────────────
-            var orderCanvas = document.getElementById('orderStatusChart');
-            if (orderCanvas) {
-                new Chart(orderCanvas.getContext('2d'), {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Đang Chờ','Xác Nhận','Đã Gửi','Đã Giao','Hủy'],
-                        datasets: [{
-                            data: [
-                                parseInt(orderCanvas.dataset.pending   || 0),
-                                parseInt(orderCanvas.dataset.confirmed || 0),
-                                parseInt(orderCanvas.dataset.shipped   || 0),
-                                parseInt(orderCanvas.dataset.delivered || 0),
-                                parseInt(orderCanvas.dataset.cancelled || 0)
-                            ],
-                            backgroundColor: ['#fef08a','#dbeafe','#e0e7ff','#dcfce7','#fee2e2'],
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position:'bottom', labels:{ font:{size:12,weight:'bold'}, padding:20 } }
-                        }
-                    }
-                });
-            }
+    <!-- Tables row -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-shopping-bag" style="color:var(--adm-primary)"></i> Đơn hàng gần đây</span>
+                    <a href="/admin/orders" class="btn-a btn-ghost btn-sm">Tất cả</a>
+                </div>
+                <div class="adm-card-body p-0">
+                    <table class="adm-table">
+                        <thead><tr><th>#ID</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+                        <tbody>
+                        <tr th:each="o : ${recentOrders}">
+                            <td><a th:href="@{/admin/orders/{id}(id=${o.id})}" style="font-weight:700;color:var(--adm-primary);" th:text="'#'+${o.id}">#0</a></td>
+                            <td style="font-size:.82rem;" th:text="${o.user?.fullName ?: (o.user?.username ?: 'N/A')}">User</td>
+                            <td style="font-weight:700;color:var(--adm-success);" th:text="${#numbers.formatDecimal(o.totalPrice?:0,0,'COMMA',0,'POINT')}+'₫'">0₫</td>
+                            <td>
+                                <span class="bdg"
+                                      th:classappend="${o.status=='PENDING'?'bdg-pending':o.status=='CONFIRMED'?'bdg-confirmed':o.status=='SHIPPED'?'bdg-shipped':o.status=='DELIVERED'?'bdg-delivered':'bdg-cancelled'}"
+                                      th:text="${o.status}">-</span>
+                            </td>
+                        </tr>
+                        <tr th:if="${recentOrders==null or #lists.isEmpty(recentOrders)}">
+                            <td colspan="4" class="tbl-empty"><i class="fas fa-shopping-bag tbl-empty-icon"></i>Chưa có đơn hàng</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="adm-card">
+                <div class="adm-card-header">
+                    <span class="adm-card-title"><i class="fas fa-fire" style="color:var(--adm-danger)"></i> Sản phẩm bán chạy</span>
+                    <a href="/admin/products" class="btn-a btn-ghost btn-sm">Tất cả</a>
+                </div>
+                <div class="adm-card-body p-0">
+                    <table class="adm-table">
+                        <thead><tr><th>Sản phẩm</th><th>Giá</th><th class="text-end">Đã bán</th></tr></thead>
+                        <tbody>
+                        <tr th:each="e : ${bestSellers}">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <img th:src="${e.key.image}?:'/img/product-default.jpg'" class="tbl-img">
+                                    <span style="font-size:.83rem;font-weight:600;" th:text="${e.key.name}">Product</span>
+                                </div>
+                            </td>
+                            <td style="color:var(--adm-primary);font-weight:700;" th:text="${#numbers.formatDecimal(e.key.price?:0,0,'COMMA',0,'POINT')}+'₫'">0₫</td>
+                            <td class="text-end"><strong th:text="${e.value}+' cái'">0 cái</strong></td>
+                        </tr>
+                        <tr th:if="${bestSellers==null or #lists.isEmpty(bestSellers)}">
+                            <td colspan="3" class="tbl-empty"><i class="fas fa-box tbl-empty-icon"></i>Chưa có dữ liệu</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // ── Line: monthly revenue ──────────────────────────────────
-            var revenueCanvas = document.getElementById('revenueChart');
-            if (revenueCanvas) {
-                var labels = [], values = [];
-                document.querySelectorAll('#revenue-data span').forEach(function(s) {
-                    labels.push(s.dataset.label);
-                    values.push(parseFloat(s.dataset.value || 0));
-                });
-                new Chart(revenueCanvas.getContext('2d'), {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Doanh Thu',
-                            data: values,
-                            tension: 0.3,
-                            borderColor: '#2E90FA',
-                            backgroundColor: 'rgba(46,144,250,0.1)',
-                            fill: true, pointRadius: 4, borderWidth: 2
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: { callback: function(v){ return (v/1000000).toFixed(1)+'M'; } }
-                            }
-                        },
-                        plugins: {
-                            legend: { display:true, labels:{ font:{size:12,weight:'bold'} } },
-                            tooltip: { callbacks: { label: function(ctx){ return ' '+(ctx.parsed.y/1000000).toFixed(2)+' M\u20ab'; } } }
-                        }
+    <!-- Chart scripts -->
+    <script th:inline="javascript">
+        // Revenue chart
+        const rev = /*[[${monthlyRevenue}]]*/ {};
+        const revLabels = [], revData = [];
+        for (const [k, v] of Object.entries(rev)) {
+            const p = k.toString().split('-');
+            revLabels.push('Th.' + (p[1] || k));
+            revData.push(parseFloat(v) || 0);
+        }
+        new Chart(document.getElementById('revenueChart'), {
+            type: 'line',
+            data: {
+                labels: revLabels,
+                datasets: [{
+                    label: 'Doanh thu (₫)',
+                    data: revData,
+                    borderColor: '#7C3AED',
+                    backgroundColor: 'rgba(124,58,237,.07)',
+                    borderWidth: 2.5,
+                    pointBackgroundColor: '#7C3AED',
+                    pointRadius: 4,
+                    fill: true, tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 11 } } },
+                    y: {
+                        grid: { color: 'rgba(0,0,0,.05)' },
+                        ticks: { font: { size: 11 }, callback: v => new Intl.NumberFormat('vi-VN', { notation: 'compact' }).format(v) + '₫' }
                     }
-                });
+                }
             }
+        });
+
+        // Status donut
+        const statuses = /*[[${orderStatuses}]]*/ {};
+        new Chart(document.getElementById('statusChart'), {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(statuses),
+                datasets: [{ data: Object.values(statuses).map(v => parseInt(v)||0),
+                    backgroundColor: ['#F59E0B','#3B82F6','#7C3AED','#10B981','#EF4444'],
+                    borderWidth: 2, borderColor: '#fff' }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { display: false } } }
         });
     </script>
 </div>
+</body>
+</html>

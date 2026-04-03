@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lịch sử đơn hàng | LifestyleShop</title>
+</head>
+<body>
+    <div th:fragment="content">
+        <div class="container py-5">
+            <div class="row g-4">
+                <!-- Sidebar -->
+                <div class="col-lg-3">
+                    <div th:replace="~{profile/sidebar :: sidebar}"></div>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-lg-9">
+
+                    <!-- Error Alert -->
+                    <div th:if="${errorMsg}" class="alert-ls alert-ls-danger animate-up mb-4">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:text="${errorMsg}">Có lỗi xảy ra</span>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 p-4 mb-4 animate-up delay-1">
+                        <div class="mb-4 pb-2 border-bottom d-flex align-items-center justify-content-between">
+                            <div>
+                                <h4 class="fw-800 mb-1">Đơn hàng của tôi</h4>
+                                <p class="text-muted small mb-0">Theo dõi trạng thái và lịch sử mua bán chi tiết</p>
+                            </div>
+                            <span class="badge-ls badge-ls-primary" th:if="${orders != null}"
+                                  th:text="${#lists.size(orders)} + ' đơn'">0 đơn</span>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div th:if="${orders == null or #lists.isEmpty(orders)}" class="text-center py-5 animate-up delay-2">
+                            <div class="mb-4" style="font-size: 5rem; color: var(--border);">
+                                <i class="fas fa-box-open"></i>
+                            </div>
+                            <h5 class="fw-700 mb-2">Bạn chưa có đơn hàng nào!</h5>
+                            <p class="text-muted mb-4">Hãy khám phá hàng ngàn sản phẩm hấp dẫn và bắt đầu mua sắm ngay.</p>
+                            <a th:href="@{/products}" class="btn-primary-ls btn-lg">
+                                <i class="fas fa-shopping-bag me-2"></i>Mua sắm ngay
+                            </a>
+                        </div>
+
+                        <!-- Orders Table -->
+                        <div th:if="${orders != null and not #lists.isEmpty(orders)}" class="table-responsive animate-up delay-2">
+                            <table class="table table-hover align-middle custom-order-table">
+                                <thead>
+                                    <tr>
+                                        <th class="ps-3">Mã đơn</th>
+                                        <th>Ngày đặt</th>
+                                        <th>Sản phẩm</th>
+                                        <th>Tổng cộng</th>
+                                        <th>Trạng thái</th>
+                                        <th class="text-end pe-3">Hành động</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="order, iter : ${orders}"
+                                        class="animate-up"
+                                        th:style="|animation-delay: ${0.05 * iter.index + 0.1}s|">
+
+                                        <!-- Mã đơn -->
+                                        <td class="ps-3">
+                                            <span style="font-weight:800;color:var(--txt);">
+                                                <span style="color:var(--txt-faint)">#</span><span th:text="${order.id}">123</span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Ngày đặt -->
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <span style="font-weight:600;font-size:.88rem;"
+                                                      th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy')}">01/01/2024</span>
+                                                <span style="font-size:.78rem;color:var(--txt-muted);"
+                                                      th:text="${#temporals.format(order.createdAt, 'HH:mm')}">12:00</span>
+                                            </div>
+                                        </td>
+
+                                        <!-- Số sản phẩm -->
+                                        <td>
+                                            <span style="font-size:.85rem;color:var(--txt-muted);">
+                                                <i class="fas fa-box me-1" style="color:var(--clr-primary);"></i>
+                                                <span th:text="${order.totalItems} + ' sp'">1 sp</span>
+                                            </span>
+                                        </td>
+
+                                        <!-- Tổng tiền -->
+                                        <td>
+                                            <span style="font-weight:800;font-size:.95rem;color:var(--clr-primary);"
+                                                  th:text="${#numbers.formatDecimal(order.finalTotal, 0, 'COMMA', 0, 'POINT')} + ' đ'">500,000đ</span>
+                                        </td>
+
+                                        <!-- Trạng thái -->
+                                        <td>
+                                            <span th:if="${order.status == 'PENDING'}"    class="badge-ls badge-ls-warning">Chờ xử lý</span>
+                                            <span th:if="${order.status == 'CONFIRMED'}"  class="badge-ls badge-ls-info">Đã xác nhận</span>
+                                            <span th:if="${order.status == 'PROCESSING'}" class="badge-ls badge-ls-info">Đang xử lý</span>
+                                            <span th:if="${order.status == 'SHIPPED'}"    class="badge-ls badge-ls-primary">Đang giao</span>
+                                            <span th:if="${order.status == 'SHIPPING'}"   class="badge-ls badge-ls-primary">Đang giao</span>
+                                            <span th:if="${order.status == 'DELIVERED'}"  class="badge-ls badge-ls-success">Đã giao</span>
+                                            <span th:if="${order.status == 'CANCELLED'}"  class="badge-ls badge-ls-danger">Đã hủy</span>
+                                            <span th:if="${order.status == 'REFUNDED'}"   class="badge-ls badge-ls-danger">Đã hoàn tiền</span>
+                                            <!-- Fallback cho trạng thái không xác định -->
+                                            <span th:if="${order.status != 'PENDING' and order.status != 'CONFIRMED' and order.status != 'PROCESSING' and order.status != 'SHIPPED' and order.status != 'SHIPPING' and order.status != 'DELIVERED' and order.status != 'CANCELLED' and order.status != 'REFUNDED'}"
+                                                  class="badge-ls badge-ls-warning"
+                                                  th:text="${order.status}">Không rõ</span>
+                                        </td>
+
+                                        <!-- Hành động -->
+                                        <td class="text-end pe-3">
+                                            <a th:href="@{'/orders/' + ${order.id}}" class="btn-view-order" title="Xem chi tiết đơn hàng">
+                                                <i class="fas fa-arrow-right"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .custom-order-table thead th {
+                font-size: 0.72rem; font-weight: 700;
+                text-transform: uppercase; letter-spacing: 0.06em;
+                color: var(--txt-muted); border-bottom: 2px solid var(--border);
+                padding: 14px 12px; background: var(--bg-soft);
+                white-space: nowrap;
+            }
+            .custom-order-table tbody td {
+                padding: 16px 12px;
+                border-bottom: 1px solid var(--border);
+                vertical-align: middle;
+            }
+            .custom-order-table tbody tr:last-child td { border-bottom: none; }
+            .custom-order-table tbody tr:hover { background: var(--bg-soft); }
+
+            .btn-view-order {
+                width: 36px; height: 36px;
+                display: inline-flex; align-items: center; justify-content: center;
+                border-radius: 10px; background: var(--bg-soft);
+                color: var(--clr-primary); transition: all 0.2s ease;
+                border: 1px solid var(--border);
+            }
+            .btn-view-order:hover {
+                background: var(--clr-primary);
+                color: white; transform: translateX(3px);
+                box-shadow: var(--shadow-sm);
+            }
+
+            .fw-800 { font-weight: 800; }
+            .fw-700 { font-weight: 700; }
+        </style>
+    </div>
+</body>
+</html>

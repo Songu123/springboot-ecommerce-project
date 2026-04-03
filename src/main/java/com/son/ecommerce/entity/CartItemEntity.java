@@ -33,6 +33,14 @@ public class CartItemEntity {
 
     private int quantity;
 
+    // ✅ NEW: These fields are populated from product for JSON serialization
+    // @Transient means they are NOT persisted to database, only used in JSON responses
+    @Transient
+    private Long productId;
+
+    @Transient
+    private double price;
+
     private LocalDateTime addedAt = LocalDateTime.now();
 
     public double getTotalPrice() {

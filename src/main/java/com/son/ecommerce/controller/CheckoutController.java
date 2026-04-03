@@ -1,5 +1,6 @@
 package com.son.ecommerce.controller;
 
+import com.son.ecommerce.dto.CustomUserDetails;
 import com.son.ecommerce.entity.CartItemEntity;
 import com.son.ecommerce.entity.Order;
 import com.son.ecommerce.entity.OrderItem;
@@ -8,10 +9,12 @@ import com.son.ecommerce.service.CartService;
 import com.son.ecommerce.service.OrderService;
 import com.son.ecommerce.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,13 +28,15 @@ public class CheckoutController {
     private final CartService cartService;
     private final OrderService orderService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @GetMapping
-    public String checkout(Model model) {
-        Long userId = 1L;
-
+    public String checkout(@AuthenticationPrincipal CustomUserDetails userDetails, Model model) {
+        if (userDetails == null) {
+            return "redirect:/login?error=Please login to proceed to checkout";
+        }
         try {
-            List<CartItemEntity> cartItems = cartService.getCartItems(userId);
+            List<CartItemEntity> cartItems = cartService.getCartItems(userDetails.getId());
 
             if (cartItems.isEmpty()) {
                 return "redirect:/cart?error=Cart is empty";
@@ -53,6 +58,7 @@ public class CheckoutController {
 
     @PostMapping("/place-order")
     public String placeOrder(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
             @RequestParam String shippingAddress,
             @RequestParam String shippingCity,
             @RequestParam String shippingPhone,
@@ -61,13 +67,17 @@ public class CheckoutController {
             @RequestParam(required = false) String note,
             RedirectAttributes redirectAttributes) {
 
-        Long userId = 1L;
+        if (userDetails == null) {
+            return "redirect:/login?error=Please login to place an order";
+        }
+
+        Long userId = userDetails.getId();
 
         try {
             List<CartItemEntity> cartItems = cartService.getCartItems(userId);
 
             if (cartItems.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Cart is empty");
+                redirectAttributes.addFlashAttribute("error", "Giỏ hàng trống, không thể đặt hàng.");
                 return "redirect:/cart";
             }
 
@@ -75,8 +85,8 @@ public class CheckoutController {
                     .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
                     .sum();
 
-            double shippingFee = "express".equals(shippingMethod) ? 10 :
-                                "nextday".equals(shippingMethod) ? 20 : 0;
+            double shippingFee = "express".equals(shippingMethod) ? 30000 :
+                                "nextday".equals(shippingMethod) ? 60000 : 0;
 
             User user = userService.findById(userId);
             Order order = Order.builder()
@@ -105,13 +115,24 @@ public class CheckoutController {
             order.setItems(orderItems);
 
             Order savedOrder = orderService.save(order);
+
+            // Clear cart after successful order placement
             cartService.clearCart(userId);
 
-            redirectAttributes.addFlashAttribute("success", "Order placed successfully! Order #" + savedOrder.getId());
+            // Broadcast real-time order notification via WebSocket
+            try {
+                String payload = String.format("{\"id\": %d, \"customerName\": \"%s\", \"total\": %s}",
+                        savedOrder.getId(), user.getFullName() != null ? user.getFullName() : user.getUsername(), String.valueOf(totalPrice));
+                messagingTemplate.convertAndSend("/topic/admin/orders", payload);
+            } catch (Exception wsEx) {
+                // Ignore websocket send errors (don't break the checkout flow)
+            }
+
+            redirectAttributes.addFlashAttribute("orderSuccess", true);
             return "redirect:/orders/" + savedOrder.getId();
 
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to place order: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Đặt hàng thất bại: " + e.getMessage());
             return "redirect:/checkout";
         }
     }

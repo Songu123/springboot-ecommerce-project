@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hỗ trợ trực tuyến</title>
+</head>
+<body>
+<div th:fragment="content" class="h-100 d-flex flex-column">
+    
+    <div class="page-hdr mb-3">
+        <div>
+            <h1 class="page-title">Hỗ trợ khách hàng</h1>
+            <ul class="breadcrumb">
+                <li><a href="/admin/dashboard">Admin</a></li>
+                <li><span class="bc-active">Chat</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Chat Dashboard Container -->
+    <div class="adm-card flex-grow-1 d-flex" style="min-height: 70vh; overflow:hidden;">
+        
+        <!-- Left Sidebar: Chat List -->
+        <div style="width: 320px; border-right: 1px solid var(--border); display: flex; flex-direction: column; background: var(--bg-card);">
+            <div style="padding: 15px; border-bottom: 1px solid var(--border); background: var(--bg-card);">
+                <input type="text" id="chatSearchInput" placeholder="Tìm kiếm hội thoại..." class="form-control" style="font-size: .85rem;" oninput="filterChatRooms(this.value)">
+            </div>
+            <div id="dedicatedChatList" style="flex: 1; overflow-y: auto;">
+                <div style="padding: 30px; text-align: center; color: var(--adm-txt-muted); font-size: .9rem;">
+                    <i class="fas fa-spinner fa-spin me-2"></i> Đang tải...
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Main Panel: Active Chat -->
+        <div id="dedicatedChatMain" style="flex: 1; display: flex; flex-direction: column; background: var(--bg);">
+            
+            <!-- Default Empty State -->
+            <div id="chatEmptyState" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--adm-txt-muted);">
+                <div style="width: 80px; height: 80px; background: var(--adm-primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 20px;">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h5>Hỗ trợ trực tuyến</h5>
+                <p>Mở một cuộc hội thoại từ danh sách bên trái để bắt đầu nhắn tin.</p>
+            </div>
+
+            <!-- Active Conversation Container -->
+            <div id="chatActiveState" class="d-none" style="flex: 1; display: flex; flex-direction: column; height: 100%;">
+                
+                <!-- Chat Header -->
+                <div style="padding: 15px 20px; display: flex; align-items: center; justify-content: space-between; background: var(--bg-card); border-bottom: 1px solid var(--border);">
+                    <div class="d-flex align-items-center">
+                        <div style="width: 40px; height: 40px; background: var(--adm-primary); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; margin-right: 15px;">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div>
+                            <h6 style="margin: 0; font-weight: 600;" id="activeChatName">Tên khách hàng</h6>
+                            <span style="font-size: .8rem; color: var(--adm-txt-faint);" id="activeChatStatus"><i class="fas fa-circle text-success" style="font-size: 8px;"></i> Đang kết nối</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Body (Messages) -->
+                <div id="dedicatedChatBody" style="flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; font-size: .95rem;">
+                    <!-- Messages will be injected here -->
+                </div>
+
+                <!-- Admin Image Preview -->
+                <div id="adminImgPreview" style="display:none; padding:10px 20px; border-top:1px solid var(--border); background:var(--bg-input); position:relative;">
+                    <img id="adminImgPreviewEl" src="" style="max-height:80px; border-radius:8px; border:1px solid var(--border);">
+                    <button onclick="clearAdminPreview()" style="position:absolute; top:5px; right:15px; background:rgba(0,0,0,0.5); color:#fff; border:none; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:.8rem;"><i class="fas fa-times"></i></button>
+                </div>
+
+                <!-- Chat Footer (Input) -->
+                <div style="padding: 15px 20px; background: var(--bg-card); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center;">
+                    <input type="file" id="adminImageInput" accept="image/*" style="display:none;">
+                    <button onclick="document.getElementById('adminImageInput').click()" style="background:none;border:none;color:var(--adm-txt-muted);font-size:1.2rem;cursor:pointer;">
+                        <i class="fas fa-paperclip"></i>
+                    </button>
+                    <input type="text" id="dedicatedChatInput" placeholder="Nhập tin nhắn..." class="form-control" style="border-radius: 20px; outline: none; flex: 1;" onkeypress="if(event.key==='Enter') sendDedicatedChat()">
+                    <button onclick="sendDedicatedChat()" class="btn-a btn-primary" style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Additional logic for Dedicated Chat Page -->
+    <script>
+        let currentActiveRoomId = null;
+        let chatRoomsGlobal = [];
+        let pendingAdminImage = null;
+        let activeRoomSubscription = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ensure STOMP is connected from admin-layout.html global logic
+            setTimeout(loadDedicatedRooms, 500);
+
+            // Hook File Input Change
+            const adminImageInput = document.getElementById('adminImageInput');
+            if (adminImageInput) {
+                adminImageInput.addEventListener('change', (e) => {
+                    if (e.target.files.length > 0) {
+                        handleAdminImageSelection(e.target.files[0]);
+                    }
+                });
+            }
+
+            // Hook Paste Event
+            const chatInput = document.getElementById('dedicatedChatInput');
+            if (chatInput) {
+                chatInput.addEventListener('paste', (e) => {
+                    const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+                    for (let index in items) {
+                        const item = items[index];
+                        if (item.kind === 'file' && item.type.startsWith('image/')) {
+                            const blob = item.getAsFile();
+                            handleAdminImageSelection(blob);
+                            e.preventDefault();
+                        }
+                    }
+                });
+            }
+        });
+
+        function clearAdminPreview() {
+            pendingAdminImage = null;
+            document.getElementById('adminImgPreview').style.display = 'none';
+            document.getElementById('adminImageInput').value = '';
+        }
+
+        function handleAdminImageSelection(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            pendingAdminImage = file;
+            const url = URL.createObjectURL(file);
+            document.getElementById('adminImgPreviewEl').src = url;
+            document.getElementById('adminImgPreview').style.display = 'block';
+        }
+
+        function loadDedicatedRooms() {
+            fetch('/api/admin/chat/rooms')
+                .then(r => r.json())
+                .then(rooms => {
+                    chatRoomsGlobal = rooms;
+                    renderChatRoomList(rooms);
+                });
+        }
+
+        function renderChatRoomList(rooms) {
+            const listBody = document.getElementById('dedicatedChatList');
+            if (rooms.length === 0) {
+                listBody.innerHTML = '<div style="padding:30px;text-align:center;color:var(--adm-txt-muted);font-size:.9rem;">Chưa có hội thoại nào.</div>';
+                return;
+            }
+            listBody.innerHTML = '';
+            rooms.forEach(r => {
+                const row = document.createElement('div');
+                row.className = 'chat-room-item';
+                row.style.padding = '15px';
+                row.style.borderBottom = '1px solid var(--border)';
+                row.style.cursor = 'pointer';
+                row.style.transition = 'background .2s';
+                if (r.sessionId === currentActiveRoomId) {
+                    row.style.background = 'var(--bg)';
+                    row.style.borderLeft = '4px solid var(--adm-primary)';
+                } else {
+                    row.style.background = 'var(--bg-card)';
+                    row.style.borderLeft = '4px solid transparent';
+                }
+
+                row.onmouseover = () => { if(r.sessionId !== currentActiveRoomId) row.style.background = 'var(--bg)'; };
+                row.onmouseleave = () => { if(r.sessionId !== currentActiveRoomId) row.style.background = 'var(--bg-card)'; };
+                row.onclick = () => openDedicatedChat(r.sessionId, r.userName);
+
+                row.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 5px;">
+                        <h6 style="margin:0; font-size:.95rem; font-weight:600; color:var(--adm-txt);">${r.userName || 'Khách ẩn danh'}</h6>
+                        <span style="font-size:.75rem; color:var(--adm-txt-faint)">
+                            ${r.lastUpdate ? new Date(r.lastUpdate).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}) : ''}
+                        </span>
+                    </div>
+                    <div style="font-size:.85rem; color:var(--adm-txt-muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${r.lastMessage || '...'}
+                    </div>
+                `;
+                listBody.appendChild(row);
+            });
+        }
+
+        function filterChatRooms(keyword) {
+            keyword = keyword.toLowerCase();
+            const filtered = chatRoomsGlobal.filter(r => (r.userName||'').toLowerCase().includes(keyword) || (r.lastMessage||'').toLowerCase().includes(keyword));
+            renderChatRoomList(filtered);
+        }
+
+        function openDedicatedChat(roomId, userName) {
+            currentActiveRoomId = roomId;
+            // Update UI blocks
+            document.getElementById('chatEmptyState').classList.add('d-none');
+            document.getElementById('chatActiveState').classList.remove('d-none');
+            document.getElementById('chatActiveState').classList.add('d-flex');
+            
+            document.getElementById('activeChatName').innerText = userName || 'Khách ẩn danh';
+            
+            // Highlight list item
+            renderChatRoomList(chatRoomsGlobal);
+
+            // Fetch history
+            fetch('/api/chat/history/' + roomId)
+                .then(res => res.json())
+                .then(data => {
+                    const body = document.getElementById('dedicatedChatBody');
+                    body.innerHTML = '';
+                    data.forEach(msg => appendDedicatedMessage(msg));
+                    setTimeout(() => { 
+                        if(body.lastElementChild) body.lastElementChild.scrollIntoView({behavior: 'smooth', block: 'end'}); 
+                    }, 100);
+                    setTimeout(() => { 
+                        if(body.lastElementChild) body.lastElementChild.scrollIntoView({behavior: 'smooth', block: 'end'}); 
+                    }, 500); // Wait for images
+                });
+
+            // Subscribe to the specific Room Topic to receive real-time messages (including our own echoes from the server)
+            if (activeRoomSubscription) {
+                activeRoomSubscription.unsubscribe();
+            }
+            if (typeof stompClient !== 'undefined' && stompClient !== null) {
+                activeRoomSubscription = stompClient.subscribe('/topic/messages/' + roomId, (msg) => {
+                    const data = JSON.parse(msg.body);
+                    appendDedicatedMessage(data);
+                    // Reload sidebar list to show latest message snippet
+                    loadDedicatedRooms();
+                });
+            }
+        }
+
+        // Global hook for incoming messages from ANY customer (triggered by admin-layout.html)
+        window.onIncomingDedicatedMessage = function(msg) {
+            // We do NOT append to the chat body here because the activeRoomSubscription already handles it.
+            // We just refresh the sidebar list so unread indicators or snippets update.
+            loadDedicatedRooms();     
+        };
+
+        function sendDedicatedChat() {
+            const input = document.getElementById('dedicatedChatInput');
+            const content = input.value.trim();
+            
+            if (!content && !pendingAdminImage) return;
+            if (!stompClient || !currentActiveRoomId) return;
+
+            // If there's an image, upload first
+            if (pendingAdminImage) {
+                const formData = new FormData();
+                formData.append('imageFile', pendingAdminImage);
+
+                fetch('/api/chat/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(r => r.text())
+                .then(url => {
+                    if(url !== 'error') {
+                        const imgMsg = {
+                            roomId: currentActiveRoomId,
+                            senderType: 'ADMIN',
+                            messageType: 'IMAGE',
+                            content: url
+                        };
+                        stompClient.send("/app/chat.send", {}, JSON.stringify(imgMsg));
+                        
+                        // Send text right after if available
+                        if (content) {
+                            const txtMsg = {
+                                roomId: currentActiveRoomId,
+                                senderType: 'ADMIN',
+                                messageType: 'TEXT',
+                                content: content
+                            };
+                            setTimeout(() => {
+                                stompClient.send("/app/chat.send", {}, JSON.stringify(txtMsg));
+                            }, 200);
+                        }
+                    } else {
+                        alert('Lỗi khi tải ảnh lên!');
+                    }
+                })
+                .catch(e => console.error(e))
+                .finally(() => {
+                    clearAdminPreview();
+                    input.value = '';
+                });
+
+            } else {
+                // Only Text
+                const msg = { roomId: currentActiveRoomId, senderType: 'ADMIN', messageType: 'TEXT', content: content };
+                stompClient.send("/app/chat.send", {}, JSON.stringify(msg));
+                input.value = '';
+            }
+        }
+
+        function appendDedicatedMessage(msg) {
+            const body = document.getElementById('dedicatedChatBody');
+            const isAdmin = msg.senderType === 'ADMIN';
+            
+            const wrapper = document.createElement('div');
+            wrapper.style.display = 'flex';
+            wrapper.style.flexDirection = 'column';
+            wrapper.style.alignItems = isAdmin ? 'flex-end' : 'flex-start';
+
+            const bubble = document.createElement('div');
+            bubble.style.padding = '10px 15px';
+            bubble.style.borderRadius = '20px';
+            bubble.style.maxWidth = '75%';
+            bubble.style.wordBreak = 'break-word';
+
+            if (isAdmin) {
+                bubble.style.background = 'var(--adm-primary)';
+                bubble.style.color = '#fff';
+                bubble.style.borderBottomRightRadius = '4px';
+            } else {
+                bubble.style.background = 'var(--bg-card)';
+                bubble.style.color = 'var(--adm-txt)';
+                bubble.style.border = '1px solid var(--border)';
+                bubble.style.borderBottomLeftRadius = '4px';
+            }
+
+            if (msg.messageType === 'IMAGE') {
+                bubble.style.padding = '5px';
+                bubble.style.background = 'none';
+                bubble.style.border = 'none';
+                bubble.innerHTML = `<img src="${msg.content}" onload="this.scrollIntoView({behavior: 'smooth', block: 'end'});" style="max-width: 250px; border-radius: 8px; cursor: pointer; border: 1px solid var(--border);" onclick="window.open('${msg.content}', '_blank')">`;
+            } else {
+                bubble.innerText = msg.content;
+            }
+
+            wrapper.appendChild(bubble);
+
+            // Timestamp
+            if (msg.timestamp) {
+                const timeStr = new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                const ts = document.createElement('span');
+                ts.innerText = timeStr;
+                ts.style.fontSize = '.7rem';
+                ts.style.color = 'var(--adm-txt-faint)';
+                ts.style.marginTop = '4px';
+                ts.style.marginRight = isAdmin ? '10px' : '0';
+                ts.style.marginLeft = isAdmin ? '0' : '10px';
+                wrapper.appendChild(ts);
+            }
+
+            body.appendChild(wrapper);
+            wrapper.scrollIntoView({behavior: 'smooth', block: 'end'});
+            setTimeout(() => {
+                wrapper.scrollIntoView({behavior: 'smooth', block: 'end'});
+            }, 100);
+        }
+    </script>
+</div>
+</body>
+</html>

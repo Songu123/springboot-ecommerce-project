@@ -1,694 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="vi">
-<head>
-  <title>Danh sách sản phẩm</title>
-  <style>
-    /* ID Badge Style */
-    .id-badge {
-      background: #28a745 !important;
-      color: white !important;
-      padding: 8px 14px !important;
-      border-radius: 20px !important;
-      font-weight: bold !important;
-      font-size: 13px !important;
-      display: inline-block !important;
-      box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3) !important;
-      transition: all 0.3s ease !important;
-    }
-
-    .id-badge:hover {
-      background: #218838 !important;
-      box-shadow: 0 4px 14px rgba(40, 167, 69, 0.4) !important;
-      transform: scale(1.05) !important;
-    }
-
-    /* ========== ClickUp-Style Pagination - Professional Design ========== */
-    .pagination-wrapper {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 1.25rem 1.5rem;
-      background: #ffffff;
-      border-top: 1px solid #e5e7eb;
-      border-bottom: 1px solid #e5e7eb;
-      border-radius: 0 0 12px 12px;
-      flex-wrap: wrap;
-      gap: 2rem;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
-    }
-
-    .pagination-info {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      font-size: 0.875rem;
-      color: #9ca3af;
-      padding: 0.5rem 0;
-      white-space: nowrap;
-    }
-
-    .pagination-info strong {
-      color: #1f2937;
-      font-weight: 700;
-      font-size: 0.9375rem;
-    }
-
-    .pagination-info span {
-      color: #9ca3af;
-    }
-
-    .pagination-controls {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .pagination {
-      display: flex;
-      list-style: none;
-      gap: 0.35rem;
-      margin: 0;
-      padding: 0;
-      align-items: center;
-      background: white;
-      padding: 0.5rem 0.75rem;
-      border-radius: 8px;
-      border: 1px solid #e5e7eb;
-    }
-
-    .pagination .page-item {
-      display: inline-block;
-    }
-
-    .pagination .page-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 36px;
-      height: 36px;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      background: transparent;
-      color: #6b7280;
-      text-decoration: none;
-      font-weight: 500;
-      font-size: 0.875rem;
-      cursor: pointer;
-      user-select: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      position: relative;
-    }
-
-    .pagination .page-link:hover:not(.disabled) {
-      background: #f3f4f6;
-      color: #1f2937;
-      border-color: #d1d5db;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .pagination .page-item.active .page-link {
-      background: #2563EB;
-      border-color: #2563EB;
-      color: white;
-      font-weight: 600;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-      position: relative;
-      z-index: 1;
-    }
-
-    .pagination .page-item.active .page-link:hover {
-      background: #1E40AF;
-      border-color: #1E40AF;
-      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
-      transform: translateY(-2px);
-    }
-
-    .pagination .page-link i {
-      font-size: 0.8rem;
-      transition: transform 0.3s ease;
-    }
-
-    .pagination .page-link:hover:not(.disabled) i {
-      transform: scale(1.15);
-    }
-
-    .pagination .page-item.active .page-link i {
-      color: white;
-    }
-
-    .pagination .page-item.disabled .page-link {
-      opacity: 0.4;
-      cursor: not-allowed;
-      color: #d1d5db;
-      background: transparent;
-      border-color: transparent;
-      pointer-events: none;
-    }
-
-    .pagination .page-item.disabled .page-link:hover {
-      background: transparent;
-      transform: none;
-      box-shadow: none;
-    }
-
-    .pagination .ellipsis {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 36px;
-      height: 36px;
-      color: #9ca3af;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0 0.25rem;
-    }
-
-    .page-size-selector {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      font-size: 0.875rem;
-      color: #6b7280;
-      white-space: nowrap;
-    }
-
-    .page-size-selector label {
-      font-weight: 500;
-      color: #4b5563;
-    }
-
-    .page-size-selector select {
-      padding: 0.5rem 0.85rem;
-      border: 1px solid #d1d5db;
-      border-radius: 6px;
-      background: white;
-      color: #1f2937;
-      font-size: 0.875rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      appearance: none;
-      padding-right: 2rem;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 0.6rem center;
-      padding-right: 2.2rem;
-    }
-
-    .page-size-selector select:hover {
-      border-color: #9ca3af;
-      background-color: #f9fafb;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    .page-size-selector select:focus {
-      outline: none;
-      border-color: #2563EB;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1),
-                  0 2px 4px rgba(0, 0, 0, 0.05);
-    }
-
-    @media (max-width: 1024px) {
-      .pagination-wrapper {
-        gap: 1.5rem;
-        padding: 1rem 1.25rem;
-      }
-
-      .pagination-controls {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-      }
-
-      .pagination-info {
-        order: 1;
-        width: 100%;
-        justify-content: center;
-      }
-
-      .page-size-selector {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .pagination-wrapper {
-        flex-direction: column;
-        gap: 1rem;
-        padding: 1rem;
-      }
-
-      .pagination-info {
-        order: 1;
-        width: 100%;
-        justify-content: center;
-        font-size: 0.8125rem;
-      }
-
-      .pagination-controls {
-        order: 2;
-        width: 100%;
-        justify-content: center;
-      }
-
-      .page-size-selector {
-        order: 3;
-        width: 100%;
-        justify-content: center;
-      }
-
-      .pagination {
-        padding: 0.4rem 0.5rem;
-        gap: 0.25rem;
-      }
-
-      .pagination .page-link {
-        min-width: 32px;
-        height: 32px;
-        padding: 0.4rem 0.6rem;
-        font-size: 0.8125rem;
-      }
-
-      .pagination .page-link i {
-        font-size: 0.7rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .pagination-wrapper {
-        gap: 0.75rem;
-        padding: 0.85rem;
-      }
-
-      .pagination-info {
-        font-size: 0.75rem;
-      }
-
-      .pagination-info strong {
-        font-size: 0.875rem;
-      }
-
-      .pagination {
-        padding: 0.3rem 0.4rem;
-        gap: 0.2rem;
-      }
-
-      .pagination .page-link {
-        min-width: 28px;
-        height: 28px;
-        padding: 0.3rem 0.5rem;
-        font-size: 0.75rem;
-      }
-
-      .pagination .ellipsis {
-        min-width: 28px;
-        height: 28px;
-        font-size: 0.9rem;
-      }
-
-      .page-size-selector {
-        gap: 0.5rem;
-        font-size: 0.8125rem;
-      }
-
-      .page-size-selector select {
-        padding: 0.35rem 0.65rem;
-        font-size: 0.75rem;
-      }
-    }
-
-    @media print {
-      .pagination-wrapper {
-        display: none;
-      }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      .pagination .page-link,
-      .page-size-selector select {
-        transition: none;
-      }
-
-      .pagination .page-link:hover:not(.disabled) {
-        transform: none;
-      }
-    }
-  </style>
-</head>
+<head><title>Sản phẩm</title></head>
 <body>
 <div th:fragment="content">
-  <div class="container-fluid">
-    <!-- Page Header with Actions -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h1 class="h3 mb-1 text-gray-800">
-          <i class="fas fa-box text-primary"></i> Product Management
-        </h1>
-        <p class="text-muted small mb-0">Quản lý sản phẩm và kho hàng</p>
-      </div>
-      <div>
-        <a th:href="@{/admin/products/create}" class="btn btn-primary">
-          <i class="fas fa-plus"></i> Thêm sản phẩm mới
-        </a>
-      </div>
+
+    <div class="page-hdr">
+        <div>
+            <h1 class="page-title">Quản lý sản phẩm</h1>
+            <ul class="breadcrumb"><li><a href="/admin">Admin</a></li><li><span class="bc-active">Sản phẩm</span></li></ul>
+        </div>
+        <a href="/admin/products/create" class="btn-a btn-primary"><i class="fas fa-plus"></i> Thêm sản phẩm</a>
     </div>
 
-    <!-- Stats Cards Row -->
-    <div class="row mb-4">
-      <div class="col-md-3">
-        <div class="card border-left-primary shadow-sm h-100">
-          <div class="card-body py-3">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                  Tổng Sản Phẩm
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${#lists.size(products)}">0</div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-box fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
+    <!-- Toolbar -->
+    <div class="adm-toolbar">
+        <div class="toolbar-search">
+            <i class="fas fa-search si"></i>
+            <input type="text" id="srchProd" placeholder="Tìm theo tên sản phẩm..." oninput="filterTable('srchProd','productTbody')">
         </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card border-left-success shadow-sm h-100">
-          <div class="card-body py-3">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                  In Stock
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800"
-                     th:text="${#lists.size(products.?[quantity > 0])}">0</div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-check-circle fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card border-left-warning shadow-sm h-100">
-          <div class="card-body py-3">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                  Out of Stock
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800"
-                     th:text="${#lists.size(products.?[quantity == 0])}">0</div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-exclamation-triangle fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-3">
-        <div class="card border-left-info shadow-sm h-100">
-          <div class="card-body py-3">
-            <div class="row no-gutters align-items-center">
-              <div class="col mr-2">
-                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                  Total Value
-                </div>
-                <div class="h5 mb-0 font-weight-bold text-gray-800">
-                  <span th:text="${#numbers.formatDecimal(#aggregates.sum(products.![price * quantity]), 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
-                </div>
-              </div>
-              <div class="col-auto">
-                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        <span class="toolbar-info">Tổng: <strong th:text="${totalItems}?:0">0</strong> sản phẩm</span>
     </div>
 
-    <!-- Main Table Card -->
-    <div class="card shadow-lg border-0">
-      <div class="card-header bg-gradient-primary text-white py-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <h6 class="m-0 font-weight-bold">
-            <i class="fas fa-table"></i> Danh sách sản phẩm
-          </h6>
-          <span class="badge badge-light" th:text="${#lists.size(products)} + ' products'">0 products</span>
-        </div>
-      </div>
-
-      <div class="card-body p-0">
-        <div class="table-responsive">
-          <table class="table table-hover table-borderless mb-0" id="dataTable">
-            <thead class="bg-light">
-            <tr>
-              <th class="border-0 text-center" style="width: 60px;">
-                <small class="text-uppercase font-weight-bold">ID</small>
-              </th>
-              <th class="border-0" style="width: 100px;">
-                <small class="text-uppercase font-weight-bold">Image</small>
-              </th>
-              <th class="border-0">
-                <small class="text-uppercase font-weight-bold">Tên sản phẩm</small>
-              </th>
-              <th class="border-0">
-                <small class="text-uppercase font-weight-bold">Danh mục</small>
-              </th>
-              <th class="border-0 text-right">
-                <small class="text-uppercase font-weight-bold">Giá</small>
-              </th>
-              <th class="border-0 text-center">
-                <small class="text-uppercase font-weight-bold">Số lượng</small>
-              </th>
-              <th class="border-0 text-center">
-                <small class="text-uppercase font-weight-bold">Trạng thái</small>
-              </th>
-              <th class="border-0 text-center">
-                <small class="text-uppercase font-weight-bold">Thao tác</small>
-              </th>
-            </tr>
-            </thead>
-
-            <tbody>
-            <tr th:if="${#lists.isEmpty(products)}">
-              <td colspan="8" class="text-center py-5">
-                <div class="text-muted">
-                  <i class="fas fa-box-open fa-3x mb-3 d-block"></i>
-                  <p class="mb-0">Chưa có sản phẩm nào trong hệ thống</p>
-                </div>
-              </td>
-            </tr>
-
-            <tr th:each="product : ${products}" class="border-bottom">
-              <td class="text-center align-middle">
-                <span class="id-badge" th:text="${product.id}">1</span>
-              </td>
-              <td class="align-middle">
-                <img th:src="${product.image}" th:alt="${product.name}"
-                     class="img-thumbnail"
-                     style="width: 60px; height: 60px; object-fit: cover;"
-                     onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
-              </td>
-              <td class="align-middle">
-                <div>
-                  <strong th:text="${product.name}">Product Name</strong>
-                  <br>
-                  <small class="text-muted" th:if="${product.description}"
-                         th:text="${#strings.abbreviate(product.description, 50)}">Description...</small>
-                </div>
-              </td>
-              <td class="align-middle">
-                <span class="badge badge-info badge-pill"
-                      th:if="${product.category}"
-                      th:text="${product.category.name}">Category</span>
-                <span class="text-muted small" th:unless="${product.category}">
-                  <i class="fas fa-minus"></i> N/A
-                </span>
-              </td>
-              <td class="text-right align-middle">
-                <strong class="text-success">
-                  <span th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
-                </strong>
-              </td>
-              <td class="text-center align-middle">
-                <span th:if="${product.quantity > 10}"
-                      class="badge badge-success badge-pill px-3">
-                  <span th:text="${product.quantity}">0</span>
-                </span>
-                <span th:if="${product.quantity > 0 && product.quantity <= 10}"
-                      class="badge badge-warning badge-pill px-3">
-                  <i class="fas fa-exclamation-triangle"></i>
-                  <span th:text="${product.quantity}">0</span>
-                </span>
-                <span th:if="${product.quantity == 0}"
-                      class="badge badge-danger badge-pill px-3">
-                  <i class="fas fa-times-circle"></i> 0
-                </span>
-              </td>
-              <td class="text-center align-middle">
-                <span th:if="${product.quantity > 0}"
-                      class="badge badge-success badge-pill px-3">
-                  <i class="fas fa-check-circle"></i> In Stock
-                </span>
-                <span th:unless="${product.quantity > 0}"
-                      class="badge badge-danger badge-pill px-3">
-                  <i class="fas fa-ban"></i> Out of Stock
-                </span>
-              </td>
-              <td class="text-center align-middle">
-                <div class="btn-group" role="group">
-                  <a th:href="@{/admin/products/edit/{id}(id=${product.id})}"
-                     class="btn btn-sm btn-outline-primary"
-                     title="Chỉnh sửa">
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a th:href="@{/admin/products/delete/{id}(id=${product.id})}"
-                     class="btn btn-sm btn-outline-danger"
-                     title="Xóa"
-                     onclick="return confirm('⚠️ Bạn có chắc chắn muốn xóa sản phẩm này?\n\nHành động này không thể hoàn tác!')">
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
-                </div>
-              </td>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Pagination -->
-      <div class="pagination-wrapper" th:if="${totalPages > 0}">
-        <div class="pagination-info">
-          <span>Hiển thị</span>
-          <strong th:text="${displayStartIndex}">1</strong>
-          <span>-</span>
-          <strong th:text="${displayEndIndex}">10</strong>
-          <span>trong</span>
-          <strong th:text="${totalItems}">0</strong>
+    <div class="adm-card">
+        <div class="adm-card-body p-0">
+            <table class="adm-table">
+                <thead>
+                <tr>
+                    <th style="width:40px">#</th>
+                    <th>Sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Giá bán</th>
+                    <th>Số lượng</th>
+                    <th style="width:120px;text-align:right;">Thao tác</th>
+                </tr>
+                </thead>
+                <tbody id="productTbody">
+                <tr th:each="p,stat : ${products}">
+                    <td style="color:var(--adm-txt-faint);font-size:.78rem;" th:text="${(currentPage-1)*pageSize+stat.count}">1</td>
+                    <td>
+                        <div class="d-flex align-items-center gap-3">
+                            <img th:src="${p.image}?:'/img/product-default.jpg'" class="tbl-img" th:alt="${p.name}">
+                            <div>
+                                <p style="font-weight:600;font-size:.875rem;margin:0;" th:text="${p.name}">Name</p>
+                                <p style="font-size:.73rem;color:var(--adm-txt-faint);margin:0;" th:text="'ID: '+${p.id}">ID</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="bdg bdg-user" th:text="${p.category?.name}?:'N/A'">Cat</span></td>
+                    <td style="font-weight:700;color:var(--adm-primary);" th:text="${#numbers.formatDecimal(p.price?:0,0,'COMMA',0,'POINT')}+'₫'">0₫</td>
+                    <td><strong th:text="${p.quantity}+' cái'">0 cái</strong></td>
+                    <td>
+                        <div class="d-flex justify-content-end gap-1">
+                            <a th:href="@{/products/{id}(id=${p.id})}" target="_blank" class="btn-a btn-ghost btn-icon btn-sm" title="Xem"><i class="fas fa-eye"></i></a>
+                            <a th:href="@{/admin/products/edit/{id}(id=${p.id})}" class="btn-a btn-outline btn-icon btn-sm" title="Sửa"><i class="fas fa-edit"></i></a>
+                            <a th:href="@{/admin/products/delete/{id}(id=${p.id})}" class="btn-a btn-danger btn-icon btn-sm" title="Xóa"
+                               th:attr="onclick='return confirmDel(\''+${p.name}+'\')'"><i class="fas fa-trash"></i></a>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${products==null or #lists.isEmpty(products)}">
+                    <td colspan="6" class="tbl-empty"><i class="fas fa-box tbl-empty-icon"></i>Chưa có sản phẩm nào</td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
-        <div class="pagination-controls">
-          <ul class="pagination">
-            <li class="page-item" th:classappend="${currentPage <= 1 ? 'disabled' : ''}">
-              <a th:if="${currentPage > 1}" class="page-link" th:href="@{/admin/products(page=${currentPage-1})}" title="Trang trước">
-                <i class="fas fa-chevron-left"></i>
-              </a>
-              <span th:unless="${currentPage > 1}" class="page-link disabled">
-                <i class="fas fa-chevron-left"></i>
-              </span>
-            </li>
-
-            <th:block th:if="${totalPages <= 7}">
-              <li class="page-item" th:each="p : ${#numbers.sequence(1, totalPages)}" th:classappend="${p == currentPage ? 'active' : ''}">
-                <a th:if="${p != currentPage}" class="page-link" th:href="@{/admin/products(page=${p})}" th:text="${p}">1</a>
-                <span th:unless="${p != currentPage}" class="page-link" th:text="${p}">1</span>
-              </li>
-            </th:block>
-
-            <th:block th:if="${totalPages > 7}">
-              <li class="page-item" th:classappend="${currentPage == 1 ? 'active' : ''}">
-                <a th:if="${currentPage != 1}" class="page-link" th:href="@{/admin/products(page=1)}">1</a>
-                <span th:unless="${currentPage != 1}" class="page-link">1</span>
-              </li>
-
-              <th:block th:if="${currentPage <= 3}">
-                <li class="page-item" th:classappend="${currentPage == 2 ? 'active' : ''}">
-                  <a th:if="${currentPage != 2}" class="page-link" th:href="@{/admin/products(page=2)}">2</a>
-                  <span th:unless="${currentPage != 2}" class="page-link">2</span>
-                </li>
-                <li class="page-item" th:classappend="${currentPage == 3 ? 'active' : ''}">
-                  <a th:if="${currentPage != 3}" class="page-link" th:href="@{/admin/products(page=3)}">3</a>
-                  <span th:unless="${currentPage != 3}" class="page-link">3</span>
-                </li>
-              </th:block>
-              <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                <li class="page-item">
-                  <span class="ellipsis">...</span>
-                </li>
-              </th:block>
-
-              <th:block th:if="${currentPage > 3 && currentPage < totalPages - 2}">
-                <li class="page-item">
-                  <a class="page-link" th:href="@{/admin/products(page=${currentPage - 1})}" th:text="${currentPage - 1}"></a>
-                </li>
-                <li class="page-item active">
-                  <span class="page-link" th:text="${currentPage}"></span>
-                </li>
-                <li class="page-item">
-                  <a class="page-link" th:href="@{/admin/products(page=${currentPage + 1})}" th:text="${currentPage + 1}"></a>
-                </li>
-              </th:block>
-
-              <th:block th:if="${currentPage >= totalPages - 2}">
-                <li class="page-item" th:classappend="${currentPage == totalPages - 2 ? 'active' : ''}">
-                  <a th:if="${currentPage != totalPages - 2}" class="page-link" th:href="@{/admin/products(page=${totalPages - 2})}" th:text="${totalPages - 2}"></a>
-                  <span th:unless="${currentPage != totalPages - 2}" class="page-link" th:text="${totalPages - 2}"></span>
-                </li>
-                <li class="page-item" th:classappend="${currentPage == totalPages - 1 ? 'active' : ''}">
-                  <a th:if="${currentPage != totalPages - 1}" class="page-link" th:href="@{/admin/products(page=${totalPages - 1})}" th:text="${totalPages - 1}"></a>
-                  <span th:unless="${currentPage != totalPages - 1}" class="page-link" th:text="${totalPages - 1}"></span>
-                </li>
-              </th:block>
-              <th:block th:if="${currentPage < totalPages - 2}">
-                <li class="page-item">
-                  <span class="ellipsis">...</span>
-                </li>
-              </th:block>
-
-              <li class="page-item" th:classappend="${currentPage == totalPages ? 'active' : ''}">
-                <a th:if="${currentPage != totalPages}" class="page-link" th:href="@{/admin/products(page=${totalPages})}" th:text="${totalPages}"></a>
-                <span th:unless="${currentPage != totalPages}" class="page-link" th:text="${totalPages}"></span>
-              </li>
-            </th:block>
-
-            <li class="page-item" th:classappend="${currentPage >= totalPages ? 'disabled' : ''}">
-              <a th:if="${currentPage < totalPages}" class="page-link" th:href="@{/admin/products(page=${currentPage+1})}" title="Trang tiếp">
-                <i class="fas fa-chevron-right"></i>
-              </a>
-              <span th:unless="${currentPage < totalPages}" class="page-link disabled">
-                <i class="fas fa-chevron-right"></i>
-              </span>
-            </li>
-          </ul>
+        <!-- Pagination -->
+        <div class="adm-pagination" th:if="${totalPages > 1}">
+            <span class="pg-info">Hiển thị <strong th:text="${displayStartIndex}">1</strong>–<strong th:text="${displayEndIndex}">10</strong> / <strong th:text="${totalItems}">0</strong></span>
+            <div class="pg-btns">
+                <a th:href="@{/admin/products(page=${currentPage-1})}" class="pg-btn" th:classappend="${currentPage<=1}?'disabled'"><i class="fas fa-chevron-left"></i></a>
+                <a th:each="p : ${#numbers.sequence(1,totalPages)}" th:href="@{/admin/products(page=${p})}" class="pg-btn" th:classappend="${p==currentPage}?'active'" th:text="${p}">1</a>
+                <a th:href="@{/admin/products(page=${currentPage+1})}" class="pg-btn" th:classappend="${currentPage>=totalPages}?'disabled'"><i class="fas fa-chevron-right"></i></a>
+            </div>
         </div>
-
-        <div class="page-size-selector">
-          <label for="productPageSizeSelect">Hiển thị:</label>
-          <select id="productPageSizeSelect" onchange="if(this.value) window.location.href='/admin/products?pageSize=' + this.value;">
-            <option value="5" th:selected="${pageSize == 5}">5 / trang</option>
-            <option value="10" th:selected="${pageSize == 10}">10 / trang</option>
-            <option value="20" th:selected="${pageSize == 20}">20 / trang</option>
-            <option value="50" th:selected="${pageSize == 50}">50 / trang</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Card Footer with Info -->
-      <div class="card-footer bg-light py-3">
-        <div class="d-flex justify-content-between align-items-center">
-          <small class="text-muted">
-            <i class="fas fa-info-circle"></i>
-            Trang <strong th:text="${currentPage}">1</strong> / <strong th:text="${totalPages}">1</strong>
-          </small>
-          <small class="text-muted">
-            <i class="fas fa-database mr-2"></i>Tổng: <strong th:text="${totalItems}">0</strong> sản phẩm
-          </small>
-            <i class="fas fa-clock"></i> Cập nhật: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}">Now</span>
-          </small>
-        </div>
-      </div>
     </div>
-  </div>
+
+    <script>
+        function filterTable(inputId, tbodyId) {
+            const q = document.getElementById(inputId).value.toLowerCase();
+            document.querySelectorAll('#'+tbodyId+' tr').forEach(row => {
+                row.style.display = row.textContent.toLowerCase().includes(q) ? '' : 'none';
+            });
+        }
+        function confirmDel(name) {
+            return confirm('Bạn có chắc muốn xóa sản phẩm "' + name + '"?');
+        }
+    </script>
 </div>
 </body>
 </html>

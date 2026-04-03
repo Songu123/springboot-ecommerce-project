@@ -2,6 +2,9 @@ package com.son.ecommerce.controller.api;
 
 import com.son.ecommerce.dto.*;
 import com.son.ecommerce.entity.RefreshToken;
+import com.son.ecommerce.entity.Role;
+import com.son.ecommerce.entity.User;
+import com.son.ecommerce.repository.UserRepository;
 import com.son.ecommerce.security.JwtUtil;
 import com.son.ecommerce.service.AuthService;
 import com.son.ecommerce.service.PasswordResetService;
@@ -13,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -23,19 +28,25 @@ public class AuthApiController {
     private final RefreshTokenService refreshTokenService;
     private final PasswordResetService passwordResetService;
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
 
     /**
      * Register a new user
      * POST /api/auth/register
      * Request body: { "username": "user1", "password": "pass123", "email": "user@example.com" }
-     * Response: { "message": "User registered successfully" }
+     * Response: { "message": "User registered successfully", "user": {...} }
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
             authService.register(request);
-            Map<String, String> response = new HashMap<>();
+            // Get the registered user to return in response
+            User user = userRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("User not found after registration"));
+
+            Map<String, Object> response = new HashMap<>();
             response.put("message", "User registered successfully");
+            response.put("user", convertUserToResponse(user));
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
             Map<String, String> error = new HashMap<>();
@@ -172,5 +183,20 @@ public class AuthApiController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
         }
     }
-}
 
+    // Helper method to convert User entity to UserResponse
+    private UserResponse convertUserToResponse(User user) {
+        Set<String> roleNames = user.getRoles().stream()
+                .map(Role::getName)
+                .collect(Collectors.toSet());
+
+        return UserResponse.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
+                .roles(roleNames)
+                .enabled(user.isEnabled())
+                .build();
+    }
+}

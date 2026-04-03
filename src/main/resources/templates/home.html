@@ -1,108 +1,126 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>LifestyleShop - Elevate Your Lifestyle</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head><title>LifestyleShop - Trang chủ</title></head>
 <body>
 <div th:fragment="content">
-    <!-- Banner Slider Section -->
-    <section class="banner-slider">
-        <div id="mainBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+
+    <!-- Hero Banner Carousel -->
+    <section style="margin-bottom:56px;">
+        <div id="heroBanner" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
             <div class="carousel-indicators">
-                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="0" class="active"></button>
-                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="1"></button>
-                <button type="button" data-bs-target="#mainBannerCarousel" data-bs-slide-to="2"></button>
+                <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#heroBanner" data-bs-slide-to="2"></button>
             </div>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <div class="banner-slide banner-purple">
+                    <div class="hero-slide hero-gradient-1">
                         <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <span class="banner-badge">SUMMER SALE 2024</span>
-                                    <h1 class="banner-title">Up to 50% Off</h1>
-                                    <p class="banner-desc">Discover amazing deals on premium products</p>
-                                    <a href="/products" class="btn-banner">Shop Now <i class="fas fa-arrow-right ms-2"></i></a>
-                                </div>
-                            </div>
+                            <span class="hero-badge">☀️ SUMMER SALE 2024</span>
+                            <h1 class="hero-title">Giảm đến 50%<br>Hàng ngàn sản phẩm</h1>
+                            <p class="hero-desc">Khám phá ưu đãi cực khủng chỉ có trong hôm nay!</p>
+                            <a href="/products" class="btn-hero">Mua ngay <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <div class="banner-slide banner-blue">
+                    <div class="hero-slide hero-gradient-2">
                         <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <span class="banner-badge">NEW ARRIVALS</span>
-                                    <h1 class="banner-title">Fresh Collection</h1>
-                                    <p class="banner-desc">Check out our latest products</p>
-                                    <a href="/products?filter=new" class="btn-banner">Explore Now <i class="fas fa-arrow-right ms-2"></i></a>
-                                </div>
-                            </div>
+                            <span class="hero-badge">🆕 HÀNG MỚI VỀ</span>
+                            <h1 class="hero-title">Bộ sưu tập<br>mới nhất 2024</h1>
+                            <p class="hero-desc">Cập nhật xu hướng mới nhất, đẹp nhất, chất nhất.</p>
+                            <a href="/products?filter=new" class="btn-hero">Khám phá <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="carousel-item">
-                    <div class="banner-slide banner-cyan">
+                    <div class="hero-slide hero-gradient-3">
                         <div class="container">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <span class="banner-badge">FREE SHIPPING</span>
-                                    <h1 class="banner-title">Orders Over $50</h1>
-                                    <p class="banner-desc">Fast delivery to your doorstep</p>
-                                    <a href="/products" class="btn-banner">Start Shopping <i class="fas fa-arrow-right ms-2"></i></a>
-                                </div>
-                            </div>
+                            <span class="hero-badge">🚚 MIỄN PHÍ SHIP</span>
+                            <h1 class="hero-title">Miễn phí vận chuyển<br>Đơn từ 500.000₫</h1>
+                            <p class="hero-desc">Giao hàng nhanh chóng đến tận tay bạn.</p>
+                            <a href="/products" class="btn-hero">Mua sắm ngay <i class="fas fa-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
             </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon"></span>
+            <button class="carousel-control-prev" type="button" data-bs-target="#heroBanner" data-bs-slide="prev">
+                <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(8px);width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-chevron-left" style="color:white;"></i>
+                </span>
             </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#mainBannerCarousel" data-bs-slide="next">
-                <span class="carousel-control-next-icon"></span>
+            <button class="carousel-control-next" type="button" data-bs-target="#heroBanner" data-bs-slide="next">
+                <span style="background:rgba(255,255,255,.2);backdrop-filter:blur(8px);width:44px;height:44px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;">
+                    <i class="fas fa-chevron-right" style="color:white;"></i>
+                </span>
             </button>
         </div>
     </section>
 
-    <!-- Flash Sale Section -->
-    <section class="flash-sale-section">
-        <div class="container">
-            <div class="flash-sale-header">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <h2 class="section-title mb-0">
-                            <i class="fas fa-bolt text-warning"></i> Flash Sale
-                        </h2>
-                        <p class="text-muted mb-0">Limited time offers - Hurry up!</p>
-                    </div>
-                    <div class="flash-timer">
-                        <i class="far fa-clock"></i>
-                        <span id="flashTimer">02:45:30</span>
-                    </div>
+    <!-- Value Props -->
+    <section class="container mb-5">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="card-premium p-3 text-center">
+                    <i class="fas fa-truck fa-2x mb-2" style="color:var(--clr-primary)"></i>
+                    <p class="mb-0 fw-600" style="font-size:.85rem;font-weight:700;color:var(--txt);">Miễn phí vận chuyển</p>
+                    <p class="mb-0" style="font-size:.75rem;color:var(--txt-muted);">Đơn từ 500.000₫</p>
                 </div>
             </div>
+            <div class="col-6 col-md-3">
+                <div class="card-premium p-3 text-center">
+                    <i class="fas fa-shield-alt fa-2x mb-2" style="color:var(--clr-success)"></i>
+                    <p class="mb-0 fw-600" style="font-size:.85rem;font-weight:700;color:var(--txt);">Thanh toán an toàn</p>
+                    <p class="mb-0" style="font-size:.75rem;color:var(--txt-muted);">Bảo mật 256-bit SSL</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card-premium p-3 text-center">
+                    <i class="fas fa-undo fa-2x mb-2" style="color:var(--clr-warning)"></i>
+                    <p class="mb-0 fw-600" style="font-size:.85rem;font-weight:700;color:var(--txt);">Đổi trả dễ dàng</p>
+                    <p class="mb-0" style="font-size:.75rem;color:var(--txt-muted);">Trong vòng 30 ngày</p>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="card-premium p-3 text-center">
+                    <i class="fas fa-headset fa-2x mb-2" style="color:var(--clr-accent)"></i>
+                    <p class="mb-0 fw-600" style="font-size:.85rem;font-weight:700;color:var(--txt);">Hỗ trợ 24/7</p>
+                    <p class="mb-0" style="font-size:.75rem;color:var(--txt-muted);">Luôn sẵn sàng giúp bạn</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            <div class="row g-3 mt-2">
-                <div class="col-6 col-md-4 col-lg-2" th:each="product, iterStat : ${products}" th:if="${iterStat.index < 6}">
-                    <div class="flash-product-card">
-                        <div class="flash-badge">-30%</div>
+    <!-- Flash Sale -->
+    <section class="container mb-5" th:if="${products != null and !products.isEmpty()}">
+        <div class="section-header">
+            <h2 class="section-title-ls">
+                <i class="fas fa-bolt" style="color:var(--clr-accent)"></i> Flash Sale
+            </h2>
+            <div class="flash-timer-box">
+                <i class="fas fa-clock"></i>
+                <span id="flashTimer">02:45:30</span>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-2"
+                 th:each="product, stat : ${products}" th:if="${stat.index lt 6}">
+                <div class="flash-card">
+                    <div class="position-relative">
+                        <div class="badge-ls badge-danger" style="position:absolute;top:8px;left:8px;z-index:2;">-30%</div>
                         <img th:src="${product.image} ?: '/img/product-default.jpg'"
                              th:alt="${product.name}"
-                             class="flash-product-img">
-                        <div class="flash-product-info">
-                            <p class="flash-product-name" th:text="${product.name}">Product</p>
-                            <div class="flash-prices">
-                                <span class="flash-price-new" th:text="${#numbers.formatDecimal(product.price * 0.7, 0, 'COMMA', 0, 'POINT')} + '₫'">199.000₫</span>
-                                <span class="flash-price-old" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">299.000₫</span>
-                            </div>
-                            <div class="flash-progress">
-                                <div class="progress">
-                                    <div class="progress-bar bg-danger" style="width: 60%"></div>
-                                </div>
-                                <small class="text-muted">Sold: 60/100</small>
-                            </div>
+                             style="width:100%;aspect-ratio:1;object-fit:cover;">
+                    </div>
+                    <div class="p-2">
+                        <p style="font-size:.8rem;font-weight:600;color:var(--txt);margin-bottom:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"
+                           th:text="${product.name}">Sản phẩm</p>
+                        <div class="d-flex align-items-center gap-1 flex-wrap">
+                            <span style="font-size:.9rem;font-weight:700;color:var(--clr-accent);"
+                                  th:text="${#numbers.formatDecimal(product.price * 0.7, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
+                            <span style="font-size:.75rem;color:var(--txt-faint);text-decoration:line-through;"
+                                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">0₫</span>
                         </div>
                     </div>
                 </div>
@@ -110,1270 +128,88 @@
         </div>
     </section>
 
-    <!-- Shop by Category Section -->
-    <section class="category-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-th-large me-2"></i>Popular Categories
-                </h2>
-                <a href="/categories" class="view-all-link">
-                    View All <i class="fas fa-arrow-right ms-1"></i>
+    <!-- Categories -->
+    <section class="container mb-5" th:if="${categories != null and !categories.isEmpty()}">
+        <div class="section-header">
+            <h2 class="section-title-ls">
+                <i class="fas fa-th-large" style="color:var(--clr-primary)"></i> Danh mục nổi bật
+            </h2>
+            <a href="/categories" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-2" th:each="category : ${categories}">
+                <a th:href="@{/products/category/{slug}(slug=${category.slug})}" class="cat-card d-block text-decoration-none">
+                    <div class="cat-icon-wrap">
+                        <i class="fas fa-box"></i>
+                    </div>
+                    <p class="cat-name" th:text="${category.name}">Category</p>
                 </a>
-            </div>
-
-            <div class="row g-3">
-                <div class="col-6 col-md-4 col-lg-2" th:each="category : ${categories}">
-                    <a th:href="@{/products/category/{slug}(slug=${category.slug})}" class="category-card-modern">
-                        <div class="category-icon-wrapper">
-                            <i class="fas fa-box category-icon"></i>
-                        </div>
-                        <p class="category-name" th:text="${category.name}">Electronics</p>
-                        <small class="category-count">120 items</small>
-                    </a>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Trending Products Section -->
-    <section class="products-section" id="products">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-fire me-2" style="color: #dc2626;"></i>Trending Products
-                </h2>
-                <a href="/products" class="view-all-link">
-                    View All <i class="fas fa-arrow-right ms-1"></i>
-                </a>
-            </div>
-
-            <div class="row g-4">
-                <div class="col-6 col-md-6 col-lg-3" th:each="product, iterStat : ${products}">
-                    <div class="product-card">
+    <!-- Trending Products -->
+    <section class="container mb-5" th:if="${products != null and !products.isEmpty()}">
+        <div class="section-header">
+            <h2 class="section-title-ls">
+                <i class="fas fa-fire" style="color:var(--clr-accent)"></i> Sản phẩm nổi bật
+            </h2>
+            <a href="/products" class="view-all-btn">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+        </div>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3" th:each="product, stat : ${products}">
+                <div class="product-card">
+                    <div class="product-img-wrap">
                         <!-- Badge -->
-                        <div class="product-badge" th:if="${iterStat.index < 2}">
-                            <span class="badge-hot" th:if="${iterStat.index == 0}">HOT</span>
-                            <span class="badge-new" th:if="${iterStat.index == 1}">NEW</span>
+                        <div class="product-card-badge" th:if="${stat.index lt 2}">
+                            <span class="badge-ls badge-danger" th:if="${stat.index == 0}">HOT 🔥</span>
+                            <span class="badge-ls badge-primary" th:if="${stat.index == 1}">MỚI ✨</span>
                         </div>
-
-                        <!-- Product Image -->
-                        <div class="product-image-container">
+                        <!-- Wishlist -->
+                        <button class="product-wishlist-btn" title="Yêu thích">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <a th:href="@{/products/{id}(id=${product.id})}">
                             <img th:src="${product.image} ?: '/img/product-default.jpg'"
-                                 th:alt="${product.name}"
-                                 class="product-image">
+                                 th:alt="${product.name}" class="product-img">
+                        </a>
+                    </div>
+                    <div class="product-body">
+                        <p class="product-cat" th:text="${product.category?.name} ?: 'SẢN PHẨM'">CAT</p>
+                        <a th:href="@{/products/{id}(id=${product.id})}" class="product-name d-block"
+                           th:text="${product.name}">Product Name</a>
+                        <div class="product-price-wrap">
+                            <span class="price-main"
+                                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">0 VNĐ</span>
+                            <span class="price-old"
+                                  th:if="${product.price lt 2000000}"
+                                  th:text="${#numbers.formatDecimal(product.price * 1.2, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'"></span>
                         </div>
-
-                        <!-- Product Info -->
-                        <div class="product-info">
-                            <p class="product-category" th:text="${product.category?.name} ?: 'UNCATEGORIZED'">ELECTRONICS</p>
-                            <h5 class="product-name" th:text="${product.name}">Acoustic Pro Wireless</h5>
-                            <div class="product-price">
-                                <span class="price-current" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">249.000 VNĐ</span>
-                                <span class="price-old" th:if="${product.price < 200}"
-                                      th:text="${#numbers.formatDecimal(product.price * 1.2, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">299.000 VNĐ</span>
-                            </div>
-
-                            <!-- Add to Cart Button -->
-                            <button class="btn-add-to-cart" th:attr="data-product-id=${product.id}"
-                                    th:onclick="'addToCart(' + ${product.id} + ')'">
-                                <i class="fas fa-shopping-cart"></i> Add to Cart
-                            </button>
-                        </div>
+                        <button class="btn-add-cart btn-add-cart-ajax" th:data-product-id="${product.id}">
+                            <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="container">
-            <div class="row g-4">
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-truck"></i>
-                        </div>
-                        <h4 class="feature-title">Free Shipping</h4>
-                        <p class="feature-desc">Free shipping on orders over $50. Fast and reliable delivery to your doorstep.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h4 class="feature-title">Secure Payment</h4>
-                        <p class="feature-desc">100% secure transactions with encrypted payment processing and buyer protection.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-undo"></i>
-                        </div>
-                        <h4 class="feature-title">Easy Returns</h4>
-                        <p class="feature-desc">30-day money-back guarantee. No questions asked returns and exchanges.</p>
-                    </div>
-                </div>
-                <div class="col-md-6 col-lg-3">
-                    <div class="feature-card">
-                        <div class="feature-icon">
-                            <i class="fas fa-headset"></i>
-                        </div>
-                        <h4 class="feature-title">24/7 Support</h4>
-                        <p class="feature-desc">Dedicated customer support team available round the clock to help you.</p>
-                    </div>
+    <!-- Newsletter -->
+    <section style="background:linear-gradient(135deg,var(--clr-primary) 0%,var(--clr-primary-dark) 100%);padding:64px 0;margin-top:40px;">
+        <div class="container text-center">
+            <span class="hero-badge mb-4 d-inline-block">📧 NEWSLETTER</span>
+            <h2 style="font-size:2rem;font-weight:800;color:white;margin-bottom:12px;">Đăng ký nhận ưu đãi độc quyền</h2>
+            <p style="color:rgba(255,255,255,.8);margin-bottom:32px;font-size:1rem;">Nhận thông báo về sản phẩm mới và giảm giá đặc biệt ngay trong hộp thư của bạn.</p>
+            <div class="d-flex justify-content-center">
+                <div class="d-flex gap-2" style="max-width:480px;width:100%;background:rgba(255,255,255,.15);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.25);border-radius:var(--radius-full);padding:6px 6px 6px 20px;">
+                    <input type="email" placeholder="Nhập email của bạn..."
+                           style="flex:1;background:transparent;border:none;color:white;outline:none;font-size:.9rem;">
+                    <button class="btn-hero" style="padding:10px 24px;font-size:.9rem;">Đăng ký</button>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
-        <div class="container">
-            <div class="newsletter-content">
-                <div class="newsletter-text-wrapper">
-                    <h2 class="newsletter-title">Subscribe to Our Newsletter</h2>
-                    <p class="newsletter-subtitle">Get exclusive deals, new arrivals, and special offers delivered to your inbox.</p>
-                </div>
-                <form class="newsletter-form-wrapper" onsubmit="handleNewsletterSubmit(event)">
-                    <input type="email" class="newsletter-input" placeholder="Enter your email address" required>
-                    <button type="submit" class="newsletter-btn">Subscribe</button>
-                </form>
-            </div>
-        </div>
-    </section>
-
-    <style>
-        /* Global Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Banner Slider Section */
-        .banner-slider {
-            margin-bottom: 60px;
-        }
-
-        .banner-slide {
-            padding: 100px 0;
-            min-height: 500px;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .banner-purple {
-            background: #2563EB;
-        }
-
-        .banner-blue {
-            background: #1E40AF;
-        }
-
-        .banner-cyan {
-            background: #3B82F6;
-        }
-
-        .banner-badge {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 50px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-bottom: 24px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .banner-title {
-            font-size: 4rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 20px;
-            line-height: 1.1;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .banner-desc {
-            font-size: 1.25rem;
-            color: rgba(255, 255, 255, 0.95);
-            margin-bottom: 32px;
-            line-height: 1.6;
-        }
-
-        .btn-banner {
-            display: inline-flex;
-            align-items: center;
-            background: white;
-            color: #1f2937;
-            padding: 16px 32px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-banner:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            color: #7B68EE;
-        }
-
-        .carousel-control-prev-icon,
-        .carousel-control-next-icon {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
-            border-radius: 50%;
-        }
-
-        .carousel-indicators button {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: rgba(255, 255, 255, 0.5);
-            border: none;
-        }
-
-        .carousel-indicators button.active {
-            background-color: white;
-        }
-
-        /* Flash Sale Section */
-        .flash-sale-section {
-            padding: 60px 0;
-            background: #F9FAFB;
-        }
-
-        .flash-sale-header {
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #E5E7EB;
-        }
-
-        .flash-timer {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #DC2626;
-            background: #FEF2F2;
-            padding: 12px 24px;
-            border-radius: 8px;
-        }
-
-        .flash-timer i {
-            font-size: 1.25rem;
-        }
-
-        .flash-product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
-            height: 100%;
-            position: relative;
-        }
-
-        .flash-product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-color: #7B68EE;
-        }
-
-        .flash-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: #DC2626;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            z-index: 10;
-        }
-
-        .flash-product-img {
-            width: 100%;
-            aspect-ratio: 1;
-            object-fit: cover;
-            background: #F3F4F6;
-        }
-
-        .flash-product-info {
-            padding: 16px;
-        }
-
-        .flash-product-name {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 8px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .flash-prices {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        .flash-price-new {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: #DC2626;
-        }
-
-        .flash-price-old {
-            font-size: 0.875rem;
-            color: #9CA3AF;
-            text-decoration: line-through;
-        }
-
-        .flash-progress {
-            margin-top: 8px;
-        }
-
-        .flash-progress .progress {
-            height: 6px;
-            background: #E5E7EB;
-            border-radius: 3px;
-            margin-bottom: 4px;
-        }
-
-        .flash-progress .progress-bar {
-            border-radius: 3px;
-        }
-
-        .flash-progress small {
-            font-size: 0.75rem;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: #EEF2FF;
-            padding: 80px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-image-wrapper {
-            position: relative;
-            text-align: center;
-        }
-
-        .hero-image {
-            max-width: 100%;
-            height: auto;
-            border-radius: 0;
-        }
-
-        .hero-content {
-            padding: 40px 20px;
-        }
-
-        .summer-sale-badge {
-            display: inline-block;
-            background: #2563EB;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 24px;
-        }
-
-        .hero-title {
-            font-size: 4rem;
-            font-weight: 900;
-            color: #1f2937;
-            margin-bottom: 24px;
-            line-height: 1.1;
-        }
-
-        .text-lifestyle {
-            color: #2563EB;
-            display: inline-block;
-        }
-
-        .hero-description {
-            font-size: 1.1rem;
-            color: #4B5563;
-            margin-bottom: 32px;
-            line-height: 1.7;
-            max-width: 500px;
-        }
-
-        .btn-shop-now {
-            display: inline-block;
-            background: #2563EB;
-            color: white;
-            padding: 16px 40px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            border: none;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-shop-now:hover {
-            background: #1E40AF;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-            color: white;
-        }
-
-        /* Category Section */
-        .category-section {
-            padding: 80px 0;
-            background: #ffffff;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 48px;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .view-all-link {
-            color: #2563EB;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9375rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 8px;
-        }
-
-        .view-all-link:hover {
-            background: #F3F4F6;
-            color: #1E40AF;
-        }
-
-        .category-card-modern {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            padding: 24px;
-            border-radius: 12px;
-            background: white;
-            border: 1px solid #E5E7EB;
-        }
-
-        .category-card-modern:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
-            border-color: #2563EB;
-        }
-
-        .category-icon-wrapper {
-            width: 80px;
-            height: 80px;
-            border-radius: 16px;
-            background: #DBEAFE;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            transition: all 0.3s ease;
-        }
-
-        .category-card-modern:hover .category-icon-wrapper {
-            background: #2563EB;
-        }
-
-        .category-icon {
-            font-size: 2rem;
-            color: #2563EB;
-            transition: color 0.3s ease;
-        }
-
-        .category-card-modern:hover .category-icon {
-            color: white;
-        }
-
-        .category-name {
-            font-size: 0.9375rem;
-            font-weight: 600;
-            color: #1f2937;
-            text-align: center;
-            margin: 0 0 4px 0;
-        }
-
-        .category-count {
-            font-size: 0.75rem;
-            color: #6B7280;
-        }
-
-        /* Products Section */
-        .products-section {
-            padding: 80px 0;
-            background: #f9fafb;
-        }
-
-        .products-section .section-title {
-            margin-bottom: 48px;
-        }
-
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            border: 1px solid #E5E7EB;
-            transition: all 0.3s ease;
-            position: relative;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            border-color: #7B68EE;
-        }
-
-        .product-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            z-index: 10;
-        }
-
-        .badge-hot {
-            background: #dc2626;
-            color: white;
-            padding: 6px 14px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: inline-block;
-        }
-
-        .badge-new {
-            background: #2563EB;
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            display: inline-block;
-        }
-
-        .product-image-container {
-            width: 100%;
-            aspect-ratio: 1;
-            overflow: hidden;
-            background: #F3F4F6;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .product-card:hover .product-image {
-            transform: scale(1.05);
-        }
-
-        .product-info {
-            padding: 20px;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .product-category {
-            font-size: 0.75rem;
-            color: #2563EB;
-            letter-spacing: 1px;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .product-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: #1f2937;
-            margin-bottom: 12px;
-            min-height: 2.4rem;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .product-price {
-            margin-bottom: 16px;
-        }
-
-        .price-current {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1f2937;
-        }
-
-        .price-old {
-            font-size: 0.875rem;
-            color: #9CA3AF;
-            text-decoration: line-through;
-            margin-left: 8px;
-        }
-
-        .btn-add-to-cart {
-            width: 100%;
-            background: #2563EB;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.875rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-top: auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-add-to-cart:hover {
-            background: #1E40AF;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-        }
-
-        .btn-add-to-cart:active {
-            transform: translateY(0);
-        }
-
-        /* Features Section */
-        .features-section {
-            padding: 80px 0;
-            background: white;
-            border-top: 1px solid #E5E7EB;
-            border-bottom: 1px solid #E5E7EB;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 32px 24px;
-            border-radius: 12px;
-            background: #F9FAFB;
-            border: 1px solid #E5E7EB;
-            transition: all 0.3s ease;
-            height: 100%;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 25px rgba(37, 99, 235, 0.1);
-            border-color: #2563EB;
-            background: white;
-        }
-
-        .feature-icon {
-            width: 64px;
-            height: 64px;
-            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 20px;
-            font-size: 1.75rem;
-            color: white;
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .feature-title {
-            font-size: 1.125rem;
-            font-weight: 700;
-            color: #1f2937;
-            margin-bottom: 12px;
-        }
-
-        .feature-desc {
-            font-size: 0.9375rem;
-            color: #6B7280;
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* Newsletter Section */
-        .newsletter-section {
-            padding: 80px 0;
-            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .newsletter-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 500px;
-            height: 500px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            z-index: 0;
-        }
-
-        .newsletter-section::after {
-            content: '';
-            position: absolute;
-            bottom: -30%;
-            left: -5%;
-            width: 400px;
-            height: 400px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 50%;
-            z-index: 0;
-        }
-
-        .newsletter-content {
-            position: relative;
-            z-index: 1;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 60px;
-        }
-
-        .newsletter-text-wrapper {
-            flex: 1;
-        }
-
-        .newsletter-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 16px;
-            line-height: 1.2;
-        }
-
-        .newsletter-subtitle {
-            font-size: 1.0625rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 0;
-            line-height: 1.6;
-        }
-
-        .newsletter-form-wrapper {
-            flex: 1;
-            display: flex;
-            gap: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 16px 20px;
-            border: none;
-            background: white;
-            color: #1f2937;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-        }
-
-        .newsletter-input::placeholder {
-            color: #9CA3AF;
-        }
-
-        .newsletter-input:focus {
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
-        }
-
-        .newsletter-btn {
-            background: white;
-            color: #2563EB;
-            border: none;
-            padding: 16px 32px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .newsletter-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-            background: #F3F4F6;
-        }
-
-        .newsletter-btn:active {
-            transform: translateY(0);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .hero-title {
-                font-size: 3rem;
-            }
-
-            .banner-title {
-                font-size: 3rem;
-            }
-
-            .category-icon-wrapper {
-                width: 70px;
-                height: 70px;
-            }
-
-            .category-icon {
-                font-size: 1.75rem;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .hero-section {
-                padding: 40px 0;
-            }
-
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .banner-slide {
-                padding: 60px 0;
-                min-height: 400px;
-            }
-
-            .banner-title {
-                font-size: 2.5rem;
-            }
-
-            .banner-desc {
-                font-size: 1rem;
-            }
-
-            .hero-content {
-                text-align: center;
-                padding: 30px 20px;
-            }
-
-            .hero-description {
-                margin-left: auto;
-                margin-right: auto;
-            }
-
-            .section-title {
-                font-size: 1.5rem;
-            }
-
-            .category-section,
-            .products-section,
-            .flash-sale-section,
-            .features-section {
-                padding: 50px 0;
-            }
-
-            .category-icon-wrapper {
-                width: 60px;
-                height: 60px;
-            }
-
-            .category-icon {
-                font-size: 1.5rem;
-            }
-
-            .flash-timer {
-                font-size: 1.25rem;
-            }
-
-            .newsletter-content {
-                flex-direction: column;
-                gap: 40px;
-            }
-
-            .newsletter-title {
-                font-size: 1.75rem;
-            }
-
-            .newsletter-subtitle {
-                font-size: 0.9375rem;
-            }
-
-            .newsletter-form-wrapper {
-                flex-direction: column;
-            }
-
-            .newsletter-btn {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 576px) {
-            .banner-title {
-                font-size: 2rem;
-            }
-
-            .banner-desc {
-                font-size: 0.9375rem;
-            }
-
-            .btn-banner {
-                padding: 12px 24px;
-                font-size: 0.9375rem;
-            }
-        }
-    </style>
-
-
-    <style>
-        /* Footer Styles */
-        .footer-section {
-            /*background: #111827;*/
-            color: #9ca3af;
-            padding: 60px 0 20px;
-        }
-
-        .footer-widget {
-            margin-bottom: 20px;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        .logo-icon-footer {
-            background: #2563EB;
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-        }
-
-        .footer-logo span {
-            color: white;
-            font-weight: 700;
-            font-size: 1.25rem;
-        }
-
-        .footer-desc {
-            font-size: 0.9rem;
-            line-height: 1.6;
-            color: #6b7280;
-        }
-
-        .footer-title {
-            color: white;
-            font-size: 0.85rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            margin-bottom: 20px;
-        }
-
-        .footer-links {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .footer-links li {
-            margin-bottom: 12px;
-        }
-
-        .footer-links a {
-            color: #9ca3af;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.3s;
-        }
-
-        .footer-links a:hover {
-            color: #2563EB;
-        }
-
-        .newsletter-text {
-            font-size: 0.9rem;
-            margin-bottom: 16px;
-            line-height: 1.5;
-        }
-
-        .newsletter-form {
-            display: flex;
-            gap: 8px;
-        }
-
-        .newsletter-input {
-            flex: 1;
-            padding: 12px 16px;
-            border: 1px solid #374151;
-            background: #1f2937;
-            color: white;
-            border-radius: 6px;
-            font-size: 0.9rem;
-        }
-
-        .newsletter-input:focus {
-            outline: none;
-            border-color: #2563EB;
-        }
-
-        .newsletter-btn {
-            background: #2563EB;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-
-        .newsletter-btn:hover {
-            background: #1E40AF;
-        }
-
-        .footer-bottom {
-            margin-top: 40px;
-            padding-top: 30px;
-            border-top: 1px solid #374151;
-        }
-
-        .copyright {
-            color: #6b7280;
-            font-size: 0.85rem;
-            margin: 0;
-        }
-
-        .footer-icons {
-            display: flex;
-            justify-content: flex-end;
-            gap: 16px;
-        }
-
-        .footer-icons a {
-            color: #9ca3af;
-            font-size: 1.1rem;
-            transition: color 0.3s;
-        }
-
-        .footer-icons a:hover {
-            color: #2563EB;
-        }
-
-        @media (max-width: 768px) {
-            .footer-icons {
-                justify-content: flex-start;
-                margin-top: 16px;
-            }
-        }
-    </style>
-
-    <script>
-        // Flash Sale Timer
-        function startFlashTimer() {
-            const timerElement = document.getElementById('flashTimer');
-            if (!timerElement) return;
-
-            let hours = 2;
-            let minutes = 45;
-            let seconds = 30;
-
-            setInterval(() => {
-                seconds--;
-                if (seconds < 0) {
-                    seconds = 59;
-                    minutes--;
-                }
-                if (minutes < 0) {
-                    minutes = 59;
-                    hours--;
-                }
-                if (hours < 0) {
-                    hours = 0;
-                    minutes = 0;
-                    seconds = 0;
-                }
-
-                const formattedTime =
-                    String(hours).padStart(2, '0') + ':' +
-                    String(minutes).padStart(2, '0') + ':' +
-                    String(seconds).padStart(2, '0');
-
-                timerElement.textContent = formattedTime;
-            }, 1000);
-        }
-
-        // Start timer when page loads
-        document.addEventListener('DOMContentLoaded', startFlashTimer);
-
-        // Add to Cart Functionality
-        function addToCart(productId) {
-            fetch('/api/cart/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    productId: productId,
-                    quantity: 1
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                // Show success message
-                showToast('Product added to cart successfully!', 'success');
-                // Update cart count if element exists
-                updateCartCount();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showToast('Failed to add product to cart', 'error');
-            });
-        }
-
-        // Show Toast Notification
-        function showToast(message, type) {
-            const toast = document.createElement('div');
-            toast.className = `toast-notification ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.classList.add('show');
-            }, 100);
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    document.body.removeChild(toast);
-                }, 300);
-            }, 3000);
-        }
-
-        // Update Cart Count
-        function updateCartCount() {
-            fetch('/api/cart/count')
-                .then(response => response.json())
-                .then(data => {
-                    const cartBadge = document.querySelector('.cart-count');
-                    if (cartBadge) {
-                        cartBadge.textContent = data.count;
-                    }
-                })
-                .catch(error => console.error('Error updating cart count:', error));
-        }
-
-        // Smooth Scroll
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
-    </script>
-
-    <style>
-        /* Toast Notification Styles */
-        .toast-notification {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: white;
-            padding: 16px 24px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 9999;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
-
-        .toast-notification.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast-notification.success {
-            border-left: 4px solid #10b981;
-        }
-
-        .toast-notification.error {
-            border-left: 4px solid #ef4444;
-        }
-    </style>
 </div>
 </body>
 </html>
-

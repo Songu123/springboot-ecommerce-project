@@ -1,5 +1,6 @@
 package com.son.ecommerce.security;
 
+import com.son.ecommerce.dto.CustomUserDetails;
 import com.son.ecommerce.entity.Permission;
 import com.son.ecommerce.entity.Role;
 import com.son.ecommerce.entity.User;
@@ -25,34 +26,14 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        // ✅ FIX: Try to find by username first, then by email
+        // This allows login with either username or email
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+                .orElseGet(() -> userRepository.findByEmail(username)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found with username or email: " + username)));
 
-        Set<GrantedAuthority> authorities = new HashSet<>();
-
-        // Add roles
-        for (Role role : user.getRoles()) {
-            authorities.add(new SimpleGrantedAuthority(role.getName()));
-
-            // Add permissions from each role
-            for (Permission permission : role.getPermissions()) {
-                authorities.add(new SimpleGrantedAuthority(permission.getName()));
-            }
-        }
-
-        // Fallback: if no roles assigned, use old string role_id field (deprecated)
-        if (authorities.isEmpty() && user.getRole_id() != null && !user.getRole_id().isEmpty()) {
-            authorities.add(new SimpleGrantedAuthority(user.getRole_id()));
-        }
-
-        return org.springframework.security.core.userdetails.User
-                .withUsername(user.getUsername())
-                .password(user.getPassword())
-                .authorities(authorities)
-                .accountExpired(false)
-                .accountLocked(!user.isEnabled())
-                .credentialsExpired(false)
-                .disabled(!user.isEnabled())
-                .build();
+        // ✅ Return CustomUserDetails object that contains full user info
+        return new CustomUserDetails(user);
     }
+
 }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <title>Tài khoản của tôi | LifestyleShop</title>
+</head>
+<body>
+<div th:fragment="content">
+    <div class="container py-5">
+        <div class="row g-4">
+            <!-- Sidebar -->
+            <div class="col-lg-3">
+                <div th:replace="~{profile/sidebar :: sidebar}"></div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-lg-9">
+
+                <!-- Flash messages -->
+                <div th:if="${success}" class="alert-ls alert-ls-success animate-up mb-4">
+                    <i class="fas fa-check-circle"></i>
+                    <span th:text="${success}">Thành công</span>
+                </div>
+                <div th:if="${error}" class="alert-ls alert-ls-danger animate-up mb-4">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span th:text="${error}">Có lỗi xảy ra</span>
+                </div>
+
+                <!-- Profile Card -->
+                <div class="checkout-step animate-up delay-1">
+                    <div class="d-flex align-items-center justify-content-between mb-4" style="border-bottom:1px solid var(--border);padding-bottom:20px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div style="width:56px;height:56px;border-radius:50%;background:var(--clr-primary-glow);border:2px solid var(--clr-primary);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--clr-primary);">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div>
+                                <h4 style="font-weight:800;margin:0;font-size:1.1rem;" th:text="${user.fullName} ?: ${user.username}">Người dùng</h4>
+                                <p style="margin:0;font-size:.82rem;color:var(--txt-muted);" th:text="${user.email}">email@example.com</p>
+                            </div>
+                        </div>
+                        <a th:href="@{/profile/edit}" class="btn-primary-ls">
+                            <i class="fas fa-edit me-2"></i>Chỉnh sửa
+                        </a>
+                    </div>
+
+                    <!-- Info Grid -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="profile-info-tile">
+                                <div class="profile-info-icon" style="background:rgba(77,109,154,.1);color:var(--clr-primary)">
+                                    <i class="fas fa-at"></i>
+                                </div>
+                                <div>
+                                    <label>Tên đăng nhập</label>
+                                    <p th:text="${user.username}">username</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-info-tile">
+                                <div class="profile-info-icon" style="background:rgba(153,206,211,.15);color:#2D7D82">
+                                    <i class="fas fa-signature"></i>
+                                </div>
+                                <div>
+                                    <label>Họ và Tên</label>
+                                    <p th:text="${user.fullName} ?: 'Chưa thiết lập'">Full Name</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-info-tile">
+                                <div class="profile-info-icon" style="background:rgba(237,181,191,.15);color:#8B3A4A">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <label>Email liên hệ</label>
+                                    <p th:text="${user.email}">email@example.com</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="profile-info-tile">
+                                <div class="profile-info-icon" style="background:rgba(77,109,154,.08);color:var(--clr-primary)">
+                                    <i class="fas fa-phone-alt"></i>
+                                </div>
+                                <div>
+                                    <label>Số điện thoại</label>
+                                    <p th:text="${user.phone} ?: 'Chưa thiết lập'">0123456789</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="profile-info-tile" style="border-style:dashed;border-color:var(--clr-primary-light);">
+                                <div class="profile-info-icon" style="background:var(--clr-primary-glow);color:var(--clr-primary)">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <div>
+                                    <label>Địa chỉ giao hàng mặc định</label>
+                                    <p th:text="${user.address} ?: 'Bạn chưa có địa chỉ giao hàng mặc định.'">Address</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Actions -->
+                    <div class="d-flex gap-3 flex-wrap mt-4 pt-4" style="border-top:1px solid var(--border);">
+                        <a th:href="@{/orders}" class="btn-outline-ls">
+                            <i class="fas fa-box me-2"></i>Đơn hàng của tôi
+                        </a>
+                        <a th:href="@{/profile/change-password}" class="btn-ghost-ls">
+                            <i class="fas fa-shield-alt me-2"></i>Đổi mật khẩu
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .profile-info-tile {
+            display: flex; align-items: flex-start; gap: 14px;
+            padding: 18px 20px;
+            background: var(--bg-soft);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            height: 100%;
+            transition: all var(--transition);
+        }
+        .profile-info-tile:hover {
+            background: var(--bg-card);
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-2px);
+            border-color: var(--clr-primary-light);
+        }
+        .profile-info-icon {
+            width: 42px; height: 42px; flex-shrink: 0;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: .95rem;
+        }
+        .profile-info-tile label {
+            display: block;
+            font-size: .7rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: .06em;
+            color: var(--txt-faint); margin-bottom: 4px;
+        }
+        .profile-info-tile p {
+            margin: 0; font-size: .95rem; font-weight: 600; color: var(--txt);
+        }
+    </style>
+</div>
+</body>
+</html>
